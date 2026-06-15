@@ -1,0 +1,550 @@
+<!doctype html>
+<html lang="es-CL">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#2C4753">
+  <title>Portal Administrativo | DDG Del Valle</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Montserrat:wght@500;600;700&display=swap" rel="stylesheet">
+  <link rel="icon" href="https://ddgdelvalle.cl/wp-content/uploads/2026/03/icono-ddg.png">
+  <style>
+    /* Tokens alineados con index.html (.ddg-page) */
+    .portal-page{
+      --primary:#2C4753;
+      --secondary:#81A896;
+      --bg:#F4F7F6;
+      --bg2:#F2EEDB;
+      --accent:#D5CC3C;
+      --surface:#F4F7F6;
+      --text:#0f172a;
+      --muted:rgba(15,23,42,.72);
+      --shadow:0 18px 45px rgba(15,23,42,.10);
+      --card:#ffffff;
+
+      margin:0;
+      min-height:100vh;
+      font-family:Inter, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
+      color:var(--text);
+      background:linear-gradient(180deg, var(--bg) 0%, var(--bg2) 100%);
+      line-height:1.6;
+      -webkit-font-smoothing:antialiased;
+      position:relative;
+      overflow-x:hidden;
+    }
+
+    .portal-page::before{
+      content:'';
+      position:absolute;
+      top:22%; left:-10%;
+      width:600px; height:600px;
+      background:radial-gradient(circle, rgba(129,168,150,0.15) 0%, transparent 60%);
+      z-index:0; pointer-events:none;
+    }
+    .portal-page::after{
+      content:'';
+      position:absolute;
+      top:55%; right:-10%;
+      width:500px; height:500px;
+      background:radial-gradient(circle, rgba(213,204,60,0.12) 0%, transparent 60%);
+      z-index:0; pointer-events:none;
+    }
+
+    .portal-page *{ box-sizing:border-box; }
+    .portal-page a{ color:inherit; text-decoration:none; }
+
+    .portal-container{
+      width:min(750px, calc(100% - 48px));
+      margin:0 auto;
+      position:relative;
+      z-index:2;
+    }
+
+    .portal-header{
+      position:sticky;
+      top:0;
+      z-index:10;
+      background:rgba(255,255,255,.92);
+      backdrop-filter:saturate(1.2) blur(10px);
+      border-bottom:1px solid rgba(15,23,42,.08);
+    }
+    .portal-header-inner{
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding:18px 0 16px;
+    }
+    .portal-brand{
+      display:flex;
+      align-items:center;
+      justify-content:center;
+    }
+    /* Logo OTEC destacado (más grande que el header del sitio público) */
+    .portal-brand img{
+      height:80px;
+      width:auto;
+      max-width:100%;
+      object-fit:contain;
+      display:block;
+    }
+
+    .portal-main{
+      padding:28px 0 40px;
+      position:relative;
+      z-index:2;
+    }
+
+    .portal-hero{
+      margin-bottom:22px;
+      border-radius:16px;
+      overflow:hidden;
+      border:1px solid rgba(15,23,42,.08);
+      box-shadow:var(--shadow);
+      background:var(--card);
+    }
+    .portal-hero a{
+      display:block;
+      line-height:0;
+    }
+    .portal-hero img{
+      width:100%;
+      height:auto;
+      display:block;
+      vertical-align:bottom;
+    }
+    .portal-hero-caption{
+      font-size:12px;
+      color:var(--muted);
+      padding:10px 14px 12px;
+      border-top:1px solid rgba(15,23,42,.06);
+      text-align:center;
+    }
+    .portal-hero-caption a{
+      color:var(--primary);
+      font-weight:600;
+      text-decoration:underline;
+      text-underline-offset:2px;
+    }
+
+    .panel{
+      width:100%;
+      background:var(--card);
+      border:1px solid rgba(15,23,42,.08);
+      border-radius:18px;
+      box-shadow:var(--shadow);
+      padding:26px;
+    }
+
+    h1{
+      margin:0 0 8px;
+      color:var(--primary);
+      font-family:Montserrat, Inter, system-ui;
+      font-size:26px;
+      font-weight:700;
+      line-height:1.2;
+      letter-spacing:.2px;
+    }
+
+    .intro{
+      margin:0 0 20px;
+      color:var(--muted);
+      font-size:14px;
+    }
+
+    .gate{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      margin-bottom:12px;
+    }
+
+    input[type="password"]{
+      flex:1 1 280px;
+      min-width:240px;
+      border:1px solid rgba(15,23,42,.18);
+      border-radius:12px;
+      padding:12px 14px;
+      font-size:14px;
+      outline:none;
+      font-family:inherit;
+    }
+    input[type="password"]:focus{
+      border-color:var(--secondary);
+      box-shadow:0 0 0 3px rgba(129,168,150,.20);
+    }
+
+    button{
+      border:0;
+      border-radius:12px;
+      padding:12px 18px;
+      font-weight:700;
+      font-family:Montserrat, Inter, system-ui;
+      font-size:13px;
+      letter-spacing:.2px;
+      background:var(--primary);
+      color:#fff;
+      cursor:pointer;
+      box-shadow:0 10px 22px rgba(44,71,83,.18);
+      transition:box-shadow .2s ease, filter .15s ease;
+    }
+    button:hover:not(:disabled){ box-shadow:0 14px 30px rgba(44,71,83,.24); filter:brightness(1.03); }
+    button:disabled{ opacity:.55; cursor:not-allowed; }
+
+    .error{
+      color:#b42318;
+      font-size:13px;
+      min-height:20px;
+      margin-bottom:6px;
+    }
+
+    .links{
+      display:none;
+      margin-top:22px;
+      border-top:1px solid rgba(15,23,42,.08);
+      padding-top:22px;
+    }
+    .links.visible{ display:block; animation:fadeIn .4s ease; }
+    @keyframes fadeIn{
+      from{ opacity:0; transform:translateY(6px); }
+      to{ opacity:1; transform:translateY(0); }
+    }
+
+    .links-section + .links-section{ margin-top:24px; }
+
+    .links h2{
+      margin:0 0 4px;
+      font-size:13px;
+      font-family:Montserrat, Inter, system-ui;
+      font-weight:700;
+      color:var(--primary);
+      text-transform:uppercase;
+      letter-spacing:1.2px;
+    }
+    .links-subtitle{
+      margin:0 0 14px;
+      font-size:12px;
+      color:var(--muted);
+    }
+
+    .links-grid{
+      display:grid;
+      grid-template-columns:repeat(2, minmax(0,1fr));
+      gap:12px;
+    }
+    @media (max-width:560px){
+      .links-grid{ grid-template-columns:1fr; }
+    }
+
+    .link-card{
+      position:relative;
+      display:flex;
+      align-items:flex-start;
+      gap:12px;
+      padding:14px 14px 14px 14px;
+      background:#fff;
+      border:1px solid rgba(15,23,42,.10);
+      border-radius:14px;
+      transition:transform .18s ease, box-shadow .18s ease, border-color .18s ease;
+      overflow:hidden;
+      isolation:isolate;
+    }
+    .link-card::before{
+      content:'';
+      position:absolute;
+      inset:0;
+      background:linear-gradient(135deg, rgba(129,168,150,.10), rgba(213,204,60,.06));
+      opacity:0;
+      transition:opacity .2s ease;
+      z-index:-1;
+    }
+    .link-card:hover{
+      transform:translateY(-2px);
+      border-color:rgba(129,168,150,.55);
+      box-shadow:0 14px 30px rgba(44,71,83,.12);
+    }
+    .link-card:hover::before{ opacity:1; }
+    .link-card:hover .link-card-arrow{ transform:translate(2px,-2px); opacity:1; }
+
+    .link-card-icon{
+      flex:0 0 40px;
+      width:40px;
+      height:40px;
+      border-radius:10px;
+      display:grid;
+      place-items:center;
+      background:rgba(44,71,83,.08);
+      color:var(--primary);
+    }
+    .link-card-icon svg{ width:20px; height:20px; }
+
+    .link-card-body{ min-width:0; flex:1; }
+    .link-card-title{
+      display:block;
+      font-family:Montserrat, Inter, system-ui;
+      font-weight:700;
+      font-size:14px;
+      color:var(--primary);
+      line-height:1.25;
+    }
+    .link-card-desc{
+      display:block;
+      font-size:12px;
+      color:var(--muted);
+      margin-top:2px;
+      line-height:1.4;
+    }
+    .link-card-arrow{
+      position:absolute;
+      top:12px;
+      right:12px;
+      width:14px;
+      height:14px;
+      color:var(--secondary);
+      opacity:.5;
+      transition:transform .2s ease, opacity .2s ease;
+    }
+
+    .link-card.is-public .link-card-icon{
+      background:rgba(213,204,60,.18);
+      color:#7a6f00;
+    }
+    .link-card.is-restricted .link-card-icon{
+      background:rgba(44,71,83,.10);
+    }
+
+    .hint{
+      margin-top:18px;
+      font-size:12px;
+      color:var(--muted);
+    }
+
+    .back-site{
+      margin-top:14px;
+      font-size:13px;
+    }
+    .back-site a{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      color:var(--primary);
+      font-weight:600;
+    }
+    .back-site a:hover{ text-decoration:underline; text-underline-offset:2px; }
+    .back-site img{
+      width:22px;
+      height:22px;
+      object-fit:contain;
+    }
+  </style>
+</head>
+<body>
+  <div class="portal-page">
+    <header class="portal-header">
+      <div class="portal-container portal-header-inner">
+        <a class="portal-brand" href="index.html" aria-label="DDG Del Valle - Ir al sitio de cursos">
+          <img
+            src="https://ddgdelvalle.cl/wp-content/uploads/2026/03/cropped-LOGO-DDG_color.png"
+            alt="DDG Del Valle Capacitaciones"
+            width="320"
+            height="80">
+        </a>
+      </div>
+    </header>
+
+    <main class="portal-main">
+      <div class="portal-container">
+        <div class="portal-hero" aria-label="Destacado cursos">
+          <a href="index.html#cursos" title="Ver cursos en el sitio público">
+            <img
+              src="https://ddgdelvalle.cl/wp-content/uploads/2026/04/Plaguicida-.webp"
+              alt="Uso y manejo de plaguicida agrícola"
+              width="750"
+              height="250"
+              fetchpriority="high">
+          </a>
+          <p class="portal-hero-caption">
+            Curso de referencia en el sitio público — <a href="index.html#cursos">ver todos los cursos</a>
+          </p>
+        </div>
+
+        <section class="panel">
+          <h1>Portal administrativo</h1>
+          <p class="intro">Acceso interno para centralizar enlaces operativos.</p>
+
+          <div class="gate">
+            <input id="admin-password" type="password" placeholder="Ingresa la contraseña" autocomplete="off">
+            <button id="unlock-btn" type="button">Entrar</button>
+          </div>
+          <div id="error-msg" class="error" aria-live="polite"></div>
+
+          <section id="admin-links" class="links" aria-hidden="true">
+            <div class="links-section">
+              <h2>Operación interna</h2>
+              <p class="links-subtitle">Herramientas administrativas y registros.</p>
+              <div class="links-grid">
+                <a class="link-card is-restricted" href="inventario.html">
+                  <span class="link-card-icon" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 7 12 3 4 7v10l8 4 8-4V7Z"/><path d="m4 7 8 4 8-4"/><path d="M12 11v10"/></svg>
+                  </span>
+                  <span class="link-card-body">
+                    <span class="link-card-title">Inventario</span>
+                    <span class="link-card-desc">Stock, materiales y equipos.</span>
+                  </span>
+                  <svg class="link-card-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17 17 7"/><path d="M8 7h9v9"/></svg>
+                </a>
+
+                <a class="link-card is-restricted" href="relatores.html">
+                  <span class="link-card-icon" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                  </span>
+                  <span class="link-card-body">
+                    <span class="link-card-title">Relatores</span>
+                    <span class="link-card-desc">Base de docentes y especialistas.</span>
+                  </span>
+                  <svg class="link-card-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17 17 7"/><path d="M8 7h9v9"/></svg>
+                </a>
+
+                <a class="link-card is-restricted" id="registro-link" href="#">
+                  <span class="link-card-icon" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4"/><path d="M8 2v4"/><path d="M3 10h18"/><path d="m9 16 2 2 4-4"/></svg>
+                  </span>
+                  <span class="link-card-body">
+                    <span class="link-card-title">Registro · Panel</span>
+                    <span class="link-card-desc">Acceso seguro con token diario.</span>
+                  </span>
+                  <svg class="link-card-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17 17 7"/><path d="M8 7h9v9"/></svg>
+                </a>
+
+                <a class="link-card is-restricted" href="registro/presupuestos.html">
+                  <span class="link-card-icon" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v20"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+                  </span>
+                  <span class="link-card-body">
+                    <span class="link-card-title">Registro · Presupuestos</span>
+                    <span class="link-card-desc">Cotizaciones y control financiero.</span>
+                  </span>
+                  <svg class="link-card-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17 17 7"/><path d="M8 7h9v9"/></svg>
+                </a>
+              </div>
+            </div>
+
+            <div class="links-section">
+              <h2>Cursos y formularios</h2>
+              <p class="links-subtitle">Páginas públicas vinculadas a programas.</p>
+              <div class="links-grid">
+                <a class="link-card is-public" href="aplicador-plaguicidas.html">
+                  <span class="link-card-icon" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2s4 4 4 8a4 4 0 0 1-8 0c0-4 4-8 4-8Z"/><path d="M8 18h8"/><path d="M9 22h6"/></svg>
+                  </span>
+                  <span class="link-card-body">
+                    <span class="link-card-title">Aplicador de Plaguicidas</span>
+                    <span class="link-card-desc">Curso SAG · ficha y postulación.</span>
+                  </span>
+                  <svg class="link-card-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17 17 7"/><path d="M8 7h9v9"/></svg>
+                </a>
+
+                <a class="link-card is-public" href="insercion-laboral.html">
+                  <span class="link-card-icon" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
+                  </span>
+                  <span class="link-card-body">
+                    <span class="link-card-title">Inserción Laboral</span>
+                    <span class="link-card-desc">Programa de empleabilidad.</span>
+                  </span>
+                  <svg class="link-card-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17 17 7"/><path d="M8 7h9v9"/></svg>
+                </a>
+
+                <a class="link-card is-public" href="encuesta.html">
+                  <span class="link-card-icon" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><path d="M9 13h6"/><path d="M9 17h4"/></svg>
+                  </span>
+                  <span class="link-card-body">
+                    <span class="link-card-title">Encuesta</span>
+                    <span class="link-card-desc">Formulario de satisfacción.</span>
+                  </span>
+                  <svg class="link-card-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17 17 7"/><path d="M8 7h9v9"/></svg>
+                </a>
+
+                <a class="link-card is-public" href="index.html">
+                  <span class="link-card-icon" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M2 12h20"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+                  </span>
+                  <span class="link-card-body">
+                    <span class="link-card-title">Sitio público</span>
+                    <span class="link-card-desc">Portada de cursos DDG.</span>
+                  </span>
+                  <svg class="link-card-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17 17 7"/><path d="M8 7h9v9"/></svg>
+                </a>
+              </div>
+            </div>
+          </section>
+
+          <p class="hint">
+            Nota: esta protección es básica (front-end). Para seguridad real, se debe validar en servidor (PHP/sesión) y no exponer la clave en el navegador.
+          </p>
+
+          <p class="back-site">
+            <a href="index.html">
+              <img src="https://ddgdelvalle.cl/wp-content/uploads/2026/03/icono-ddg.png" alt="" width="22" height="22" aria-hidden="true">
+              Volver al sitio de cursos
+            </a>
+          </p>
+        </section>
+      </div>
+    </main>
+  </div>
+
+  <script>
+    /* ── Token dinámico para Registro ── */
+    (function () {
+      var today = new Date();
+      var yyyy = today.getFullYear();
+      var mm = String(today.getMonth() + 1).padStart(2, '0');
+      var dd = String(today.getDate()).padStart(2, '0');
+      var token = btoa(yyyy + '-' + mm + '-' + dd + '_DDG_SEC_2026');
+      var link = document.getElementById('registro-link');
+      if (link) link.href = 'registro/index.php?token=' + token;
+    })();
+
+    (function () {
+      var ACCESS_PASSWORD = "admin123";
+      var passwordInput = document.getElementById("admin-password");
+      var unlockButton = document.getElementById("unlock-btn");
+      var linksBlock = document.getElementById("admin-links");
+      var errorMsg = document.getElementById("error-msg");
+
+      function unlock() {
+        if (!passwordInput || !linksBlock || !errorMsg) return;
+
+        var entered = passwordInput.value.trim();
+        if (!entered) {
+          errorMsg.textContent = "Debes ingresar una contraseña.";
+          return;
+        }
+
+        if (entered === ACCESS_PASSWORD) {
+          errorMsg.textContent = "";
+          linksBlock.classList.add("visible");
+          linksBlock.setAttribute("aria-hidden", "false");
+          passwordInput.value = "";
+          passwordInput.disabled = true;
+          if (unlockButton) unlockButton.disabled = true;
+        } else {
+          errorMsg.textContent = "Contraseña incorrecta.";
+        }
+      }
+
+      if (unlockButton) {
+        unlockButton.addEventListener("click", unlock);
+      }
+
+      if (passwordInput) {
+        passwordInput.addEventListener("keydown", function (event) {
+          if (event.key === "Enter") unlock();
+        });
+      }
+    })();
+  </script>
+</body>
+</html>

@@ -1,0 +1,570 @@
+<!DOCTYPE html>
+<html lang="es-CL">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DDG del Valle · Inventario y Agenda</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,300;0,14..32,400;0,14..32,500;0,14..32,600;0,14..32,700;1,14..32,400&display=swap" rel="stylesheet">
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: { sans: ['Inter', 'ui-sans-serif', 'system-ui'] },
+          colors: {
+            brand: { 50:'#eef2ff', 100:'#e0e7ff', 200:'#c7d2fe', 500:'#6366f1', 600:'#4f46e5', 700:'#4338ca', 800:'#3730a3' }
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    * { box-sizing: border-box; }
+    body { font-family: 'Inter', ui-sans-serif, system-ui; }
+
+    ::-webkit-scrollbar { width: 5px; height: 5px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+    ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+
+    input:focus-visible, select:focus-visible, textarea:focus-visible, button:focus-visible {
+      outline: 2px solid #6366f1; outline-offset: 2px;
+    }
+
+    .modal-enter { animation: fadeIn 0.18s ease-out; }
+    @keyframes fadeIn { from { opacity:0; transform:scale(.97); } to { opacity:1; transform:scale(1); } }
+
+    tbody tr:hover td { background-color: #f8fafc; }
+
+    .field {
+      width: 100%;
+      padding: 0.5rem 0.75rem;
+      font-size: 0.875rem;
+      border: 1px solid #e2e8f0;
+      border-radius: 0.5rem;
+      background: white;
+      color: #1e293b;
+      transition: border-color 0.15s, box-shadow 0.15s;
+    }
+    .field:focus { border-color: #6366f1; box-shadow: 0 0 0 3px rgba(99,102,241,0.12); outline: none; }
+    .field::placeholder { color: #94a3b8; }
+    .field[type="date"]::-webkit-calendar-picker-indicator { opacity: 0.4; cursor: pointer; }
+
+    /* Barra de disponibilidad */
+    .avail-bar { height: 4px; border-radius: 9999px; background: #e2e8f0; overflow: hidden; }
+    .avail-bar-fill { height: 100%; border-radius: 9999px; transition: width 0.3s; }
+
+    /* Row highlight para hoy */
+    tr.is-today td { background-color: #fefce8 !important; }
+    tr.is-today:hover td { background-color: #fef9c3 !important; }
+  </style>
+</head>
+
+<body class="bg-slate-50 text-slate-800 antialiased">
+
+  <!-- ╔═══════════════════════════╗ -->
+  <!-- ║       LOGIN SCREEN        ║ -->
+  <!-- ╚═══════════════════════════╝ -->
+  <div id="loginScreen" class="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-900 via-slate-800 to-brand-800 p-4">
+    <div class="w-full max-w-[400px]">
+      <div class="text-center mb-8">
+        <div class="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-white/10 backdrop-blur-sm border border-white/10 mb-4">
+          <svg class="w-7 h-7 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M20 7H4a2 2 0 00-2 2v6a2 2 0 002 2h16a2 2 0 002-2V9a2 2 0 00-2-2z"/>
+            <path d="M16 21V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v16"/>
+          </svg>
+        </div>
+        <h1 class="text-xl font-semibold text-white tracking-tight">DDG del Valle</h1>
+        <p class="text-slate-400 text-sm mt-1 font-light">Inventario y Agenda OTEC</p>
+      </div>
+
+      <div class="bg-white rounded-2xl shadow-2xl shadow-slate-900/30 p-8">
+        <h2 class="text-base font-semibold text-slate-800 mb-0.5">Iniciar sesión</h2>
+        <p class="text-slate-400 text-xs mb-6">Control de activos y agenda de clases</p>
+
+        <div class="space-y-4">
+          <div>
+            <label class="block text-xs font-medium text-slate-600 mb-1.5">Usuario</label>
+            <input id="loginUser" type="text" placeholder="admin" class="field" autocomplete="username">
+          </div>
+          <div>
+            <label class="block text-xs font-medium text-slate-600 mb-1.5">Contraseña</label>
+            <input id="loginPass" type="password" placeholder="••••••••" class="field" autocomplete="current-password">
+          </div>
+          <div id="loginError" class="hidden items-center gap-2 text-red-600 text-xs bg-red-50 border border-red-100 rounded-lg px-3 py-2.5">
+            <svg class="w-3.5 h-3.5 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+            Credenciales incorrectas. Verifica usuario y contraseña.
+          </div>
+          <button onclick="handleLogin()"
+            class="w-full bg-brand-600 hover:bg-brand-700 text-white font-medium py-2.5 rounded-lg text-sm transition-colors flex items-center justify-center gap-2">
+            Ingresar al sistema
+          </button>
+        </div>
+        <p class="text-center text-slate-300 text-xs mt-6">Acceso restringido para equipo autorizado.</p>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ╔═══════════════════════════╗ -->
+  <!-- ║        DASHBOARD          ║ -->
+  <!-- ╚═══════════════════════════╝ -->
+  <div id="dashboard" class="hidden min-h-screen flex flex-col">
+
+    <!-- Header -->
+    <header class="bg-white border-b border-slate-200/80 sticky top-0 z-30">
+      <div class="max-w-[1600px] mx-auto px-6 h-14 flex items-center justify-between">
+        <div class="flex items-center gap-2.5">
+          <div class="w-7 h-7 rounded-lg bg-brand-600 flex items-center justify-center shrink-0">
+            <svg class="w-3.5 h-3.5 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M20 7H4a2 2 0 00-2 2v6a2 2 0 002 2h16a2 2 0 002-2V9a2 2 0 00-2-2z"/><path d="M16 21V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v16"/>
+            </svg>
+          </div>
+          <div class="leading-none">
+            <p class="text-sm font-semibold text-slate-800 leading-none">DDG del Valle</p>
+            <p class="text-[10px] text-slate-400 leading-none mt-0.5">Inventario y Agenda</p>
+          </div>
+        </div>
+        <div class="flex items-center gap-4">
+          <div class="text-right hidden sm:block">
+            <p class="text-xs font-medium text-slate-700">Administrador</p>
+            <p class="text-[10px] text-slate-400" id="currentDate"></p>
+          </div>
+          <button onclick="handleLogout()" title="Salir"
+            class="flex items-center gap-1.5 text-xs text-slate-500 hover:text-slate-800 border border-slate-200 hover:border-slate-300 px-2.5 py-1.5 rounded-lg transition-all">
+            <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/>
+            </svg>
+            Salir
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <main class="flex-1 max-w-[1600px] mx-auto w-full px-6 py-7">
+
+      <!-- Tabs -->
+      <div class="flex items-end gap-6 border-b border-slate-200 mb-7">
+        <button id="tab-inventario" onclick="switchTab('inventario')"
+          class="flex items-center gap-2 pb-3 text-sm font-medium border-b-2 transition-all">
+          <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M20 7H4a2 2 0 00-2 2v6a2 2 0 002 2h16a2 2 0 002-2V9a2 2 0 00-2-2z"/><path d="M16 21V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v16"/>
+          </svg>
+          Inventario de Activos
+        </button>
+        <button id="tab-agenda" onclick="switchTab('agenda')"
+          class="flex items-center gap-2 pb-3 text-sm font-medium border-b-2 transition-all">
+          <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/>
+          </svg>
+          Agenda de Clases
+        </button>
+      </div>
+
+
+      <!-- ══════════════════════════════════════ -->
+      <!--  VIEW: INVENTARIO                      -->
+      <!-- ══════════════════════════════════════ -->
+      <div id="viewInventario">
+
+        <!-- Stats -->
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-6">
+          <div class="bg-white border border-slate-200/80 rounded-xl p-4">
+            <p class="text-[10px] font-semibold text-slate-400 uppercase tracking-widest">Tipos de Activo</p>
+            <p class="text-2xl font-semibold text-slate-800 tabular-nums mt-1.5 leading-none" id="si-tipos">0</p>
+            <p class="text-[10px] text-slate-400 mt-1">registrados</p>
+          </div>
+          <div class="bg-white border border-slate-200/80 rounded-xl p-4">
+            <p class="text-[10px] font-semibold text-slate-400 uppercase tracking-widest">Unidades Totales</p>
+            <p class="text-2xl font-semibold text-slate-800 tabular-nums mt-1.5 leading-none" id="si-total">0</p>
+            <p class="text-[10px] text-slate-400 mt-1">en inventario</p>
+          </div>
+          <div class="bg-white border border-slate-200/80 rounded-xl p-4">
+            <p class="text-[10px] font-semibold text-slate-400 uppercase tracking-widest">En Uso Ahora</p>
+            <p class="text-2xl font-semibold text-amber-500 tabular-nums mt-1.5 leading-none" id="si-enuso">0</p>
+            <p class="text-[10px] text-slate-400 mt-1">asignadas a clases</p>
+          </div>
+          <div class="bg-white border border-slate-200/80 rounded-xl p-4">
+            <p class="text-[10px] font-semibold text-slate-400 uppercase tracking-widest">Disponibles</p>
+            <p class="text-2xl font-semibold text-emerald-600 tabular-nums mt-1.5 leading-none" id="si-disponible">0</p>
+            <p class="text-[10px] text-slate-400 mt-1">sin asignar</p>
+          </div>
+        </div>
+
+        <!-- Table card -->
+        <div class="bg-white border border-slate-200/80 rounded-xl overflow-hidden shadow-sm shadow-slate-100">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 px-5 py-4 border-b border-slate-100">
+            <div class="relative">
+              <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-slate-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+              <input id="searchActivo" type="text" placeholder="Buscar activo…" oninput="filterActivos()"
+                class="field pl-8 w-full sm:w-60 text-xs py-2">
+            </div>
+            <button onclick="openAddActivoModal()"
+              class="inline-flex items-center justify-center gap-2 bg-brand-600 hover:bg-brand-700 text-white text-xs font-medium px-4 py-2 rounded-lg transition-colors shrink-0">
+              <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+              Agregar Activo
+            </button>
+          </div>
+
+          <div class="overflow-x-auto">
+            <table class="w-full text-sm border-collapse">
+              <thead>
+                <tr class="border-b border-slate-100 bg-slate-50/70">
+                  <th class="px-4 py-3 text-left text-[10px] font-semibold text-slate-400 uppercase tracking-widest">Código</th>
+                  <th class="px-4 py-3 text-left text-[10px] font-semibold text-slate-400 uppercase tracking-widest">Activo</th>
+                  <th class="px-4 py-3 text-left text-[10px] font-semibold text-slate-400 uppercase tracking-widest">Categoría</th>
+                  <th class="px-4 py-3 text-left text-[10px] font-semibold text-slate-400 uppercase tracking-widest">Estado</th>
+                  <th class="px-4 py-3 text-left text-[10px] font-semibold text-slate-400 uppercase tracking-widest w-48">Disponibilidad</th>
+                  <th class="px-4 py-3 text-left text-[10px] font-semibold text-slate-400 uppercase tracking-widest">Acciones</th>
+                </tr>
+              </thead>
+              <tbody id="tbodyActivos"></tbody>
+            </table>
+          </div>
+
+          <div id="emptyActivos" class="hidden py-20 text-center">
+            <div class="inline-flex items-center justify-center w-12 h-12 rounded-full bg-slate-100 mb-4">
+              <svg class="w-5 h-5 text-slate-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M20 7H4a2 2 0 00-2 2v6a2 2 0 002 2h16a2 2 0 002-2V9a2 2 0 00-2-2z"/><path d="M16 21V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v16"/></svg>
+            </div>
+            <p class="text-sm font-medium text-slate-500">Sin activos registrados</p>
+            <p class="text-xs text-slate-400 mt-1">Agrega equipos y materiales al inventario</p>
+          </div>
+
+          <div class="px-5 py-3 border-t border-slate-100 flex items-center justify-between">
+            <p class="text-xs text-slate-400" id="countActivos">—</p>
+            <p class="text-xs text-slate-300">DDG del Valle · OTEC</p>
+          </div>
+        </div>
+      </div><!-- /viewInventario -->
+
+
+      <!-- ══════════════════════════════════════ -->
+      <!--  VIEW: AGENDA                          -->
+      <!-- ══════════════════════════════════════ -->
+      <div id="viewAgenda" class="hidden">
+
+        <!-- Stats -->
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-6">
+          <div class="bg-white border border-slate-200/80 rounded-xl p-4">
+            <p class="text-[10px] font-semibold text-slate-400 uppercase tracking-widest">Hoy</p>
+            <p class="text-2xl font-semibold text-brand-600 tabular-nums mt-1.5 leading-none" id="sa-hoy">0</p>
+            <p class="text-[10px] text-slate-400 mt-1">clases</p>
+          </div>
+          <div class="bg-white border border-slate-200/80 rounded-xl p-4">
+            <p class="text-[10px] font-semibold text-slate-400 uppercase tracking-widest">Esta Semana</p>
+            <p class="text-2xl font-semibold text-slate-800 tabular-nums mt-1.5 leading-none" id="sa-semana">0</p>
+            <p class="text-[10px] text-slate-400 mt-1">clases</p>
+          </div>
+          <div class="bg-white border border-slate-200/80 rounded-xl p-4">
+            <p class="text-[10px] font-semibold text-slate-400 uppercase tracking-widest">Programadas</p>
+            <p class="text-2xl font-semibold text-emerald-600 tabular-nums mt-1.5 leading-none" id="sa-programadas">0</p>
+            <p class="text-[10px] text-slate-400 mt-1">pendientes</p>
+          </div>
+          <div class="bg-white border border-slate-200/80 rounded-xl p-4">
+            <p class="text-[10px] font-semibold text-slate-400 uppercase tracking-widest">Finalizadas</p>
+            <p class="text-2xl font-semibold text-slate-400 tabular-nums mt-1.5 leading-none" id="sa-finalizadas">0</p>
+            <p class="text-[10px] text-slate-400 mt-1">completadas</p>
+          </div>
+        </div>
+
+        <!-- Table card -->
+        <div class="bg-white border border-slate-200/80 rounded-xl overflow-hidden shadow-sm shadow-slate-100">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 px-5 py-4 border-b border-slate-100">
+            <div class="flex items-center gap-2">
+              <div class="relative">
+                <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-slate-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                <input id="searchClase" type="text" placeholder="Buscar curso o relator…" oninput="filterClases()"
+                  class="field pl-8 w-full sm:w-60 text-xs py-2">
+              </div>
+              <select id="filterPeriodo" onchange="filterClases()"
+                class="field text-xs py-2 w-36 appearance-none bg-no-repeat bg-[right_0.6rem_center] pr-7"
+                style="background-image:url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='11' height='11' viewBox='0 0 24 24' fill='none' stroke='%2394a3b8' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E\")">
+                <option value="todas">Todas</option>
+                <option value="hoy">Hoy</option>
+                <option value="semana">Esta semana</option>
+                <option value="proximas">Próximas</option>
+                <option value="finalizadas">Finalizadas</option>
+              </select>
+            </div>
+            <button onclick="openAddClaseModal()"
+              class="inline-flex items-center justify-center gap-2 bg-brand-600 hover:bg-brand-700 text-white text-xs font-medium px-4 py-2 rounded-lg transition-colors shrink-0">
+              <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+              Agregar Clase
+            </button>
+          </div>
+
+          <div class="overflow-x-auto">
+            <table class="w-full text-sm border-collapse">
+              <thead>
+                <tr class="border-b border-slate-100 bg-slate-50/70">
+                  <th class="px-4 py-3 text-left text-[10px] font-semibold text-slate-400 uppercase tracking-widest whitespace-nowrap">Fecha</th>
+                  <th class="px-4 py-3 text-left text-[10px] font-semibold text-slate-400 uppercase tracking-widest whitespace-nowrap">Horario</th>
+                  <th class="px-4 py-3 text-left text-[10px] font-semibold text-slate-400 uppercase tracking-widest whitespace-nowrap">Curso</th>
+                  <th class="px-4 py-3 text-left text-[10px] font-semibold text-slate-400 uppercase tracking-widest whitespace-nowrap">Relator</th>
+                  <th class="px-4 py-3 text-left text-[10px] font-semibold text-slate-400 uppercase tracking-widest whitespace-nowrap">Sala</th>
+                  <th class="px-4 py-3 text-left text-[10px] font-semibold text-slate-400 uppercase tracking-widest">Activos asignados</th>
+                  <th class="px-4 py-3 text-left text-[10px] font-semibold text-slate-400 uppercase tracking-widest whitespace-nowrap">Estado</th>
+                  <th class="px-4 py-3 text-left text-[10px] font-semibold text-slate-400 uppercase tracking-widest whitespace-nowrap">Acciones</th>
+                </tr>
+              </thead>
+              <tbody id="tbodyClases"></tbody>
+            </table>
+          </div>
+
+          <div id="emptyClases" class="hidden py-20 text-center">
+            <div class="inline-flex items-center justify-center w-12 h-12 rounded-full bg-slate-100 mb-4">
+              <svg class="w-5 h-5 text-slate-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+            </div>
+            <p class="text-sm font-medium text-slate-500">Sin clases en este período</p>
+            <p class="text-xs text-slate-400 mt-1">Cambia el filtro o agrega una nueva clase</p>
+          </div>
+
+          <div class="px-5 py-3 border-t border-slate-100 flex items-center justify-between">
+            <p class="text-xs text-slate-400" id="countClases">—</p>
+            <p class="text-xs text-slate-300">DDG del Valle · OTEC</p>
+          </div>
+        </div>
+      </div><!-- /viewAgenda -->
+
+    </main>
+  </div><!-- /dashboard -->
+
+
+  <!-- ╔═══════════════════════════╗ -->
+  <!-- ║   MODAL: ACTIVO FORM      ║ -->
+  <!-- ╚═══════════════════════════╝ -->
+  <div id="activoModal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-sm">
+    <div class="modal-enter bg-white rounded-2xl shadow-2xl w-full max-w-xl max-h-[90vh] flex flex-col">
+      <div class="flex items-center justify-between px-6 py-4 border-b border-slate-100 shrink-0">
+        <h3 class="text-sm font-semibold text-slate-800" id="activoModalTitle">Agregar Activo</h3>
+        <button onclick="closeActivoModal()" class="w-7 h-7 flex items-center justify-center rounded-lg text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition-all">
+          <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+      </div>
+      <div class="overflow-y-auto flex-1 px-6 py-5">
+        <div class="grid grid-cols-2 gap-4">
+          <div>
+            <label class="block text-xs font-medium text-slate-600 mb-1.5">Código <span class="text-slate-400 font-normal">(opcional)</span></label>
+            <input id="aCodigo" type="text" placeholder="Ej: TAB-001" class="field">
+          </div>
+          <div>
+            <label class="block text-xs font-medium text-slate-600 mb-1.5">Nombre del Activo <span class="text-red-400">*</span></label>
+            <input id="aNombre" type="text" placeholder="Ej: Tablet Samsung A7" class="field">
+          </div>
+          <div>
+            <label class="block text-xs font-medium text-slate-600 mb-1.5">Categoría</label>
+            <select id="aCategoria" class="field appearance-none bg-no-repeat bg-[right_0.7rem_center] pr-8"
+              style="background-image:url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%2394a3b8' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E\")">
+              <option>Tecnología</option>
+              <option>Material Didáctico</option>
+              <option>Papelería y Oficina</option>
+              <option>Mobiliario</option>
+              <option>Equipamiento</option>
+              <option>Otro</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-xs font-medium text-slate-600 mb-1.5">Estado</label>
+            <select id="aEstado" class="field appearance-none bg-no-repeat bg-[right_0.7rem_center] pr-8"
+              style="background-image:url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%2394a3b8' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E\")">
+              <option>Bueno</option>
+              <option>Regular</option>
+              <option>En Reparación</option>
+              <option>De Baja</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-xs font-medium text-slate-600 mb-1.5">Cantidad Total <span class="text-red-400">*</span></label>
+            <input id="aCantidad" type="number" min="0" placeholder="0" class="field">
+          </div>
+          <div class="col-span-2">
+            <label class="block text-xs font-medium text-slate-600 mb-1.5">Descripción <span class="text-slate-400 font-normal">(opcional)</span></label>
+            <input id="aDescripcion" type="text" placeholder="Notas sobre este activo…" class="field">
+          </div>
+        </div>
+        <div id="activoError" class="hidden mt-4 flex items-center gap-2 text-red-600 text-xs bg-red-50 border border-red-100 rounded-lg px-3 py-2.5">
+          <svg class="w-3.5 h-3.5 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+          <span id="activoErrorMsg"></span>
+        </div>
+      </div>
+      <div class="flex items-center justify-end gap-2.5 px-6 py-4 border-t border-slate-100 shrink-0">
+        <button onclick="closeActivoModal()" class="px-4 py-2 text-xs font-medium text-slate-600 border border-slate-200 hover:border-slate-300 rounded-lg transition-all">Cancelar</button>
+        <button id="activoSaveBtn" onclick="saveActivo()" class="px-5 py-2 bg-brand-600 hover:bg-brand-700 text-white text-xs font-medium rounded-lg transition-colors">Guardar Activo</button>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ╔═══════════════════════════╗ -->
+  <!-- ║    MODAL: CLASE FORM      ║ -->
+  <!-- ╚═══════════════════════════╝ -->
+  <div id="claseModal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-sm">
+    <div class="modal-enter bg-white rounded-2xl shadow-2xl w-full max-w-xl max-h-[90vh] flex flex-col">
+      <div class="flex items-center justify-between px-6 py-4 border-b border-slate-100 shrink-0">
+        <h3 class="text-sm font-semibold text-slate-800" id="claseModalTitle">Agregar Clase</h3>
+        <button onclick="closeClaseModal()" class="w-7 h-7 flex items-center justify-center rounded-lg text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition-all">
+          <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+      </div>
+      <div class="overflow-y-auto flex-1 px-6 py-5">
+        <div class="grid grid-cols-2 gap-4">
+          <div class="col-span-2">
+            <label class="block text-xs font-medium text-slate-600 mb-1.5">Nombre del Curso / Taller <span class="text-red-400">*</span></label>
+            <input id="cCurso" type="text" placeholder="Ej: Primeros Auxilios" class="field">
+          </div>
+          <div>
+            <label class="block text-xs font-medium text-slate-600 mb-1.5">Relator <span class="text-red-400">*</span></label>
+            <input id="cRelator" type="text" placeholder="Nombre del docente" class="field">
+          </div>
+          <div>
+            <label class="block text-xs font-medium text-slate-600 mb-1.5">Sala / Ubicación</label>
+            <input id="cSala" type="text" placeholder="Ej: Sala A" class="field">
+          </div>
+          <div>
+            <label class="block text-xs font-medium text-slate-600 mb-1.5">Fecha <span class="text-red-400">*</span></label>
+            <input id="cFecha" type="date" class="field">
+          </div>
+          <div>
+            <label class="block text-xs font-medium text-slate-600 mb-1.5">Estado</label>
+            <select id="cEstado" class="field appearance-none bg-no-repeat bg-[right_0.7rem_center] pr-8"
+              style="background-image:url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%2394a3b8' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E\")">
+              <option>Programada</option>
+              <option>En Curso</option>
+              <option>Finalizada</option>
+              <option>Cancelada</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-xs font-medium text-slate-600 mb-1.5">Hora inicio</label>
+            <input id="cHoraInicio" type="time" class="field">
+          </div>
+          <div>
+            <label class="block text-xs font-medium text-slate-600 mb-1.5">Hora fin</label>
+            <input id="cHoraFin" type="time" class="field">
+          </div>
+        </div>
+        <div id="claseError" class="hidden mt-4 flex items-center gap-2 text-red-600 text-xs bg-red-50 border border-red-100 rounded-lg px-3 py-2.5">
+          <svg class="w-3.5 h-3.5 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+          <span id="claseErrorMsg"></span>
+        </div>
+      </div>
+      <div class="flex items-center justify-end gap-2.5 px-6 py-4 border-t border-slate-100 shrink-0">
+        <button onclick="closeClaseModal()" class="px-4 py-2 text-xs font-medium text-slate-600 border border-slate-200 hover:border-slate-300 rounded-lg transition-all">Cancelar</button>
+        <button onclick="saveClase()" class="px-5 py-2 bg-brand-600 hover:bg-brand-700 text-white text-xs font-medium rounded-lg transition-colors">Guardar Clase</button>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ╔═══════════════════════════════════╗ -->
+  <!-- ║   MODAL: GESTIÓN DE ASIGNACIONES  ║ -->
+  <!-- ╚═══════════════════════════════════╝ -->
+  <div id="asignacionesModal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-sm">
+    <div class="modal-enter bg-white rounded-2xl shadow-2xl w-full max-w-lg max-h-[92vh] flex flex-col">
+
+      <!-- Header -->
+      <div class="px-5 py-4 border-b border-slate-100 shrink-0">
+        <div class="flex items-start justify-between gap-3">
+          <div>
+            <h3 class="text-sm font-semibold text-slate-800" id="asigModalCurso">Activos de la Clase</h3>
+            <p class="text-[11px] text-slate-400 mt-0.5" id="asigModalMeta">—</p>
+          </div>
+          <button onclick="closeAsignacionesModal()" class="w-7 h-7 shrink-0 flex items-center justify-center rounded-lg text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition-all">
+            <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+          </button>
+        </div>
+      </div>
+
+      <!-- Lista de asignaciones actuales -->
+      <div class="flex-1 overflow-y-auto">
+        <div class="px-5 pt-4 pb-2">
+          <p class="text-[10px] font-semibold text-slate-400 uppercase tracking-widest mb-2">Activos asignados</p>
+          <div id="asigList">
+            <!-- JS rendered -->
+          </div>
+          <div id="asigEmpty" class="hidden py-4 text-center text-xs text-slate-400">
+            Ningún activo asignado aún
+          </div>
+        </div>
+
+        <!-- Separador -->
+        <div class="flex items-center gap-3 px-5 py-3">
+          <div class="flex-1 h-px bg-slate-100"></div>
+          <p class="text-[10px] font-semibold text-slate-400 uppercase tracking-widest shrink-0">Agregar activo</p>
+          <div class="flex-1 h-px bg-slate-100"></div>
+        </div>
+
+        <!-- Form para agregar -->
+        <div class="px-5 pb-5 space-y-3">
+          <div class="flex gap-2 items-end">
+            <div class="flex-1">
+              <label class="block text-xs font-medium text-slate-600 mb-1.5">Activo</label>
+              <select id="asigActivoId" onchange="onActivoSelectChange()"
+                class="field text-xs appearance-none bg-no-repeat bg-[right_0.7rem_center] pr-8"
+                style="background-image:url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%2394a3b8' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E\")">
+                <option value="">Seleccionar activo…</option>
+              </select>
+            </div>
+            <div style="width: 90px">
+              <label class="block text-xs font-medium text-slate-600 mb-1.5">Cantidad</label>
+              <input id="asigCantidad" type="number" min="1" value="1" class="field text-xs">
+            </div>
+            <button onclick="addAsignacion()"
+              class="h-[36px] px-3.5 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-medium rounded-lg transition-colors shrink-0 flex items-center gap-1.5 whitespace-nowrap">
+              <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+              Agregar
+            </button>
+          </div>
+          <p id="asigHint" class="text-xs text-slate-400 min-h-[1rem]"></p>
+          <div id="asigError" class="hidden flex items-center gap-2 text-red-600 text-xs bg-red-50 border border-red-100 rounded-lg px-3 py-2">
+            <svg class="w-3.5 h-3.5 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+            <span id="asigErrorMsg"></span>
+          </div>
+        </div>
+      </div>
+
+      <div class="px-5 pb-5 pt-3 border-t border-slate-100 shrink-0">
+        <button onclick="closeAsignacionesModal()" class="w-full text-xs font-medium text-slate-600 border border-slate-200 hover:bg-slate-50 py-2 rounded-lg transition-colors">
+          Cerrar
+        </button>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ╔═══════════════════════════╗ -->
+  <!-- ║   MODAL: CONFIRM DELETE   ║ -->
+  <!-- ╚═══════════════════════════╝ -->
+  <div id="deleteModal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-sm">
+    <div class="modal-enter bg-white rounded-2xl shadow-2xl w-full max-w-sm p-6 text-center">
+      <div class="w-12 h-12 bg-red-50 border border-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
+        <svg class="w-5 h-5 text-red-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 011-1h4a1 1 0 011 1v2"/></svg>
+      </div>
+      <h3 class="text-sm font-semibold text-slate-800 mb-1" id="deleteModalTitle">¿Eliminar?</h3>
+      <p class="text-xs text-slate-400 mb-5 leading-relaxed" id="deleteModalMsg">Esta acción no se puede deshacer.</p>
+      <div class="flex items-center gap-2.5">
+        <button onclick="closeDeleteModal()" class="flex-1 text-xs font-medium text-slate-600 border border-slate-200 hover:bg-slate-50 py-2 rounded-lg transition-colors">Cancelar</button>
+        <button onclick="confirmDelete()" class="flex-1 text-xs font-medium bg-red-500 hover:bg-red-600 text-white py-2 rounded-lg transition-colors">Eliminar</button>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ╔═══════════════════════════╗ -->
+  <!-- ║     TOAST NOTIFICATION    ║ -->
+  <!-- ╚═══════════════════════════╝ -->
+  <div id="toast" class="hidden fixed bottom-6 right-6 z-50">
+    <div class="flex items-center gap-2.5 bg-slate-800 text-white px-4 py-3 rounded-xl shadow-xl text-xs font-medium">
+      <span id="toastIcon" class="shrink-0"></span>
+      <span id="toastMsg"></span>
+    </div>
+  </div>
+
+  <script src="inventario.js"></script>
+</body>
+</html>

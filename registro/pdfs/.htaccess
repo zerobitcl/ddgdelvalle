@@ -1,0 +1,3 @@
+# Bloquea acceso directo a los PDFs — solo download_pdf.php puede servirlos
+Options -Indexes
+Deny from all

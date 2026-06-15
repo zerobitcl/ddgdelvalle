@@ -1,0 +1,1714 @@
+<!doctype html>
+<html lang="es-CL">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"/>
+  <meta name="theme-color" content="#2C4753"/>
+  <title>Encuesta de Satisfacción | OTEC DDG</title>
+  <meta name="description" content="Encuesta de Satisfacción OTEC DDG Del Valle — ayúdanos a mejorar evaluando la calidad de nuestra capacitación."/>
+  <meta name="robots" content="noindex,nofollow"/>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Montserrat:wght@500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="icon" href="https://ddgdelvalle.cl/wp-content/uploads/2026/03/icono-ddg.png"/>
+
+  <style>
+    /* ─── DESIGN TOKENS ─────────────────────────────────────────────────────── */
+    :root {
+      --primary:        #2C4753;
+      --primary-d:      #1e3540;
+      --secondary:      #81A896;
+      --accent:         #D5CC3C;
+      --bg:             #F4F7F6;
+      --bg2:            #F2EEDB;
+      --surface:        #ffffff;
+      --text:           #0f172a;
+      --muted:          rgba(15,23,42,.60);
+      --border:         rgba(15,23,42,.09);
+      --shadow-sm:      0 4px 14px rgba(15,23,42,.06);
+      --shadow-md:      0 14px 36px rgba(15,23,42,.09);
+      --shadow-lg:      0 24px 56px rgba(15,23,42,.12);
+      --r-sm:  12px;
+      --r-md:  16px;
+      --r-lg:  24px;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+      color: var(--text);
+      background: linear-gradient(170deg, var(--bg) 0%, var(--bg2) 100%);
+      min-height: 100vh;
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    a { color: inherit; text-decoration: none; }
+    img { max-width: 100%; display: block; height: auto; }
+
+    .container {
+      width: min(860px, calc(100% - 48px));
+      margin: 0 auto;
+    }
+
+    /* ─── HEADER ─────────────────────────────────────────────────────────────── */
+    .site-header {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(255,255,255,.93);
+      backdrop-filter: saturate(1.3) blur(12px);
+      border-bottom: 1px solid var(--border);
+    }
+    .header-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 13px 0;
+    }
+    .brand { display: flex; align-items: center; gap: 12px; }
+    .brand img { height: 52px; width: auto; object-fit: contain; }
+    .header-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 5px 14px;
+      border-radius: 999px;
+      background: rgba(44,71,83,.06);
+      border: 1px solid var(--border);
+      color: var(--primary);
+      font-size: 11px;
+      font-weight: 700;
+      font-family: Montserrat, Inter;
+      letter-spacing: .3px;
+      white-space: nowrap;
+    }
+    .header-badge svg { flex-shrink: 0; }
+
+    /* ─── HERO ───────────────────────────────────────────────────────────────── */
+    .survey-hero {
+      background: linear-gradient(135deg, var(--primary) 0%, var(--primary-d) 100%);
+      padding: 64px 0 90px;
+      position: relative;
+      overflow: hidden;
+      color: #fff;
+    }
+    .survey-hero::before {
+      content: '';
+      position: absolute;
+      top: -25%; left: -6%;
+      width: 480px; height: 480px;
+      background: radial-gradient(circle, rgba(213,204,60,.18) 0%, transparent 65%);
+      pointer-events: none;
+    }
+    .survey-hero::after {
+      content: '';
+      position: absolute;
+      bottom: -20%; right: -5%;
+      width: 380px; height: 380px;
+      background: radial-gradient(circle, rgba(129,168,150,.22) 0%, transparent 65%);
+      pointer-events: none;
+    }
+    .survey-hero .container { position: relative; z-index: 2; }
+    .hero-eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 5px 14px;
+      border-radius: 999px;
+      background: rgba(255,255,255,.12);
+      border: 1px solid rgba(255,255,255,.20);
+      color: rgba(255,255,255,.82);
+      font-size: 10px;
+      font-weight: 700;
+      font-family: Montserrat, Inter;
+      letter-spacing: .6px;
+      text-transform: uppercase;
+      margin-bottom: 18px;
+    }
+    .survey-hero h1 {
+      font-family: Montserrat, Inter;
+      font-size: clamp(28px, 4.5vw, 44px);
+      font-weight: 800;
+      line-height: 1.08;
+      letter-spacing: -.6px;
+      color: #fff;
+      margin-bottom: 14px;
+    }
+    .survey-hero p {
+      color: rgba(255,255,255,.76);
+      font-size: 14px;
+      max-width: 560px;
+      line-height: 1.7;
+    }
+    .hero-wave {
+      position: absolute;
+      bottom: -1px; left: 0; right: 0;
+      height: 68px;
+      pointer-events: none;
+      z-index: 3;
+    }
+    .hero-wave svg { width: 100%; height: 100%; display: block; }
+
+    /* ─── PROGRESS STRIP ─────────────────────────────────────────────────────── */
+    .survey-progress {
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      padding: 14px 0;
+      position: sticky;
+      top: 79px;
+      z-index: 90;
+      box-shadow: var(--shadow-sm);
+    }
+    .progress-inner {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .progress-steps {
+      display: flex;
+      align-items: center;
+      flex: 1;
+      gap: 0;
+      min-width: 0;
+    }
+    .ps-step {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-shrink: 0;
+    }
+    .ps-dot {
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      border: 2px solid var(--border);
+      background: var(--bg);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 10px;
+      font-weight: 800;
+      color: var(--muted);
+      flex-shrink: 0;
+      font-family: Montserrat, Inter;
+      transition: all .3s cubic-bezier(0.4,0,0.2,1);
+    }
+    .ps-dot.active { border-color: var(--primary); background: var(--primary); color: #fff; }
+    .ps-dot.done   { border-color: var(--secondary); background: var(--secondary); color: #fff; }
+    .ps-label {
+      font-size: 10px;
+      font-weight: 600;
+      color: var(--muted);
+      white-space: nowrap;
+    }
+    .ps-connector {
+      flex: 1;
+      height: 2px;
+      background: var(--border);
+      border-radius: 2px;
+      margin: 0 6px;
+      min-width: 12px;
+    }
+    .progress-count {
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--primary);
+      font-family: Montserrat, Inter;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+
+    /* ─── SURVEY BODY ────────────────────────────────────────────────────────── */
+    .survey-body { padding: 48px 0 80px; }
+
+    /* Section card */
+    .survey-section {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--r-lg);
+      box-shadow: var(--shadow-md);
+      margin-bottom: 24px;
+      overflow: hidden;
+    }
+    .sec-header {
+      padding: 26px 30px 22px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: flex-start;
+      gap: 16px;
+      background: linear-gradient(135deg, rgba(44,71,83,.025) 0%, transparent 100%);
+    }
+    .sec-num {
+      width: 44px;
+      height: 44px;
+      border-radius: 14px;
+      background: var(--primary);
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: Montserrat, Inter;
+      font-weight: 800;
+      font-size: 15px;
+      flex-shrink: 0;
+      letter-spacing: -.3px;
+    }
+    .sec-num.accent { background: var(--accent); color: #1b2b33; }
+    .sec-info { flex: 1; }
+    .sec-info h2 {
+      font-family: Montserrat, Inter;
+      font-size: 16px;
+      font-weight: 800;
+      color: var(--primary);
+      margin-bottom: 3px;
+      line-height: 1.3;
+    }
+    .sec-info p { font-size: 12px; color: var(--muted); }
+    .sec-body { padding: 0 30px 10px; }
+
+    /* Question row */
+    .question-row {
+      padding: 22px 0;
+      border-bottom: 1px solid rgba(15,23,42,.045);
+    }
+    .question-row:last-child { border-bottom: none; }
+    .q-label-row {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      margin-bottom: 14px;
+    }
+    .q-badge {
+      width: 24px;
+      height: 24px;
+      border-radius: 8px;
+      background: rgba(44,71,83,.07);
+      border: 1px solid rgba(44,71,83,.12);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 10px;
+      font-weight: 800;
+      color: var(--primary);
+      flex-shrink: 0;
+      margin-top: 2px;
+      font-family: Montserrat, Inter;
+    }
+    .q-text {
+      font-size: 13.5px;
+      font-weight: 600;
+      color: var(--text);
+      line-height: 1.5;
+    }
+
+    /* Likert scale */
+    .likert-wrap { display: flex; flex-direction: column; gap: 7px; }
+    .likert-ends {
+      display: flex;
+      justify-content: space-between;
+      padding: 0 2px;
+    }
+    .likert-ends span {
+      font-size: 10px;
+      font-weight: 600;
+      color: var(--muted);
+      letter-spacing: .4px;
+      text-transform: uppercase;
+    }
+    .likert-options {
+      display: flex;
+      gap: 7px;
+    }
+    .likert-opt {
+      flex: 1;
+      position: relative;
+      cursor: pointer;
+    }
+    .likert-opt input[type="radio"] {
+      position: absolute;
+      opacity: 0;
+      width: 0;
+      height: 0;
+      pointer-events: none;
+    }
+    .likert-btn {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 3px;
+      padding: 11px 4px;
+      border-radius: 12px;
+      border: 2px solid var(--border);
+      background: var(--bg);
+      transition: border-color .15s ease, background .15s ease, transform .15s ease, box-shadow .15s ease;
+      user-select: none;
+      -webkit-tap-highlight-color: transparent;
+      min-height: 62px;
+    }
+    .l-num {
+      font-family: Montserrat, Inter;
+      font-size: 20px;
+      font-weight: 800;
+      color: rgba(15,23,42,.30);
+      line-height: 1;
+      transition: color .15s ease;
+    }
+    .l-tag {
+      font-size: 8.5px;
+      font-weight: 700;
+      color: rgba(15,23,42,.38);
+      text-align: center;
+      letter-spacing: .3px;
+      text-transform: uppercase;
+      line-height: 1.25;
+      transition: color .15s ease;
+    }
+    .likert-opt:hover .likert-btn {
+      border-color: rgba(44,71,83,.30);
+      background: rgba(44,71,83,.05);
+      transform: translateY(-3px);
+      box-shadow: var(--shadow-sm);
+    }
+    .likert-opt:hover .l-num { color: var(--primary); }
+    .likert-opt:hover .l-tag { color: var(--primary); }
+
+    /* Checked states — color-coded by value */
+    .likert-opt:nth-child(1) input:checked ~ .likert-btn {
+      background:#c0392b; border-color:#c0392b;
+      box-shadow:0 8px 22px rgba(192,57,43,.28); transform:translateY(-3px);
+    }
+    .likert-opt:nth-child(2) input:checked ~ .likert-btn {
+      background:#d35400; border-color:#d35400;
+      box-shadow:0 8px 22px rgba(211,84,0,.28); transform:translateY(-3px);
+    }
+    .likert-opt:nth-child(3) input:checked ~ .likert-btn {
+      background:#b8891a; border-color:#b8891a;
+      box-shadow:0 8px 22px rgba(184,137,26,.28); transform:translateY(-3px);
+    }
+    .likert-opt:nth-child(4) input:checked ~ .likert-btn {
+      background:#1a7a4a; border-color:#1a7a4a;
+      box-shadow:0 8px 22px rgba(26,122,74,.28); transform:translateY(-3px);
+    }
+    .likert-opt:nth-child(5) input:checked ~ .likert-btn {
+      background:#0d6632; border-color:#0d6632;
+      box-shadow:0 8px 22px rgba(13,102,50,.28); transform:translateY(-3px);
+    }
+    .likert-opt input:checked ~ .likert-btn .l-num,
+    .likert-opt input:checked ~ .likert-btn .l-tag { color: rgba(255,255,255,.90); }
+
+    /* Error state */
+    .question-row.has-error .likert-btn {
+      border-color: rgba(192,57,43,.30);
+      background: rgba(192,57,43,.04);
+    }
+    .err-msg {
+      display: none;
+      font-size: 11px;
+      font-weight: 600;
+      color: #c0392b;
+      margin-top: 8px;
+      padding: 6px 10px;
+      background: rgba(192,57,43,.06);
+      border-radius: 8px;
+      border-left: 3px solid #c0392b;
+    }
+    .question-row.has-error .err-msg { display: block; }
+    .question-row.has-error .q-badge {
+      background: rgba(192,57,43,.10);
+      border-color: rgba(192,57,43,.25);
+      color: #c0392b;
+    }
+
+    /* ─── SECTION IV — COMMENTS ──────────────────────────────────────────────── */
+    .survey-textarea {
+      width: 100%;
+      min-height: 190px;
+      padding: 16px 18px;
+      border: 2px solid var(--border);
+      border-radius: var(--r-md);
+      font-family: Inter, system-ui;
+      font-size: 13.5px;
+      color: var(--text);
+      background: var(--bg);
+      resize: vertical;
+      transition: border-color .2s, box-shadow .2s;
+      outline: none;
+      line-height: 1.7;
+    }
+    .survey-textarea::placeholder { color: rgba(15,23,42,.32); }
+    .survey-textarea:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(44,71,83,.09);
+      background: var(--surface);
+    }
+    .char-count { text-align: right; font-size: 11px; color: var(--muted); margin-top: 6px; }
+
+    /* ─── SUBMIT ─────────────────────────────────────────────────────────────── */
+    .submit-area {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      flex-wrap: wrap;
+      margin-top: 10px;
+    }
+    .submit-hint { font-size: 12px; color: var(--muted); flex: 1; min-width: 200px; line-height: 1.55; }
+    .btn-submit {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      padding: 16px 42px;
+      border-radius: 999px;
+      border: none;
+      background: var(--primary);
+      color: #fff;
+      font-family: Montserrat, Inter;
+      font-size: 14px;
+      font-weight: 800;
+      letter-spacing: .2px;
+      cursor: pointer;
+      box-shadow: 0 10px 28px rgba(44,71,83,.22);
+      transition: background .2s, box-shadow .2s, transform .1s;
+      user-select: none;
+      white-space: nowrap;
+    }
+    .btn-submit:hover {
+      background: var(--primary-d);
+      box-shadow: 0 16px 38px rgba(44,71,83,.30);
+      transform: translateY(-2px);
+    }
+    .btn-submit:active { transform: translateY(0); }
+    .btn-submit svg { width: 17px; height: 17px; flex-shrink: 0; }
+
+    /* ─── SUBMIT STATES ──────────────────────────────────────────────────────── */
+    .btn-submit:disabled {
+      opacity: .75;
+      cursor: progress;
+      transform: none !important;
+      box-shadow: 0 6px 18px rgba(44,71,83,.18) !important;
+    }
+    .btn-spinner {
+      width: 16px; height: 16px;
+      border: 2.5px solid rgba(255,255,255,.35);
+      border-top-color: #fff;
+      border-radius: 50%;
+      animation: btn-spin .7s linear infinite;
+    }
+    @keyframes btn-spin { to { transform: rotate(360deg); } }
+    .submit-error {
+      display: none;
+      margin-top: 14px;
+      padding: 12px 16px;
+      background: rgba(192,57,43,.07);
+      border: 1px solid rgba(192,57,43,.20);
+      border-left: 3px solid #c0392b;
+      border-radius: 10px;
+      font-size: 12.5px;
+      font-weight: 600;
+      color: #8a2a20;
+    }
+    .submit-error.show { display: block; }
+
+    /* ─── THANK YOU PANEL ────────────────────────────────────────────────────── */
+    #thanks-panel { display: none; padding: 90px 0 110px; }
+    .thanks-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--r-lg);
+      box-shadow: var(--shadow-lg);
+      padding: 60px 48px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .thanks-card::before {
+      content: '';
+      position: absolute;
+      top: -40%; left: -10%;
+      width: 360px; height: 360px;
+      background: radial-gradient(circle, rgba(129,168,150,.16) 0%, transparent 65%);
+      pointer-events: none;
+    }
+    .thanks-card::after {
+      content: '';
+      position: absolute;
+      bottom: -30%; right: -8%;
+      width: 320px; height: 320px;
+      background: radial-gradient(circle, rgba(213,204,60,.14) 0%, transparent 65%);
+      pointer-events: none;
+    }
+    .thanks-icon {
+      width: 84px; height: 84px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #1a7a4a 0%, #0d6632 100%);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 24px;
+      box-shadow: 0 14px 36px rgba(13,102,50,.28);
+      position: relative; z-index: 1;
+      animation: thanks-pop .55s cubic-bezier(.34,1.56,.64,1) both;
+    }
+    @keyframes thanks-pop {
+      0%   { transform: scale(.4); opacity: 0; }
+      100% { transform: scale(1);   opacity: 1; }
+    }
+    .thanks-icon svg { width: 40px; height: 40px; color: #fff; }
+    .thanks-card h2 {
+      font-family: Montserrat, Inter;
+      font-size: clamp(24px, 3.8vw, 34px);
+      font-weight: 800;
+      color: var(--primary);
+      letter-spacing: -.4px;
+      margin-bottom: 12px;
+      position: relative; z-index: 1;
+    }
+    .thanks-card p {
+      font-size: 14px;
+      color: var(--muted);
+      max-width: 460px;
+      margin: 0 auto 26px;
+      line-height: 1.7;
+      position: relative; z-index: 1;
+    }
+    .thanks-meta {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 7px 16px;
+      border-radius: 999px;
+      background: rgba(13,102,50,.08);
+      border: 1px solid rgba(13,102,50,.18);
+      color: #0d6632;
+      font-size: 11px;
+      font-weight: 700;
+      font-family: Montserrat, Inter;
+      letter-spacing: .4px;
+      text-transform: uppercase;
+      position: relative; z-index: 1;
+    }
+
+    .results-hero {
+      text-align: center;
+      margin-bottom: 52px;
+    }
+    .results-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      padding: 5px 16px;
+      border-radius: 999px;
+      background: rgba(13,102,50,.10);
+      border: 1px solid rgba(13,102,50,.22);
+      color: #0d6632;
+      font-size: 10px;
+      font-weight: 700;
+      font-family: Montserrat, Inter;
+      letter-spacing: .5px;
+      text-transform: uppercase;
+      margin-bottom: 18px;
+    }
+    .results-hero h2 {
+      font-family: Montserrat, Inter;
+      font-size: clamp(24px, 3.8vw, 34px);
+      font-weight: 800;
+      color: var(--primary);
+      letter-spacing: -.4px;
+      margin-bottom: 8px;
+    }
+    .results-hero p { font-size: 13px; color: var(--muted); }
+
+    /* Global card */
+    .global-card {
+      background: var(--primary);
+      border-radius: var(--r-lg);
+      padding: 36px 40px;
+      display: flex;
+      align-items: center;
+      gap: 36px;
+      margin-bottom: 28px;
+      position: relative;
+      overflow: hidden;
+    }
+    .global-card::before {
+      content: '';
+      position: absolute;
+      top: -25%; left: -4%;
+      width: 300px; height: 300px;
+      background: radial-gradient(circle, rgba(213,204,60,.20) 0%, transparent 65%);
+      pointer-events: none;
+    }
+    .global-card::after {
+      content: '';
+      position: absolute;
+      bottom: -20%; right: -4%;
+      width: 260px; height: 260px;
+      background: radial-gradient(circle, rgba(129,168,150,.22) 0%, transparent 65%);
+      pointer-events: none;
+    }
+    .score-ring {
+      width: 116px;
+      height: 116px;
+      border-radius: 50%;
+      border: 3px solid rgba(255,255,255,.18);
+      background: rgba(255,255,255,.10);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      position: relative;
+      z-index: 1;
+    }
+    .score-val {
+      font-family: Montserrat, Inter;
+      font-size: 38px;
+      font-weight: 800;
+      color: #fff;
+      line-height: 1;
+    }
+    .score-of { font-size: 11px; font-weight: 600; color: rgba(255,255,255,.55); margin-top: 2px; }
+    .global-info { flex: 1; position: relative; z-index: 1; }
+    .global-info h3 {
+      font-family: Montserrat, Inter;
+      font-size: 20px;
+      font-weight: 800;
+      color: #fff;
+      margin-bottom: 6px;
+    }
+    .global-info p { color: rgba(255,255,255,.68); font-size: 13px; line-height: 1.6; }
+
+    /* Section scores */
+    .sec-scores-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+      margin-bottom: 28px;
+    }
+    .sec-score-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--r-md);
+      padding: 22px;
+      box-shadow: var(--shadow-sm);
+    }
+    .ssc-top {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 14px;
+    }
+    .ssc-dot {
+      width: 30px;
+      height: 30px;
+      border-radius: 10px;
+      background: var(--primary);
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: Montserrat, Inter;
+      font-weight: 800;
+      font-size: 12px;
+      flex-shrink: 0;
+    }
+    .ssc-name { font-size: 11px; font-weight: 700; color: var(--primary); line-height: 1.3; }
+    .ssc-score {
+      font-family: Montserrat, Inter;
+      font-size: 30px;
+      font-weight: 800;
+      line-height: 1;
+      margin-bottom: 10px;
+    }
+    .ssc-score .of-5 { font-size: 14px; font-weight: 600; color: var(--muted); }
+    .bar-track { height: 7px; background: var(--bg); border-radius: 999px; overflow: hidden; }
+    .bar-fill {
+      height: 100%;
+      border-radius: 999px;
+      width: 0%;
+      transition: width 1.1s cubic-bezier(0.4,0,0.2,1);
+    }
+    .ssc-lbl { font-size: 11px; font-weight: 600; margin-top: 6px; }
+
+    /* Breakdown table */
+    .bdown-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--r-lg);
+      box-shadow: var(--shadow-md);
+      overflow: hidden;
+      margin-bottom: 20px;
+    }
+    .bdown-header {
+      padding: 20px 26px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      background: rgba(44,71,83,.025);
+    }
+    .bdown-header h3 {
+      font-family: Montserrat, Inter;
+      font-size: 14px;
+      font-weight: 800;
+      color: var(--primary);
+    }
+    .bdown-body { padding: 0 26px 6px; }
+    .bdown-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 13px 0;
+      border-bottom: 1px solid rgba(15,23,42,.04);
+    }
+    .bdown-row:last-child { border-bottom: none; }
+    .br-tag {
+      width: 22px;
+      height: 22px;
+      border-radius: 7px;
+      background: rgba(44,71,83,.06);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 9px;
+      font-weight: 800;
+      color: var(--primary);
+      flex-shrink: 0;
+      font-family: Montserrat, Inter;
+    }
+    .br-text { flex: 1; font-size: 12px; color: var(--text); line-height: 1.4; }
+    .br-bar-wrap {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      width: 140px;
+      flex-shrink: 0;
+    }
+    .br-bar-track { flex: 1; height: 5px; background: var(--bg); border-radius: 999px; overflow: hidden; }
+    .br-bar-fill {
+      height: 100%;
+      border-radius: 999px;
+      width: 0%;
+      transition: width 1.1s cubic-bezier(0.4,0,0.2,1);
+    }
+    .br-val {
+      font-family: Montserrat, Inter;
+      font-size: 13px;
+      font-weight: 800;
+      width: 18px;
+      text-align: right;
+    }
+
+    /* Comments result */
+    .comments-result {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--r-lg);
+      box-shadow: var(--shadow-sm);
+      margin-bottom: 20px;
+      overflow: hidden;
+    }
+    .comments-result-header {
+      padding: 18px 26px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      background: rgba(44,71,83,.025);
+    }
+    .comments-result-header h3 {
+      font-family: Montserrat, Inter;
+      font-size: 14px;
+      font-weight: 800;
+      color: var(--primary);
+    }
+    .comments-result-body {
+      padding: 20px 26px;
+    }
+    .comments-result-body p {
+      font-size: 14px;
+      color: var(--text);
+      line-height: 1.75;
+      font-style: italic;
+      border-left: 3px solid var(--accent);
+      padding-left: 16px;
+    }
+
+    /* JSON card */
+    .json-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--r-lg);
+      overflow: hidden;
+      margin-bottom: 28px;
+    }
+    .json-toggle {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 16px 22px;
+      cursor: pointer;
+      user-select: none;
+    }
+    .json-toggle:hover { background: rgba(44,71,83,.02); }
+    .json-toggle-title {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-family: Montserrat, Inter;
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--primary);
+    }
+    .json-icon {
+      width: 28px;
+      height: 28px;
+      border-radius: 9px;
+      background: rgba(44,71,83,.06);
+      border: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 900;
+      font-size: 15px;
+      color: var(--primary);
+      transition: all .2s;
+      flex-shrink: 0;
+    }
+    .json-body {
+      display: none;
+      border-top: 1px solid var(--border);
+      padding: 18px 22px;
+      background: rgba(15,23,42,.02);
+    }
+    .json-body.open { display: block; }
+    pre.json-out {
+      font-family: 'SF Mono','Fira Code','Cascadia Code',Consolas,monospace;
+      font-size: 11.5px;
+      color: var(--text);
+      white-space: pre-wrap;
+      word-break: break-all;
+      line-height: 1.75;
+    }
+
+    /* Btn reset */
+    .btn-reset {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 11px 26px;
+      border-radius: 999px;
+      border: 2px solid var(--border);
+      background: var(--surface);
+      color: var(--primary);
+      font-family: Montserrat, Inter;
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: border-color .2s, background .2s;
+    }
+    .btn-reset:hover { border-color: var(--primary); background: rgba(44,71,83,.05); }
+    .btn-reset svg { width: 15px; height: 15px; }
+
+    /* ─── FOOTER ─────────────────────────────────────────────────────────────── */
+    .site-footer {
+      background: linear-gradient(180deg, #0b1220 0%, #070c14 100%);
+      color: rgba(255,255,255,.75);
+      padding: 28px 0;
+      border-top: 1px solid rgba(255,255,255,.06);
+    }
+    .footer-inner {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 20px;
+      flex-wrap: wrap;
+    }
+    .footer-brand { display: flex; align-items: center; gap: 10px; margin-bottom: 5px; }
+    .footer-brand img { width: 22px; height: 22px; object-fit: contain; }
+    .footer-brand strong { color: #fff; font-family: Montserrat, Inter; font-size: 13px; }
+    .f-small { font-size: 11px; color: rgba(255,255,255,.58); margin-top: 4px; }
+    .footer-links { display: flex; gap: 14px; flex-wrap: wrap; margin-top: 10px; }
+    .footer-links a { color: rgba(213,204,60,.90); text-decoration: underline; font-weight: 700; font-size: 11px; }
+
+    /* ─── RESPONSIVE ─────────────────────────────────────────────────────────── */
+    @media (max-width: 720px) {
+      .sec-scores-grid { grid-template-columns: 1fr; }
+      .global-card { flex-direction: column; align-items: flex-start; gap: 20px; padding: 26px 24px; }
+      .survey-progress { top: 78px; }
+      .ps-label { display: none; }
+      .submit-area { flex-direction: column; align-items: stretch; }
+      .btn-submit { width: 100%; }
+      .br-bar-wrap { width: 110px; }
+    }
+    @media (max-width: 560px) {
+      .container { width: calc(100% - 28px); }
+      .sec-header, .sec-body { padding-left: 18px; padding-right: 18px; }
+      .bdown-header { padding: 16px 18px; }
+      .bdown-body { padding-left: 18px; padding-right: 18px; }
+      .global-card { padding: 22px 18px; }
+      .likert-btn { min-height: 55px; padding: 9px 3px; }
+      .l-num { font-size: 18px; }
+      .l-tag { font-size: 7.5px; }
+      .likert-options { gap: 5px; }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- ══ HEADER ══════════════════════════════════════════════════════════════ -->
+  <header class="site-header">
+    <div class="container header-inner">
+      <a class="brand" href="index.html" aria-label="DDG Del Valle — Inicio">
+        <img src="https://ddgdelvalle.cl/wp-content/uploads/2026/03/LOGO-DDG_color.png"
+             alt="Logo OTEC DDG Del Valle" height="52">
+      </a>
+      <span class="header-badge">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>
+        Encuesta de Satisfacción
+      </span>
+    </div>
+  </header>
+
+  <!-- ══ HERO ════════════════════════════════════════════════════════════════ -->
+  <section class="survey-hero" aria-label="Encabezado encuesta">
+    <div class="container">
+      <div class="hero-eyebrow">
+        <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+        OTEC DDG Del Valle
+      </div>
+      <h1>Resultados de Encuesta<br>Encuesta de Satisfacción</h1>
+      <p>Tu opinión nos permite mejorar continuamente la calidad de nuestros programas. Responde con honestidad — el proceso toma aproximadamente 5 minutos.</p>
+    </div>
+    <div class="hero-wave" aria-hidden="true">
+      <svg viewBox="0 0 1440 68" preserveAspectRatio="none" focusable="false">
+        <path d="M0,34 C360,68 1080,0 1440,34 L1440,68 L0,68 Z" fill="#F4F7F6"/>
+      </svg>
+    </div>
+  </section>
+
+  <!-- ══ PROGRESS STRIP ══════════════════════════════════════════════════════ -->
+  <div class="survey-progress" id="survey-progress" aria-label="Progreso de la encuesta">
+    <div class="container">
+      <div class="progress-inner">
+        <div class="progress-steps">
+          <div class="ps-step">
+            <div class="ps-dot active" data-sdot="I">I</div>
+            <span class="ps-label">Programa</span>
+          </div>
+          <div class="ps-connector"></div>
+          <div class="ps-step">
+            <div class="ps-dot" data-sdot="II">II</div>
+            <span class="ps-label">Organización</span>
+          </div>
+          <div class="ps-connector"></div>
+          <div class="ps-step">
+            <div class="ps-dot" data-sdot="III">III</div>
+            <span class="ps-label">Relator</span>
+          </div>
+          <div class="ps-connector"></div>
+          <div class="ps-step">
+            <div class="ps-dot" data-sdot="IV">IV</div>
+            <span class="ps-label">Evaluación</span>
+          </div>
+        </div>
+        <span class="progress-count" id="progress-count">0 / 19</span>
+      </div>
+    </div>
+  </div>
+
+  <main>
+    <!-- ══ SURVEY FORM ════════════════════════════════════════════════════════ -->
+    <div class="survey-body" id="form-area">
+      <div class="container">
+        <form id="survey-form" novalidate>
+
+          <!-- ── SECCIÓN I ───────────────────────────────────────────────────── -->
+          <div class="survey-section">
+            <div class="sec-header">
+              <div class="sec-num">I</div>
+              <div class="sec-info">
+                <h2>Relativo al Programa de Capacitación</h2>
+                <p>Evalúa la profundidad, relevancia y cumplimiento de expectativas del programa.</p>
+              </div>
+            </div>
+            <div class="sec-body">
+
+              <div class="question-row" data-qrow="1">
+                <div class="q-label-row">
+                  <span class="q-badge">1</span>
+                  <span class="q-text" id="lbl-q1">Profundidad de los contenidos tratados.</span>
+                </div>
+                <div class="likert-wrap" role="radiogroup" aria-labelledby="lbl-q1">
+                  <div class="likert-ends"><span>Muy deficiente</span><span>Excelente</span></div>
+                  <div class="likert-options">
+                    <label class="likert-opt"><input type="radio" name="q1" value="1"><span class="likert-btn"><span class="l-num">1</span><span class="l-tag">Muy<br>defic.</span></span></label>
+                    <label class="likert-opt"><input type="radio" name="q1" value="2"><span class="likert-btn"><span class="l-num">2</span><span class="l-tag">Defi-<br>ciente</span></span></label>
+                    <label class="likert-opt"><input type="radio" name="q1" value="3"><span class="likert-btn"><span class="l-num">3</span><span class="l-tag">Regu-<br>lar</span></span></label>
+                    <label class="likert-opt"><input type="radio" name="q1" value="4"><span class="likert-btn"><span class="l-num">4</span><span class="l-tag">Bue-<br>no</span></span></label>
+                    <label class="likert-opt"><input type="radio" name="q1" value="5"><span class="likert-btn"><span class="l-num">5</span><span class="l-tag">Exce-<br>lente</span></span></label>
+                  </div>
+                  <div class="err-msg">Por favor selecciona una respuesta.</div>
+                </div>
+              </div>
+
+              <div class="question-row" data-qrow="2">
+                <div class="q-label-row">
+                  <span class="q-badge">2</span>
+                  <span class="q-text" id="lbl-q2">Actualización de los temas tratados en el curso.</span>
+                </div>
+                <div class="likert-wrap" role="radiogroup" aria-labelledby="lbl-q2">
+                  <div class="likert-ends"><span>Muy deficiente</span><span>Excelente</span></div>
+                  <div class="likert-options">
+                    <label class="likert-opt"><input type="radio" name="q2" value="1"><span class="likert-btn"><span class="l-num">1</span><span class="l-tag">Muy<br>defic.</span></span></label>
+                    <label class="likert-opt"><input type="radio" name="q2" value="2"><span class="likert-btn"><span class="l-num">2</span><span class="l-tag">Defi-<br>ciente</span></span></label>
+                    <label class="likert-opt"><input type="radio" name="q2" value="3"><span class="likert-btn"><span class="l-num">3</span><span class="l-tag">Regu-<br>lar</span></span></label>
+                    <label class="likert-opt"><input type="radio" name="q2" value="4"><span class="likert-btn"><span class="l-num">4</span><span class="l-tag">Bue-<br>no</span></span></label>
+                    <label class="likert-opt"><input type="radio" name="q2" value="5"><span class="likert-btn"><span class="l-num">5</span><span class="l-tag">Exce-<br>lente</span></span></label>
+                  </div>
+                  <div class="err-msg">Por favor selecciona una respuesta.</div>
+                </div>
+              </div>
+
+              <div class="question-row" data-qrow="3">
+                <div class="q-label-row">
+                  <span class="q-badge">3</span>
+                  <span class="q-text" id="lbl-q3">Tiempo asignado para el curso.</span>
+                </div>
+                <div class="likert-wrap" role="radiogroup" aria-labelledby="lbl-q3">
+                  <div class="likert-ends"><span>Muy deficiente</span><span>Excelente</span></div>
+                  <div class="likert-options">
+                    <label class="likert-opt"><input type="radio" name="q3" value="1"><span class="likert-btn"><span class="l-num">1</span><span class="l-tag">Muy<br>defic.</span></span></label>
+                    <label class="likert-opt"><input type="radio" name="q3" value="2"><span class="likert-btn"><span class="l-num">2</span><span class="l-tag">Defi-<br>ciente</span></span></label>
+                    <label class="likert-opt"><input type="radio" name="q3" value="3"><span class="likert-btn"><span class="l-num">3</span><span class="l-tag">Regu-<br>lar</span></span></label>
+                    <label class="likert-opt"><input type="radio" name="q3" value="4"><span class="likert-btn"><span class="l-num">4</span><span class="l-tag">Bue-<br>no</span></span></label>
+                    <label class="likert-opt"><input type="radio" name="q3" value="5"><span class="likert-btn"><span class="l-num">5</span><span class="l-tag">Exce-<br>lente</span></span></label>
+                  </div>
+                  <div class="err-msg">Por favor selecciona una respuesta.</div>
+                </div>
+              </div>
+
+              <div class="question-row" data-qrow="4">
+                <div class="q-label-row">
+                  <span class="q-badge">4</span>
+                  <span class="q-text" id="lbl-q4">Utilidad de los contenidos tratados.</span>
+                </div>
+                <div class="likert-wrap" role="radiogroup" aria-labelledby="lbl-q4">
+                  <div class="likert-ends"><span>Muy deficiente</span><span>Excelente</span></div>
+                  <div class="likert-options">
+                    <label class="likert-opt"><input type="radio" name="q4" value="1"><span class="likert-btn"><span class="l-num">1</span><span class="l-tag">Muy<br>defic.</span></span></label>
+                    <label class="likert-opt"><input type="radio" name="q4" value="2"><span class="likert-btn"><span class="l-num">2</span><span class="l-tag">Defi-<br>ciente</span></span></label>
+                    <label class="likert-opt"><input type="radio" name="q4" value="3"><span class="likert-btn"><span class="l-num">3</span><span class="l-tag">Regu-<br>lar</span></span></label>
+                    <label class="likert-opt"><input type="radio" name="q4" value="4"><span class="likert-btn"><span class="l-num">4</span><span class="l-tag">Bue-<br>no</span></span></label>
+                    <label class="likert-opt"><input type="radio" name="q4" value="5"><span class="likert-btn"><span class="l-num">5</span><span class="l-tag">Exce-<br>lente</span></span></label>
+                  </div>
+                  <div class="err-msg">Por favor selecciona una respuesta.</div>
+                </div>
+              </div>
+
+              <div class="question-row" data-qrow="5">
+                <div class="q-label-row">
+                  <span class="q-badge">5</span>
+                  <span class="q-text" id="lbl-q5">El taller cumplió con mis expectativas.</span>
+                </div>
+                <div class="likert-wrap" role="radiogroup" aria-labelledby="lbl-q5">
+                  <div class="likert-ends"><span>Muy deficiente</span><span>Excelente</span></div>
+                  <div class="likert-options">
+                    <label class="likert-opt"><input type="radio" name="q5" value="1"><span class="likert-btn"><span class="l-num">1</span><span class="l-tag">Muy<br>defic.</span></span></label>
+                    <label class="likert-opt"><input type="radio" name="q5" value="2"><span class="likert-btn"><span class="l-num">2</span><span class="l-tag">Defi-<br>ciente</span></span></label>
+                    <label class="likert-opt"><input type="radio" name="q5" value="3"><span class="likert-btn"><span class="l-num">3</span><span class="l-tag">Regu-<br>lar</span></span></label>
+                    <label class="likert-opt"><input type="radio" name="q5" value="4"><span class="likert-btn"><span class="l-num">4</span><span class="l-tag">Bue-<br>no</span></span></label>
+                    <label class="likert-opt"><input type="radio" name="q5" value="5"><span class="likert-btn"><span class="l-num">5</span><span class="l-tag">Exce-<br>lente</span></span></label>
+                  </div>
+                  <div class="err-msg">Por favor selecciona una respuesta.</div>
+                </div>
+              </div>
+
+            </div>
+          </div>
+
+          <!-- ── SECCIÓN II ──────────────────────────────────────────────────── -->
+          <div class="survey-section">
+            <div class="sec-header">
+              <div class="sec-num">II</div>
+              <div class="sec-info">
+                <h2>Relativo a la Organización de la Actividad de Capacitación</h2>
+                <p>Evalúa recursos, materiales y atención recibida durante la actividad.</p>
+              </div>
+            </div>
+            <div class="sec-body">
+
+              <div class="question-row" data-qrow="6">
+                <div class="q-label-row">
+                  <span class="q-badge">6</span>
+                  <span class="q-text" id="lbl-q6">Medios y recursos de apoyo al proceso de aprendizaje (data show, retroproyector, etcétera).</span>
+                </div>
+                <div class="likert-wrap" role="radiogroup" aria-labelledby="lbl-q6">
+                  <div class="likert-ends"><span>Muy deficiente</span><span>Excelente</span></div>
+                  <div class="likert-options">
+                    <label class="likert-opt"><input type="radio" name="q6" value="1"><span class="likert-btn"><span class="l-num">1</span><span class="l-tag">Muy<br>defic.</span></span></label>
+                    <label class="likert-opt"><input type="radio" name="q6" value="2"><span class="likert-btn"><span class="l-num">2</span><span class="l-tag">Defi-<br>ciente</span></span></label>
+                    <label class="likert-opt"><input type="radio" name="q6" value="3"><span class="likert-btn"><span class="l-num">3</span><span class="l-tag">Regu-<br>lar</span></span></label>
+                    <label class="likert-opt"><input type="radio" name="q6" value="4"><span class="likert-btn"><span class="l-num">4</span><span class="l-tag">Bue-<br>no</span></span></label>
+                    <label class="likert-opt"><input type="radio" name="q6" value="5"><span class="likert-btn"><span class="l-num">5</span><span class="l-tag">Exce-<br>lente</span></span></label>
+                  </div>
+                  <div class="err-msg">Por favor selecciona una respuesta.</div>
+                </div>
+              </div>
+
+              <div class="question-row" data-qrow="7">
+                <div class="q-label-row">
+                  <span class="q-badge">7</span>
+                  <span class="q-text" id="lbl-q7">Calidad del material de apoyo (apuntes, guías u otro).</span>
+                </div>
+                <div class="likert-wrap" role="radiogroup" aria-labelledby="lbl-q7">
+                  <div class="likert-ends"><span>Muy deficiente</span><span>Excelente</span></div>
+                  <div class="likert-options">
+                    <label class="likert-opt"><input type="radio" name="q7" value="1"><span class="likert-btn"><span class="l-num">1</span><span class="l-tag">Muy<br>defic.</span></span></label>
+                    <label class="likert-opt"><input type="radio" name="q7" value="2"><span class="likert-btn"><span class="l-num">2</span><span class="l-tag">Defi-<br>ciente</span></span></label>
+                    <label class="likert-opt"><input type="radio" name="q7" value="3"><span class="likert-btn"><span class="l-num">3</span><span class="l-tag">Regu-<br>lar</span></span></label>
+                    <label class="likert-opt"><input type="radio" name="q7" value="4"><span class="likert-btn"><span class="l-num">4</span><span class="l-tag">Bue-<br>no</span></span></label>
+                    <label class="likert-opt"><input type="radio" name="q7" value="5"><span class="likert-btn"><span class="l-num">5</span><span class="l-tag">Exce-<br>lente</span></span></label>
+                  </div>
+                  <div class="err-msg">Por favor selecciona una respuesta.</div>
+                </div>
+              </div>
+
+              <div class="question-row" data-qrow="8">
+                <div class="q-label-row">
+                  <span class="q-badge">8</span>
+                  <span class="q-text" id="lbl-q8">Atención brindada por el personal de nuestra organización.</span>
+                </div>
+                <div class="likert-wrap" role="radiogroup" aria-labelledby="lbl-q8">
+                  <div class="likert-ends"><span>Muy deficiente</span><span>Excelente</span></div>
+                  <div class="likert-options">
+                    <label class="likert-opt"><input type="radio" name="q8" value="1"><span class="likert-btn"><span class="l-num">1</span><span class="l-tag">Muy<br>defic.</span></span></label>
+                    <label class="likert-opt"><input type="radio" name="q8" value="2"><span class="likert-btn"><span class="l-num">2</span><span class="l-tag">Defi-<br>ciente</span></span></label>
+                    <label class="likert-opt"><input type="radio" name="q8" value="3"><span class="likert-btn"><span class="l-num">3</span><span class="l-tag">Regu-<br>lar</span></span></label>
+                    <label class="likert-opt"><input type="radio" name="q8" value="4"><span class="likert-btn"><span class="l-num">4</span><span class="l-tag">Bue-<br>no</span></span></label>
+                    <label class="likert-opt"><input type="radio" name="q8" value="5"><span class="likert-btn"><span class="l-num">5</span><span class="l-tag">Exce-<br>lente</span></span></label>
+                  </div>
+                  <div class="err-msg">Por favor selecciona una respuesta.</div>
+                </div>
+              </div>
+
+              <div class="question-row" data-qrow="9">
+                <div class="q-label-row">
+                  <span class="q-badge">9</span>
+                  <span class="q-text" id="lbl-q9">Cantidad de alumnos por curso.</span>
+                </div>
+                <div class="likert-wrap" role="radiogroup" aria-labelledby="lbl-q9">
+                  <div class="likert-ends"><span>Muy deficiente</span><span>Excelente</span></div>
+                  <div class="likert-options">
+                    <label class="likert-opt"><input type="radio" name="q9" value="1"><span class="likert-btn"><span class="l-num">1</span><span class="l-tag">Muy<br>defic.</span></span></label>
+                    <label class="likert-opt"><input type="radio" name="q9" value="2"><span class="likert-btn"><span class="l-num">2</span><span class="l-tag">Defi-<br>ciente</span></span></label>
+                    <label class="likert-opt"><input type="radio" name="q9" value="3"><span class="likert-btn"><span class="l-num">3</span><span class="l-tag">Regu-<br>lar</span></span></label>
+                    <label class="likert-opt"><input type="radio" name="q9" value="4"><span class="likert-btn"><span class="l-num">4</span><span class="l-tag">Bue-<br>no</span></span></label>
+                    <label class="likert-opt"><input type="radio" name="q9" value="5"><span class="likert-btn"><span class="l-num">5</span><span class="l-tag">Exce-<br>lente</span></span></label>
+                  </div>
+                  <div class="err-msg">Por favor selecciona una respuesta.</div>
+                </div>
+              </div>
+
+            </div>
+          </div>
+
+          <!-- ── SECCIÓN III ─────────────────────────────────────────────────── -->
+          <div class="survey-section">
+            <div class="sec-header">
+              <div class="sec-num">III</div>
+              <div class="sec-info">
+                <h2>Relativo al Relator N° 1</h2>
+                <p>Evalúa el desempeño, metodología y calidad pedagógica del/la relator/a principal.</p>
+              </div>
+            </div>
+            <div class="sec-body">
+
+              <div class="question-row" data-qrow="10">
+                <div class="q-label-row">
+                  <span class="q-badge">10</span>
+                  <span class="q-text" id="lbl-q10">El relator demuestra dominio de los contenidos.</span>
+                </div>
+                <div class="likert-wrap" role="radiogroup" aria-labelledby="lbl-q10">
+                  <div class="likert-ends"><span>Muy deficiente</span><span>Excelente</span></div>
+                  <div class="likert-options">
+                    <label class="likert-opt"><input type="radio" name="q10" value="1"><span class="likert-btn"><span class="l-num">1</span><span class="l-tag">Muy<br>defic.</span></span></label>
+                    <label class="likert-opt"><input type="radio" name="q10" value="2"><span class="likert-btn"><span class="l-num">2</span><span class="l-tag">Defi-<br>ciente</span></span></label>
+                    <label class="likert-opt"><input type="radio" name="q10" value="3"><span class="likert-btn"><span class="l-num">3</span><span class="l-tag">Regu-<br>lar</span></span></label>
+                    <label class="likert-opt"><input type="radio" name="q10" value="4"><span class="likert-btn"><span class="l-num">4</span><span class="l-tag">Bue-<br>no</span></span></label>
+                    <label class="likert-opt"><input type="radio" name="q10" value="5"><span class="likert-btn"><span class="l-num">5</span><span class="l-tag">Exce-<br>lente</span></span></label>
+                  </div>
+                  <div class="err-msg">Por favor selecciona una respuesta.</div>
+                </div>
+              </div>
+
+              <div class="question-row" data-qrow="11">
+                <div class="q-label-row">
+                  <span class="q-badge">11</span>
+                  <span class="q-text" id="lbl-q11">El relator comienza y termina la clase en los horarios establecidos.</span>
+                </div>
+                <div class="likert-wrap" role="radiogroup" aria-labelledby="lbl-q11">
+                  <div class="likert-ends"><span>Muy deficiente</span><span>Excelente</span></div>
+                  <div class="likert-options">
+                    <label class="likert-opt"><input type="radio" name="q11" value="1"><span class="likert-btn"><span class="l-num">1</span><span class="l-tag">Muy<br>defic.</span></span></label>
+                    <label class="likert-opt"><input type="radio" name="q11" value="2"><span class="likert-btn"><span class="l-num">2</span><span class="l-tag">Defi-<br>ciente</span></span></label>
+                    <label class="likert-opt"><input type="radio" name="q11" value="3"><span class="likert-btn"><span class="l-num">3</span><span class="l-tag">Regu-<br>lar</span></span></label>
+                    <label class="likert-opt"><input type="radio" name="q11" value="4"><span class="likert-btn"><span class="l-num">4</span><span class="l-tag">Bue-<br>no</span></span></label>
+                    <label class="likert-opt"><input type="radio" name="q11" value="5"><span class="likert-btn"><span class="l-num">5</span><span class="l-tag">Exce-<br>lente</span></span></label>
+                  </div>
+                  <div class="err-msg">Por favor selecciona una respuesta.</div>
+                </div>
+              </div>
+
+              <div class="question-row" data-qrow="12">
+                <div class="q-label-row">
+                  <span class="q-badge">12</span>
+                  <span class="q-text" id="lbl-q12">La presentación personal es adecuada.</span>
+                </div>
+                <div class="likert-wrap" role="radiogroup" aria-labelledby="lbl-q12">
+                  <div class="likert-ends"><span>Muy deficiente</span><span>Excelente</span></div>
+                  <div class="likert-options">
+                    <label class="likert-opt"><input type="radio" name="q12" value="1"><span class="likert-btn"><span class="l-num">1</span><span class="l-tag">Muy<br>defic.</span></span></label>
+                    <label class="likert-opt"><input type="radio" name="q12" value="2"><span class="likert-btn"><span class="l-num">2</span><span class="l-tag">Defi-<br>ciente</span></span></label>
+                    <label class="likert-opt"><input type="radio" name="q12" value="3"><span class="likert-btn"><span class="l-num">3</span><span class="l-tag">Regu-<br>lar</span></span></label>
+                    <label class="likert-opt"><input type="radio" name="q12" value="4"><span class="likert-btn"><span class="l-num">4</span><span class="l-tag">Bue-<br>no</span></span></label>
+                    <label class="likert-opt"><input type="radio" name="q12" value="5"><span class="likert-btn"><span class="l-num">5</span><span class="l-tag">Exce-<br>lente</span></span></label>
+                  </div>
+                  <div class="err-msg">Por favor selecciona una respuesta.</div>
+                </div>
+              </div>
+
+              <div class="question-row" data-qrow="13">
+                <div class="q-label-row">
+                  <span class="q-badge">13</span>
+                  <span class="q-text" id="lbl-q13">El relator mantiene la atención del curso.</span>
+                </div>
+                <div class="likert-wrap" role="radiogroup" aria-labelledby="lbl-q13">
+                  <div class="likert-ends"><span>Muy deficiente</span><span>Excelente</span></div>
+                  <div class="likert-options">
+                    <label class="likert-opt"><input type="radio" name="q13" value="1"><span class="likert-btn"><span class="l-num">1</span><span class="l-tag">Muy<br>defic.</span></span></label>
+                    <label class="likert-opt"><input type="radio" name="q13" value="2"><span class="likert-btn"><span class="l-num">2</span><span class="l-tag">Defi-<br>ciente</span></span></label>
+                    <label class="likert-opt"><input type="radio" name="q13" value="3"><span class="likert-btn"><span class="l-num">3</span><span class="l-tag">Regu-<br>lar</span></span></label>
+                    <label class="likert-opt"><input type="radio" name="q13" value="4"><span class="likert-btn"><span class="l-num">4</span><span class="l-tag">Bue-<br>no</span></span></label>
+                    <label class="likert-opt"><input type="radio" name="q13" value="5"><span class="likert-btn"><span class="l-num">5</span><span class="l-tag">Exce-<br>lente</span></span></label>
+                  </div>
+                  <div class="err-msg">Por favor selecciona una respuesta.</div>
+                </div>
+              </div>
+
+              <div class="question-row" data-qrow="14">
+                <div class="q-label-row">
+                  <span class="q-badge">14</span>
+                  <span class="q-text" id="lbl-q14">El relator crea condiciones para que el alumno consulte y responde adecuadamente a dichas preguntas.</span>
+                </div>
+                <div class="likert-wrap" role="radiogroup" aria-labelledby="lbl-q14">
+                  <div class="likert-ends"><span>Muy deficiente</span><span>Excelente</span></div>
+                  <div class="likert-options">
+                    <label class="likert-opt"><input type="radio" name="q14" value="1"><span class="likert-btn"><span class="l-num">1</span><span class="l-tag">Muy<br>defic.</span></span></label>
+                    <label class="likert-opt"><input type="radio" name="q14" value="2"><span class="likert-btn"><span class="l-num">2</span><span class="l-tag">Defi-<br>ciente</span></span></label>
+                    <label class="likert-opt"><input type="radio" name="q14" value="3"><span class="likert-btn"><span class="l-num">3</span><span class="l-tag">Regu-<br>lar</span></span></label>
+                    <label class="likert-opt"><input type="radio" name="q14" value="4"><span class="likert-btn"><span class="l-num">4</span><span class="l-tag">Bue-<br>no</span></span></label>
+                    <label class="likert-opt"><input type="radio" name="q14" value="5"><span class="likert-btn"><span class="l-num">5</span><span class="l-tag">Exce-<br>lente</span></span></label>
+                  </div>
+                  <div class="err-msg">Por favor selecciona una respuesta.</div>
+                </div>
+              </div>
+
+              <div class="question-row" data-qrow="15">
+                <div class="q-label-row">
+                  <span class="q-badge">15</span>
+                  <span class="q-text" id="lbl-q15">El relator utiliza metodologías participativas.</span>
+                </div>
+                <div class="likert-wrap" role="radiogroup" aria-labelledby="lbl-q15">
+                  <div class="likert-ends"><span>Muy deficiente</span><span>Excelente</span></div>
+                  <div class="likert-options">
+                    <label class="likert-opt"><input type="radio" name="q15" value="1"><span class="likert-btn"><span class="l-num">1</span><span class="l-tag">Muy<br>defic.</span></span></label>
+                    <label class="likert-opt"><input type="radio" name="q15" value="2"><span class="likert-btn"><span class="l-num">2</span><span class="l-tag">Defi-<br>ciente</span></span></label>
+                    <label class="likert-opt"><input type="radio" name="q15" value="3"><span class="likert-btn"><span class="l-num">3</span><span class="l-tag">Regu-<br>lar</span></span></label>
+                    <label class="likert-opt"><input type="radio" name="q15" value="4"><span class="likert-btn"><span class="l-num">4</span><span class="l-tag">Bue-<br>no</span></span></label>
+                    <label class="likert-opt"><input type="radio" name="q15" value="5"><span class="likert-btn"><span class="l-num">5</span><span class="l-tag">Exce-<br>lente</span></span></label>
+                  </div>
+                  <div class="err-msg">Por favor selecciona una respuesta.</div>
+                </div>
+              </div>
+
+              <div class="question-row" data-qrow="16">
+                <div class="q-label-row">
+                  <span class="q-badge">16</span>
+                  <span class="q-text" id="lbl-q16">El relator usa un lenguaje técnico y académico en las clases.</span>
+                </div>
+                <div class="likert-wrap" role="radiogroup" aria-labelledby="lbl-q16">
+                  <div class="likert-ends"><span>Muy deficiente</span><span>Excelente</span></div>
+                  <div class="likert-options">
+                    <label class="likert-opt"><input type="radio" name="q16" value="1"><span class="likert-btn"><span class="l-num">1</span><span class="l-tag">Muy<br>defic.</span></span></label>
+                    <label class="likert-opt"><input type="radio" name="q16" value="2"><span class="likert-btn"><span class="l-num">2</span><span class="l-tag">Defi-<br>ciente</span></span></label>
+                    <label class="likert-opt"><input type="radio" name="q16" value="3"><span class="likert-btn"><span class="l-num">3</span><span class="l-tag">Regu-<br>lar</span></span></label>
+                    <label class="likert-opt"><input type="radio" name="q16" value="4"><span class="likert-btn"><span class="l-num">4</span><span class="l-tag">Bue-<br>no</span></span></label>
+                    <label class="likert-opt"><input type="radio" name="q16" value="5"><span class="likert-btn"><span class="l-num">5</span><span class="l-tag">Exce-<br>lente</span></span></label>
+                  </div>
+                  <div class="err-msg">Por favor selecciona una respuesta.</div>
+                </div>
+              </div>
+
+              <div class="question-row" data-qrow="17">
+                <div class="q-label-row">
+                  <span class="q-badge">17</span>
+                  <span class="q-text" id="lbl-q17">Las clases son amenas y dinámicas.</span>
+                </div>
+                <div class="likert-wrap" role="radiogroup" aria-labelledby="lbl-q17">
+                  <div class="likert-ends"><span>Muy deficiente</span><span>Excelente</span></div>
+                  <div class="likert-options">
+                    <label class="likert-opt"><input type="radio" name="q17" value="1"><span class="likert-btn"><span class="l-num">1</span><span class="l-tag">Muy<br>defic.</span></span></label>
+                    <label class="likert-opt"><input type="radio" name="q17" value="2"><span class="likert-btn"><span class="l-num">2</span><span class="l-tag">Defi-<br>ciente</span></span></label>
+                    <label class="likert-opt"><input type="radio" name="q17" value="3"><span class="likert-btn"><span class="l-num">3</span><span class="l-tag">Regu-<br>lar</span></span></label>
+                    <label class="likert-opt"><input type="radio" name="q17" value="4"><span class="likert-btn"><span class="l-num">4</span><span class="l-tag">Bue-<br>no</span></span></label>
+                    <label class="likert-opt"><input type="radio" name="q17" value="5"><span class="likert-btn"><span class="l-num">5</span><span class="l-tag">Exce-<br>lente</span></span></label>
+                  </div>
+                  <div class="err-msg">Por favor selecciona una respuesta.</div>
+                </div>
+              </div>
+
+              <div class="question-row" data-qrow="18">
+                <div class="q-label-row">
+                  <span class="q-badge">18</span>
+                  <span class="q-text" id="lbl-q18">Las clases denotan planificación y preocupación por parte del relator.</span>
+                </div>
+                <div class="likert-wrap" role="radiogroup" aria-labelledby="lbl-q18">
+                  <div class="likert-ends"><span>Muy deficiente</span><span>Excelente</span></div>
+                  <div class="likert-options">
+                    <label class="likert-opt"><input type="radio" name="q18" value="1"><span class="likert-btn"><span class="l-num">1</span><span class="l-tag">Muy<br>defic.</span></span></label>
+                    <label class="likert-opt"><input type="radio" name="q18" value="2"><span class="likert-btn"><span class="l-num">2</span><span class="l-tag">Defi-<br>ciente</span></span></label>
+                    <label class="likert-opt"><input type="radio" name="q18" value="3"><span class="likert-btn"><span class="l-num">3</span><span class="l-tag">Regu-<br>lar</span></span></label>
+                    <label class="likert-opt"><input type="radio" name="q18" value="4"><span class="likert-btn"><span class="l-num">4</span><span class="l-tag">Bue-<br>no</span></span></label>
+                    <label class="likert-opt"><input type="radio" name="q18" value="5"><span class="likert-btn"><span class="l-num">5</span><span class="l-tag">Exce-<br>lente</span></span></label>
+                  </div>
+                  <div class="err-msg">Por favor selecciona una respuesta.</div>
+                </div>
+              </div>
+
+              <div class="question-row" data-qrow="19">
+                <div class="q-label-row">
+                  <span class="q-badge">19</span>
+                  <span class="q-text" id="lbl-q19">Se encuentra satisfecho como para tomar otro curso con el mismo relator.</span>
+                </div>
+                <div class="likert-wrap" role="radiogroup" aria-labelledby="lbl-q19">
+                  <div class="likert-ends"><span>Muy deficiente</span><span>Excelente</span></div>
+                  <div class="likert-options">
+                    <label class="likert-opt"><input type="radio" name="q19" value="1"><span class="likert-btn"><span class="l-num">1</span><span class="l-tag">Muy<br>defic.</span></span></label>
+                    <label class="likert-opt"><input type="radio" name="q19" value="2"><span class="likert-btn"><span class="l-num">2</span><span class="l-tag">Defi-<br>ciente</span></span></label>
+                    <label class="likert-opt"><input type="radio" name="q19" value="3"><span class="likert-btn"><span class="l-num">3</span><span class="l-tag">Regu-<br>lar</span></span></label>
+                    <label class="likert-opt"><input type="radio" name="q19" value="4"><span class="likert-btn"><span class="l-num">4</span><span class="l-tag">Bue-<br>no</span></span></label>
+                    <label class="likert-opt"><input type="radio" name="q19" value="5"><span class="likert-btn"><span class="l-num">5</span><span class="l-tag">Exce-<br>lente</span></span></label>
+                  </div>
+                  <div class="err-msg">Por favor selecciona una respuesta.</div>
+                </div>
+              </div>
+
+            </div>
+          </div>
+
+          <!-- ── SECCIÓN IV ──────────────────────────────────────────────────── -->
+          <div class="survey-section">
+            <div class="sec-header">
+              <div class="sec-num accent">IV</div>
+              <div class="sec-info">
+                <h2>Evaluación Final</h2>
+                <p>Comparte tu apreciación general, comentarios adicionales o sugerencias de mejora.</p>
+              </div>
+            </div>
+            <div class="sec-body" style="padding-top:22px; padding-bottom:28px;">
+              <label for="comments" style="display:block; font-size:13.5px; font-weight:600; color:var(--text); margin-bottom:10px;">
+                Comentarios, notas o apreciación general
+                <span style="font-weight:400; color:var(--muted); font-size:12px;">(opcional)</span>
+              </label>
+              <textarea
+                id="comments"
+                name="comments"
+                class="survey-textarea"
+                placeholder="Escribe aquí tu opinión, sugerencias o cualquier observación que nos ayude a mejorar la calidad de nuestros programas…"
+                maxlength="1000"
+                aria-label="Campo de comentarios y apreciación general"
+              ></textarea>
+              <div class="char-count"><span id="char-count">0</span> / 1000 caracteres</div>
+            </div>
+          </div>
+
+          <!-- ── SUBMIT ──────────────────────────────────────────────────────── -->
+          <div class="submit-area">
+            <p class="submit-hint">Tus respuestas son anónimas y serán utilizadas exclusivamente para mejorar la calidad de nuestros programas de capacitación.</p>
+            <button type="submit" class="btn-submit" id="btn-submit">
+              <svg id="btn-submit-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+              <span id="btn-submit-label">Enviar Respuestas</span>
+            </button>
+          </div>
+          <div class="submit-error" id="submit-error" role="alert"></div>
+
+        </form>
+      </div>
+    </div>
+
+    <!-- ══ THANK YOU PANEL ════════════════════════════════════════════════════ -->
+    <div id="thanks-panel" aria-live="polite">
+      <div class="container">
+        <div class="thanks-card">
+          <div class="thanks-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+          </div>
+          <h2>¡Gracias por tu evaluación!</h2>
+          <p>Tu respuesta fue registrada de forma anónima. Cada opinión nos ayuda a elevar la calidad de nuestros programas de capacitación.</p>
+          <span class="thanks-meta">
+            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+            Encuesta completada
+          </span>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- ══ FOOTER ══════════════════════════════════════════════════════════════ -->
+  <footer class="site-footer">
+    <div class="container footer-inner">
+      <div>
+        <div class="footer-brand">
+          <img src="https://ddgdelvalle.cl/wp-content/uploads/2026/03/icono-ddg.png" alt="" loading="lazy">
+          <strong>DDG Del Valle</strong>
+        </div>
+        <div class="f-small">OTEC — Capacitación &amp; Formación · Región de Coquimbo</div>
+        <div class="f-small" style="margin-top:3px;">© 2026 DDG Del Valle. Todos los derechos reservados.</div>
+        <div class="footer-links">
+          <a href="#">Política de privacidad</a>
+          <a href="#">Términos y condiciones</a>
+        </div>
+      </div>
+      <div>
+        <div class="f-small">Consultas e inscripciones:</div>
+        <div class="f-small" style="margin-top:5px;">WhatsApp: <a href="tel:+56963163859" style="color:#fff;text-decoration:none;font-weight:700;">+56 9 6316 3859</a></div>
+        <div class="f-small">Email: <a href="mailto:contacto@ddgdelvalle.cl" style="color:#fff;text-decoration:none;font-weight:700;">contacto@ddgdelvalle.cl</a></div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ══ JAVASCRIPT ══════════════════════════════════════════════════════════ -->
+  <script>
+  (function () {
+    'use strict';
+
+    /* ── DATA MODEL ──────────────────────────────────────────────────────────── */
+    const SECTIONS = [
+      {
+        id: 'I', label: 'Programa de Capacitación',
+        questions: [
+          { name: 'q1',  num: 1,  text: 'Profundidad de los contenidos tratados.' },
+          { name: 'q2',  num: 2,  text: 'Actualización de los temas tratados en el curso.' },
+          { name: 'q3',  num: 3,  text: 'Tiempo asignado para el curso.' },
+          { name: 'q4',  num: 4,  text: 'Utilidad de los contenidos tratados.' },
+          { name: 'q5',  num: 5,  text: 'El taller cumplió con mis expectativas.' },
+        ]
+      },
+      {
+        id: 'II', label: 'Organización de la Actividad',
+        questions: [
+          { name: 'q6',  num: 6,  text: 'Medios y recursos de apoyo al proceso de aprendizaje (data show, retroproyector, etc.).' },
+          { name: 'q7',  num: 7,  text: 'Calidad del material de apoyo (apuntes, guías u otro).' },
+          { name: 'q8',  num: 8,  text: 'Atención brindada por el personal de nuestra organización.' },
+          { name: 'q9',  num: 9,  text: 'Cantidad de alumnos por curso.' },
+        ]
+      },
+      {
+        id: 'III', label: 'Relator N° 1',
+        questions: [
+          { name: 'q10', num: 10, text: 'El relator demuestra dominio de los contenidos.' },
+          { name: 'q11', num: 11, text: 'El relator comienza y termina la clase en los horarios establecidos.' },
+          { name: 'q12', num: 12, text: 'La presentación personal es adecuada.' },
+          { name: 'q13', num: 13, text: 'El relator mantiene la atención del curso.' },
+          { name: 'q14', num: 14, text: 'El relator crea condiciones para que el alumno consulte y responde adecuadamente a dichas preguntas.' },
+          { name: 'q15', num: 15, text: 'El relator utiliza metodologías participativas.' },
+          { name: 'q16', num: 16, text: 'El relator usa un lenguaje técnico y académico en las clases.' },
+          { name: 'q17', num: 17, text: 'Las clases son amenas y dinámicas.' },
+          { name: 'q18', num: 18, text: 'Las clases denotan planificación y preocupación por parte del relator.' },
+          { name: 'q19', num: 19, text: 'Se encuentra satisfecho como para tomar otro curso con el mismo relator.' },
+        ]
+      }
+    ];
+
+    const SCORE_LABELS = ['', 'Muy deficiente', 'Deficiente', 'Regular', 'Bueno', 'Excelente'];
+    const BAR_COLORS   = ['', '#c0392b', '#d35400', '#b8891a', '#1a7a4a', '#0d6632'];
+
+    /* ── REFS ────────────────────────────────────────────────────────────────── */
+    const form        = document.getElementById('survey-form');
+    const formArea    = document.getElementById('form-area');
+    const progressBar = document.getElementById('survey-progress');
+    const progCount   = document.getElementById('progress-count');
+    const textarea    = document.getElementById('comments');
+    const charCount   = document.getElementById('char-count');
+
+    const TOTAL = 19;
+
+    /* ── PROGRESS ────────────────────────────────────────────────────────────── */
+    function getAnswered() {
+      return SECTIONS.flatMap(s => s.questions)
+        .filter(q => form.querySelector(`input[name="${q.name}"]:checked`))
+        .length;
+    }
+
+    function updateProgress() {
+      progCount.textContent = `${getAnswered()} / ${TOTAL}`;
+
+      SECTIONS.forEach(sec => {
+        const dot = document.querySelector(`[data-sdot="${sec.id}"]`);
+        if (!dot) return;
+        const done = sec.questions.every(q => form.querySelector(`input[name="${q.name}"]:checked`));
+        dot.classList.toggle('done', done);
+        dot.classList.toggle('active', !done);
+      });
+    }
+
+    form.addEventListener('change', e => {
+      if (e.target.type === 'radio') {
+        const row = e.target.closest('[data-qrow]');
+        if (row) row.classList.remove('has-error');
+      }
+      updateProgress();
+    });
+
+    textarea.addEventListener('input', () => {
+      charCount.textContent = textarea.value.length;
+    });
+
+    /* ── SUBMIT ──────────────────────────────────────────────────────────────── */
+    const ENDPOINT     = 'api/guardar.php';
+    const btnSubmit    = document.getElementById('btn-submit');
+    const btnIcon      = document.getElementById('btn-submit-icon');
+    const btnLabel     = document.getElementById('btn-submit-label');
+    const errorBox     = document.getElementById('submit-error');
+    const thanksPanel  = document.getElementById('thanks-panel');
+
+    function setSubmitting(on) {
+      btnSubmit.disabled = on;
+      btnLabel.textContent = on ? 'Enviando…' : 'Enviar Respuestas';
+      if (on) {
+        btnIcon.style.display = 'none';
+        if (!btnSubmit.querySelector('.btn-spinner')) {
+          const sp = document.createElement('span');
+          sp.className = 'btn-spinner';
+          btnSubmit.insertBefore(sp, btnLabel);
+        }
+      } else {
+        btnIcon.style.display = '';
+        const sp = btnSubmit.querySelector('.btn-spinner');
+        if (sp) sp.remove();
+      }
+    }
+
+    function showError(msg) {
+      errorBox.textContent = msg;
+      errorBox.classList.add('show');
+    }
+    function clearError() {
+      errorBox.classList.remove('show');
+      errorBox.textContent = '';
+    }
+
+    form.addEventListener('submit', async e => {
+      e.preventDefault();
+      clearError();
+
+      let hasErrors = false;
+      for (let i = 1; i <= TOTAL; i++) {
+        const row = form.querySelector(`[data-qrow="${i}"]`);
+        const ok  = form.querySelector(`input[name="q${i}"]:checked`);
+        if (row) row.classList.toggle('has-error', !ok);
+        if (!ok) hasErrors = true;
+      }
+
+      if (hasErrors) {
+        const first = form.querySelector('.has-error');
+        if (first) first.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        return;
+      }
+
+      const payload = compileResults();
+      setSubmitting(true);
+
+      try {
+        const res = await fetch(ENDPOINT, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json;charset=UTF-8' },
+          body: JSON.stringify(payload)
+        });
+
+        let data = null;
+        try { data = await res.json(); } catch (_) { /* respuesta no-JSON */ }
+
+        if (!res.ok || !data || !data.ok) {
+          const msg = (data && data.error) ? data.error : `Error del servidor (HTTP ${res.status}).`;
+          throw new Error(msg);
+        }
+
+        formArea.style.display    = 'none';
+        progressBar.style.display = 'none';
+        thanksPanel.style.display = 'block';
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      } catch (err) {
+        setSubmitting(false);
+        showError('No pudimos enviar tu respuesta. ' + (err.message || 'Verifica tu conexión e inténtalo nuevamente.'));
+      }
+    });
+
+    /* ── COMPILE ─────────────────────────────────────────────────────────────── */
+    function compileResults() {
+      const out = {
+        timestamp: new Date().toISOString(),
+        secciones: {},
+        comentarios: textarea.value.trim() || null,
+        promedioGlobal: 0
+      };
+
+      let all = [];
+
+      SECTIONS.forEach(sec => {
+        const preguntas = {};
+        const vals = [];
+
+        sec.questions.forEach(q => {
+          const val = parseInt(form.querySelector(`input[name="${q.name}"]:checked`).value, 10);
+          preguntas[q.name] = { numero: q.num, pregunta: q.text, valor: val, etiqueta: SCORE_LABELS[val] };
+          vals.push(val);
+        });
+
+        const avg = vals.reduce((a, b) => a + b, 0) / vals.length;
+        out.secciones[sec.id] = {
+          seccion: sec.label,
+          preguntas,
+          promedio: parseFloat(avg.toFixed(2)),
+          etiquetaPromedio: scoreLabel(avg)
+        };
+        all = all.concat(vals);
+      });
+
+      out.promedioGlobal = parseFloat((all.reduce((a, b) => a + b, 0) / all.length).toFixed(2));
+      return out;
+    }
+
+    /* ── HELPERS ─────────────────────────────────────────────────────────────── */
+    function scoreLabel(v) {
+      if (v >= 4.5) return 'Excelente';
+      if (v >= 3.5) return 'Bueno';
+      if (v >= 2.5) return 'Regular';
+      if (v >= 1.5) return 'Deficiente';
+      return 'Muy deficiente';
+    }
+
+  })();
+  </script>
+</body>
+</html>

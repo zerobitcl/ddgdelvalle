@@ -1,0 +1,1562 @@
+<!doctype html>
+<html lang="es-CL">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"/>
+  <meta name="theme-color" content="#2C4753"/>
+  <title>DDG Del Valle | Cursos</title>
+  <meta name="description" content="Cursos DDG Del Valle: modalidad online y presencial, acompañamiento cercano y enfoque social en la Región de Coquimbo."/>
+  <meta name="robots" content="index,follow,max-snippet:-1,max-image-preview:large,max-video-preview:-1"/>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Montserrat:wght@500;600;700&display=swap" rel="stylesheet">
+
+  <link rel="icon" href="https://ddgdelvalle.cl/wp-content/uploads/2026/03/icono-ddg.png"/>
+
+  <style>
+    /* Reset local para aislar nuestro diseño del CMS */
+    .ddg-page {
+      --primary:#2C4753;
+      --secondary:#81A896;
+      --bg:#F4F7F6;
+      --bg2:#F2EEDB;
+      --accent:#D5CC3C;
+      --surface:#F4F7F6;
+      --text:#0f172a;
+      --muted:rgba(15,23,42,.72);
+      --shadow:0 18px 45px rgba(15,23,42,.10);
+
+      margin:0;
+      padding:0;
+      width: 100%;
+      font-family:Inter, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
+      color:var(--text);
+      background:linear-gradient(180deg, var(--bg) 0%, var(--bg2) 100%);
+      line-height:1.6;
+      -webkit-font-smoothing:antialiased;
+      -moz-osx-font-smoothing:grayscale;
+      text-align: left;
+      position: relative;
+      overflow-x: hidden;
+    }
+
+    .ddg-page::before {
+      content: '';
+      position: absolute;
+      top: 25%; left: -10%;
+      width: 600px; height: 600px;
+      background: radial-gradient(circle, rgba(129,168,150,0.15) 0%, transparent 60%);
+      z-index: 0; pointer-events: none;
+    }
+    .ddg-page::after {
+      content: '';
+      position: absolute;
+      top: 60%; right: -10%;
+      width: 500px; height: 500px;
+      background: radial-gradient(circle, rgba(213,204,60,0.12) 0%, transparent 60%);
+      z-index: 0; pointer-events: none;
+    }
+
+    .ddg-page * { box-sizing:border-box; }
+    .ddg-page a { color:inherit; text-decoration:none; }
+    .ddg-page img { max-width:100%; display:block; height: auto; }
+
+    .ddg-page .container{
+      width:min(1120px, calc(100% - 48px));
+      margin:0 auto;
+      position: relative;
+      z-index: 2;
+    }
+
+    /* Header */
+    .ddg-page .header{
+      position:sticky;
+      top:0;
+      z-index:999;
+      background:rgba(255,255,255,.92);
+      backdrop-filter:saturate(1.2) blur(10px);
+      border-bottom:1px solid rgba(15,23,42,.08);
+    }
+    .ddg-page .header-inner{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:16px;
+      padding:14px 0;
+    }
+    .ddg-page .brand{
+      display:flex;
+      align-items:center;
+      gap:12px;
+      min-width:220px;
+    }
+    /* AJUSTE: Logo más grande */
+    .ddg-page .brand img{
+      height: 60px;
+      width: auto;
+      object-fit:contain;
+      margin: 0;
+    }
+
+    .ddg-page .nav{
+      display:flex;
+      align-items:center;
+      gap:18px;
+      font-size:13px;
+      color:rgba(15,23,42,.72);
+      margin: 0;
+      padding: 0;
+    }
+    .ddg-page .nav a{
+      padding:8px 10px;
+      border-radius:999px;
+      transition:background .2s ease, color .2s ease;
+    }
+    .ddg-page .nav a:hover{
+      background:rgba(44,71,83,.08);
+      color:var(--primary);
+    }
+
+    .ddg-page .header-right{
+      display:flex;
+      align-items:center;
+      gap:10px;
+    }
+
+    .ddg-page .btn{
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      gap:10px;
+      padding:10px 14px;
+      border-radius:999px;
+      font-weight:700;
+      font-family:Montserrat, Inter, system-ui;
+      font-size:12px;
+      letter-spacing:.2px;
+      border:1px solid transparent;
+      transition:transform .08s ease, box-shadow .2s ease, background .2s ease, border-color .2s ease;
+      user-select:none;
+      cursor:pointer;
+      white-space:nowrap;
+    }
+    .ddg-page .btn:active{ transform:translateY(1px); }
+
+    .ddg-page .btn-primary{
+      background:var(--primary);
+      color:#fff;
+      box-shadow:0 10px 22px rgba(44,71,83,.18);
+    }
+    .ddg-page .btn-primary:hover{ box-shadow:0 14px 30px rgba(44,71,83,.24); }
+
+    .ddg-page .btn-admin{
+      background:#fff;
+      color:var(--primary);
+      border-color:rgba(44,71,83,.18);
+      font-weight:800;
+    }
+    .ddg-page .btn-admin:hover{
+      background:rgba(44,71,83,.06);
+      border-color:rgba(44,71,83,.30);
+    }
+
+    .ddg-page .btn-accent{
+      background:var(--accent);
+      color:#1b2b33;
+      border-color:rgba(0,0,0,.08);
+      box-shadow:0 10px 22px rgba(213,204,60,.22);
+    }
+    .ddg-page .btn-accent:hover{ box-shadow:0 14px 30px rgba(213,204,60,.28); }
+
+    .ddg-page .btn-ghost{
+      background:rgba(255,255,255,.12);
+      color:#fff;
+      border-color:rgba(255,255,255,.22);
+    }
+    .ddg-page .btn-ghost:hover{
+      background:rgba(255,255,255,.18);
+      border-color:rgba(255,255,255,.28);
+    }
+
+    .ddg-page .btn .ico{
+      width:18px;
+      height:18px;
+      object-fit:contain;
+      display:block;
+      filter:drop-shadow(0 1px 0 rgba(0,0,0,.10));
+      margin: 0;
+    }
+
+    .ddg-page .menu-btn{
+      display:none;
+      width:42px;
+      height:42px;
+      border-radius:12px;
+      border:1px solid rgba(15,23,42,.10);
+      background:#fff;
+      align-items:center;
+      justify-content:center;
+      cursor:pointer;
+      padding: 0;
+    }
+    .ddg-page .menu-btn svg{ width:20px; height:20px; }
+
+    .ddg-page .mobile-nav{
+      display:none;
+      padding:0 0 14px;
+    }
+    .ddg-page .mobile-nav a{
+      display:block;
+      padding:10px 12px;
+      border-radius:12px;
+      border:1px solid rgba(15,23,42,.08);
+      background:#fff;
+      margin:10px 0 0;
+      color:rgba(15,23,42,.78);
+      font-weight:600;
+      font-size:13px;
+    }
+
+    /* Hero */
+    .ddg-page .hero{
+      position:relative;
+      min-height:580px;
+      display:flex;
+      align-items:center;
+      background:
+        linear-gradient(90deg, rgba(44,71,83,.95) 0%, rgba(44,71,83,.70) 55%, rgba(44,71,83,.20) 100%),
+        radial-gradient(900px 520px at 12% 30%, rgba(213,204,60,.30), transparent 62%),
+        url('https://ddgdelvalle.cl/wp-content/uploads/2026/03/Banner-DDG.jpg') center/cover no-repeat;
+      color:#fff;
+      isolation:isolate;
+      margin: 0;
+      padding: 0;
+    }
+    .ddg-page .hero::before{
+      content:"";
+      position:absolute;
+      inset:0;
+      background:linear-gradient(180deg, rgba(0,0,0,.05) 0%, rgba(0,0,0,.30) 100%);
+      z-index:0;
+      pointer-events:none;
+    }
+    .ddg-page .hero .hero-content{
+      position:relative;
+      z-index:2;
+      padding:60px 0 140px;
+      max-width:820px;
+    }
+    .ddg-page .kicker{
+      display:inline-flex;
+      align-items:center;
+      gap:10px;
+      padding:8px 12px;
+      border-radius:999px;
+      background:rgba(255,255,255,.14);
+      border:1px solid rgba(255,255,255,.22);
+      color:rgba(255,255,255,.92);
+      font-weight:700;
+      font-size:12px;
+      font-family:Montserrat, Inter, system-ui;
+      letter-spacing:.2px;
+    }
+    .ddg-page .kicker img{ width:18px; height:18px; object-fit:contain; margin: 0; }
+
+    .ddg-page .hero h1{
+      margin:16px 0 10px;
+      font-family:Montserrat, Inter, system-ui;
+      font-size:44px;
+      line-height:1.1;
+      letter-spacing:-.5px;
+      color:#fff !important;
+      text-shadow:0 14px 35px rgba(0,0,0,.35);
+    }
+    .ddg-page .hero p{
+      margin:0;
+      max-width:720px;
+      color:rgba(255,255,255,.88) !important;
+      text-shadow:0 10px 26px rgba(0,0,0,.30);
+      font-size:14px;
+    }
+    .ddg-page .hero-actions{
+      margin-top:18px;
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+    }
+
+    /* Wave separator */
+    .ddg-page .hero-cut{
+      position:absolute;
+      left:0; right:0;
+      bottom:-1px;
+      height:86px;
+      z-index:2;
+      pointer-events:none;
+    }
+    .ddg-page .hero-cut svg{ width:100%; height:100%; display:block; }
+
+
+    /* Sections */
+    .ddg-page section{ scroll-margin-top:92px; position: relative; z-index: 2; }
+    .ddg-page .section{ padding:80px 0; }
+    .ddg-page .section-title{
+      font-family:Montserrat, Inter, system-ui;
+      font-size:32px;
+      margin:0;
+      color:var(--primary);
+      letter-spacing:-.5px;
+      text-align:center;
+      font-weight: 800;
+    }
+    .ddg-page .section-sub{
+      margin:12px auto 0;
+      text-align:center;
+      max-width:720px;
+      color:var(--muted);
+      font-size:14px;
+      line-height: 1.6;
+    }
+
+    /* Beneficios (Overlapping) */
+    .ddg-page .beneficios{
+      background: transparent;
+      margin-top: -120px;
+      padding-top: 0;
+      z-index: 10;
+    }
+    .ddg-page .beneficios .section-title,
+    .ddg-page .beneficios .section-sub {
+      display: none;
+    }
+    .ddg-page .beneficios-grid{
+      display:grid;
+      grid-template-columns:repeat(4, 1fr);
+      gap:20px;
+    }
+    
+    /* AJUSTE: Fondo blanco sólido para ocultar el texto basura de atrás */
+    .ddg-page .beneficio-item{
+      background: #ffffff;
+      border:1px solid rgba(15,23,42,.05);
+      border-radius:24px;
+      padding:32px 24px;
+      box-shadow:0 20px 40px rgba(15,23,42,.06);
+      transition: transform .3s cubic-bezier(0.4, 0, 0.2, 1), box-shadow .3s ease;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+    }
+    .ddg-page .beneficio-item:hover{
+      transform: translateY(-8px);
+      box-shadow:0 30px 60px rgba(44,71,83,.12);
+    }
+    .ddg-page .beneficio-icon {
+      width: 54px;
+      height: 54px;
+      background: rgba(44,71,83,.05);
+      border-radius: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 20px;
+      border: 1px solid rgba(44,71,83,.05);
+    }
+    .ddg-page .beneficio-icon img {
+      width: 32px; height: 32px; object-fit: contain;
+    }
+    .ddg-page .beneficio-item h3{
+      margin:0 0 10px;
+      font-family:Montserrat, Inter, system-ui;
+      font-size:15px;
+      color:var(--primary);
+      font-weight: 700;
+      line-height: 1.3;
+    }
+    .ddg-page .beneficio-item p{
+      margin:0;
+      color:rgba(15,23,42,.72);
+      font-size:13px;
+      line-height: 1.6;
+    }
+
+    /* Toolbar: buscador + filtros */
+    .ddg-page .curso-toolbar{
+      margin-top:22px;
+      display:flex;
+      flex-direction:column;
+      gap:14px;
+    }
+    .ddg-page .search-container{
+      max-width:520px;
+      margin-left:auto;
+      margin-right:auto;
+      width:100%;
+    }
+    .ddg-page .search-container input{
+      width:100%;
+      padding:14px 18px;
+      border-radius:999px;
+      border:1px solid rgba(44,71,83,.18);
+      background:#fff;
+      font-family:Inter, system-ui, sans-serif;
+      font-size:14px;
+      color:var(--text);
+      box-shadow:0 8px 24px rgba(15,23,42,.06);
+      outline:none;
+      transition:border-color .2s ease, box-shadow .2s ease;
+    }
+    .ddg-page .search-container input:focus{
+      border-color:var(--primary);
+      box-shadow:0 0 0 3px rgba(44,71,83,.12);
+    }
+    .ddg-page .search-container input::placeholder{
+      color:rgba(15,23,42,.45);
+    }
+    .ddg-page .curso-filtros{
+      display:flex;
+      flex-wrap:wrap;
+      justify-content:center;
+      gap:8px;
+      padding:2px 0;
+    }
+    .ddg-page .filtro-btn{
+      padding:8px 14px;
+      border-radius:999px;
+      border:1px solid rgba(44,71,83,.14);
+      background:#fff;
+      color:rgba(15,23,42,.72);
+      font-family:Montserrat, Inter, system-ui;
+      font-size:11px;
+      font-weight:700;
+      cursor:pointer;
+      transition:background .2s ease, color .2s ease, border-color .2s ease, box-shadow .2s ease;
+      white-space:nowrap;
+    }
+    .ddg-page .filtro-btn:hover{
+      background:rgba(44,71,83,.06);
+      border-color:rgba(44,71,83,.22);
+      color:var(--primary);
+    }
+    .ddg-page .filtro-btn.is-active{
+      background:var(--primary);
+      border-color:var(--primary);
+      color:#fff;
+      box-shadow:0 8px 20px rgba(44,71,83,.18);
+    }
+    .ddg-page .curso-contador{
+      margin:0;
+      text-align:center;
+      font-size:12px;
+      color:var(--muted);
+      font-weight:600;
+    }
+    .ddg-page .curso-vacio{
+      margin:18px 0 0;
+      text-align:center;
+      padding:28px 20px;
+      border-radius:16px;
+      border:1px dashed rgba(44,71,83,.22);
+      background:rgba(255,255,255,.72);
+      color:var(--muted);
+      font-size:13px;
+    }
+    @media (max-width:520px){
+      .ddg-page .curso-filtros{
+        flex-wrap:nowrap;
+        justify-content:flex-start;
+        overflow-x:auto;
+        -webkit-overflow-scrolling:touch;
+        scrollbar-width:none;
+        padding-bottom:4px;
+      }
+      .ddg-page .curso-filtros::-webkit-scrollbar{ display:none; }
+    }
+
+    /* Cursos */
+    .ddg-page .curso-grid{
+      margin-top:22px;
+      display:grid;
+      grid-template-columns:repeat(3, 1fr);
+      gap:16px;
+      align-items:stretch;
+    }
+    .ddg-page .curso-card{
+      background:#fff;
+      border-radius:16px;
+      border:1px solid rgba(15,23,42,.10);
+      box-shadow:0 14px 34px rgba(15,23,42,.08);
+      overflow:hidden;
+      display:flex;
+      flex-direction:column;
+      min-height:100%;
+    }
+    .ddg-page .curso-media{
+      width:100%;
+      height:200px;
+      background:transparent;
+      overflow:hidden;
+    }
+    .ddg-page a.curso-media{
+      display:block;
+      text-decoration:none;
+      color:inherit;
+      flex-shrink:0;
+    }
+    .ddg-page a.curso-media:focus-visible{
+      outline:2px solid var(--primary);
+      outline-offset:2px;
+    }
+    .ddg-page .curso-media img{
+      width:100%;
+      height:100%;
+      object-fit:cover;
+    }
+    
+    .ddg-page .curso-card-body{
+      padding:14px;
+      display:flex;
+      flex-direction:column;
+      gap:8px;
+      flex:1;
+    }
+    .ddg-page .curso-card-body h3{
+      margin:0;
+      font-family:Montserrat, Inter, system-ui;
+      font-size:14px;
+      color:var(--primary);
+    }
+    .ddg-page .curso-card-body p{
+      margin:0;
+      color:rgba(15,23,42,.70);
+      font-size:12px;
+      min-height:38px;
+    }
+    .ddg-page .badges{
+      display:flex;
+      gap:8px;
+      flex-wrap:wrap;
+      margin-top:2px;
+      padding: 0;
+    }
+    .ddg-page .badge{
+      display:inline-flex;
+      align-items:center;
+      gap:6px;
+      padding:6px 10px;
+      border-radius:999px;
+      font-size:11px;
+      font-weight:700;
+      color:rgba(15,23,42,.72);
+      background:rgba(44,71,83,.06);
+      border:1px solid rgba(44,71,83,.12);
+    }
+
+    .ddg-page .price{
+      font-weight:800;
+      color:rgba(15,23,42,.70);
+      font-size:12px;
+      margin-top: auto;
+    }
+    .ddg-page .btn-info{
+      width:100%;
+      justify-content:center;
+      background:var(--primary);
+      color:#fff;
+      border-radius:12px;
+      padding:10px 12px;
+      font-family:Montserrat, Inter, system-ui;
+      font-weight:800;
+      font-size:12px;
+      border:1px solid rgba(255,255,255,.18);
+      transition:background .2s ease, box-shadow .2s ease, transform .08s ease;
+    }
+    .ddg-page .btn-info:hover{
+      background:#1e3540;
+      box-shadow:0 10px 26px rgba(44,71,83,.28);
+    }
+
+    /* Huella social */
+    .ddg-page .huella-social{
+      background:var(--bg2);
+      border-top:1px solid rgba(15,23,42,.08);
+      border-bottom:1px solid rgba(15,23,42,.08);
+    }
+    .ddg-page .huella-grid{
+      margin-top:22px;
+      display:grid;
+      grid-template-columns:repeat(3, 1fr);
+      gap:16px;
+    }
+    .ddg-page .huella-item{
+      background:rgba(255,255,255,.85);
+      border:1px solid rgba(15,23,42,.10);
+      border-radius:16px;
+      padding:18px;
+      box-shadow:0 14px 34px rgba(15,23,42,.06);
+    }
+    .ddg-page .huella-item h3{
+      margin:0 0 8px;
+      font-family:Montserrat, Inter, system-ui;
+      font-size:14px;
+      color:var(--primary);
+    }
+    .ddg-page .huella-item p{
+      margin:0;
+      color:rgba(15,23,42,.72);
+      font-size:12px;
+    }
+
+    /* Proceso */
+    .ddg-page .proceso{
+      background:rgba(255,255,255,.50);
+      border-top:1px solid rgba(15,23,42,.06);
+      border-bottom:1px solid rgba(15,23,42,.06);
+    }
+    .ddg-page .pasos{
+      margin-top:22px;
+      display:grid;
+      grid-template-columns:repeat(3, 1fr);
+      gap:16px;
+    }
+    .ddg-page .paso{
+      background:#fff;
+      border:1px solid rgba(15,23,42,.10);
+      border-radius:16px;
+      padding:16px;
+      box-shadow:0 14px 34px rgba(15,23,42,.06);
+    }
+    .ddg-page .paso-number{
+      width:28px;
+      height:28px;
+      border-radius:999px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      background:var(--accent);
+      color:#1b2b33;
+      font-weight:900;
+      font-size:12px;
+      margin-bottom:10px;
+    }
+    .ddg-page .paso h3{
+      margin:0 0 6px;
+      font-family:Montserrat, Inter, system-ui;
+      font-size:13px;
+      color:var(--primary);
+    }
+    .ddg-page .paso p{
+      margin:0;
+      color:rgba(15,23,42,.70);
+      font-size:12px;
+    }
+
+    /* Testimonios */
+    .ddg-page .testimonios{
+      background:linear-gradient(180deg, rgba(44,71,83,.92) 0%, rgba(44,71,83,.86) 100%);
+      color:#fff;
+    }
+    .ddg-page .testimonios .section-title{ color:#fff; }
+    .ddg-page .testimonios .section-sub{ color:rgba(255,255,255,.82); }
+    .ddg-page .testimonios-container{
+      margin-top:22px;
+      display:grid;
+      grid-template-columns:repeat(3, 1fr);
+      gap:14px;
+    }
+    .ddg-page .testimonio{
+      background:rgba(255,255,255,.08);
+      border:1px solid rgba(255,255,255,.14);
+      border-radius:16px;
+      padding:14px;
+    }
+    .ddg-page .testimonio p{
+      margin:0 0 10px;
+      color:rgba(255,255,255,.88);
+      font-size:12px;
+      font-style:italic;
+    }
+    .ddg-page .author{
+      font-weight:800;
+      font-size:12px;
+      color:rgba(255,255,255,.92);
+    }
+
+    /* FAQ */
+    .ddg-page .faq-list{
+      margin-top:22px;
+      display:flex;
+      flex-direction:column;
+      gap:12px;
+      max-width:860px;
+      margin-left:auto;
+      margin-right:auto;
+    }
+    .ddg-page .faq-item{
+      background:#fff;
+      border:1px solid rgba(15,23,42,.10);
+      border-radius:14px;
+      overflow:hidden;
+      box-shadow:0 12px 28px rgba(15,23,42,.06);
+      margin: 0;
+    }
+    .ddg-page .faq-question{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+      padding:12px 14px;
+      cursor:pointer;
+      user-select:none;
+      color:rgba(15,23,42,.84);
+      font-weight:800;
+      font-size:12px;
+      margin: 0;
+    }
+    .ddg-page .faq-question span.icon{
+      width:28px;
+      height:28px;
+      border-radius:10px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      background:rgba(44,71,83,.08);
+      border:1px solid rgba(44,71,83,.14);
+      color:var(--primary);
+      font-weight:900;
+    }
+    .ddg-page .faq-answer{
+      padding:0 14px 14px;
+      color:rgba(15,23,42,.72);
+      font-size:12px;
+      display:none;
+      margin: 0;
+    }
+    .ddg-page .faq-item.open .faq-answer{ display:block; }
+
+    /* ─── Asesoría Inmediata (Lead Capture) ─── */
+    .ddg-page .asesoria{
+      background:linear-gradient(135deg, var(--primary) 0%, #1e3540 100%);
+      position:relative;
+      overflow:hidden;
+      padding:80px 0;
+    }
+    .ddg-page .asesoria::before{
+      content:'';
+      position:absolute;
+      top:-30%; left:-8%;
+      width:520px; height:520px;
+      background:radial-gradient(circle, rgba(213,204,60,.22) 0%, transparent 65%);
+      pointer-events:none; z-index:0;
+    }
+    .ddg-page .asesoria::after{
+      content:'';
+      position:absolute;
+      bottom:-20%; right:-6%;
+      width:420px; height:420px;
+      background:radial-gradient(circle, rgba(129,168,150,.28) 0%, transparent 65%);
+      pointer-events:none; z-index:0;
+    }
+    .ddg-page .asesoria .container{
+      text-align:center;
+      z-index:2;
+    }
+    .ddg-page .asesoria-badge{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      padding:6px 14px;
+      border-radius:999px;
+      background:rgba(255,255,255,.10);
+      border:1px solid rgba(255,255,255,.18);
+      color:rgba(255,255,255,.80);
+      font-size:11px;
+      font-weight:700;
+      letter-spacing:.4px;
+      margin-bottom:20px;
+    }
+    .ddg-page .asesoria h2{
+      font-family:Montserrat, Inter, system-ui;
+      font-size:38px;
+      color:#fff;
+      margin:0 0 14px;
+      letter-spacing:-.6px;
+      font-weight:800;
+      line-height:1.12;
+    }
+    .ddg-page .asesoria p{
+      color:rgba(255,255,255,.78);
+      font-size:15px;
+      max-width:520px;
+      margin:0 auto 32px;
+      line-height:1.65;
+    }
+    .ddg-page .asesoria .btn-accent{
+      padding:16px 36px;
+      font-size:14px;
+      letter-spacing:.2px;
+      gap:12px;
+    }
+    .ddg-page .asesoria .wa-icon{
+      width:20px;
+      height:20px;
+    }
+
+    /* Footer */
+    .ddg-page footer{
+      background:linear-gradient(180deg, #0b1220 0%, #070c14 100%);
+      color:rgba(255,255,255,.82);
+      padding:26px 0;
+      border-top:1px solid rgba(255,255,255,.06);
+    }
+    .ddg-page .footer-inner{
+      display:flex;
+      align-items:flex-start;
+      justify-content:space-between;
+      gap:18px;
+      flex-wrap:wrap;
+    }
+    .ddg-page .footer-links{
+      display:flex;
+      gap:14px;
+      flex-wrap:wrap;
+      margin-top:8px;
+    }
+    .ddg-page .footer-links a{
+      color:rgba(213,204,60,.92);
+      text-decoration:underline;
+      font-weight:700;
+      font-size:11px;
+    }
+    .ddg-page .small{
+      font-size:11px;
+      color:rgba(255,255,255,.70);
+    }
+
+    /* ─── Reveal on scroll ─── */
+    .ddg-page .reveal-up{
+      opacity:0;
+      transform:translateY(30px);
+      transition:opacity .6s cubic-bezier(0.16, 1, 0.3, 1), transform .6s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .ddg-page .reveal-up.is-visible{
+      opacity:1;
+      transform:translateY(0);
+    }
+
+    /* Responsive */
+    @media (max-width: 980px){
+      .ddg-page .nav{ display:none; }
+      .ddg-page .menu-btn{ display:inline-flex; }
+      .ddg-page .beneficios-grid{ grid-template-columns:repeat(2, 1fr); }
+      .ddg-page .curso-grid{ grid-template-columns:1fr; }
+      .ddg-page .huella-grid{ grid-template-columns:1fr; }
+      .ddg-page .pasos{ grid-template-columns:1fr; }
+      .ddg-page .testimonios-container{ grid-template-columns:1fr; }
+      .ddg-page .hero h1{ font-size:34px; }
+      .ddg-page .beneficios { margin-top: -60px; }
+      .ddg-page .asesoria h2{ font-size:30px; }
+    }
+    @media (max-width: 520px){
+      .ddg-page .container{ width:calc(100% - 28px); }
+      .ddg-page .brand{ min-width:auto; }
+      .ddg-page .beneficios-grid{ grid-template-columns:1fr; }
+      .ddg-page .hero h1{ font-size:30px; }
+      .ddg-page .beneficios { margin-top: -40px; }
+      .ddg-page .asesoria h2{ font-size:26px; }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="ddg-page">
+    <header class="header">
+      <div class="container header-inner">
+        <a class="brand" href="#top" aria-label="DDG Del Valle - Cursos">
+          <img
+            src="https://ddgdelvalle.cl/wp-content/uploads/2026/03/LOGO-DDG_color.png"
+            alt="Logo DDG Del Valle">
+        </a>
+
+        <nav class="nav" aria-label="Navegación">
+          <a href="#beneficios">Beneficios</a>
+          <a href="#cursos">Cursos</a>
+          <a href="#proceso">Proceso</a>
+          <a href="#faq">FAQ</a>
+        </nav>
+
+        <div class="header-right">
+          <a class="btn btn-admin" href="portal-administrativo.html" target="_blank" rel="noopener" aria-label="Ir al portal administrativo">
+            Portal administrativo
+          </a>
+          <a class="btn btn-primary" href="https://wa.me/56963163859?text=Hola%2C%20quiero%20consultar%20sobre%20los%20cursos%20DDG%20Del%20Valle" target="_blank" rel="noopener" aria-label="Contactar por WhatsApp">
+            <img class="ico" src="https://ddgdelvalle.cl/wp-content/uploads/2026/03/icono_Online.png" alt="" width="18" height="18">
+            Contáctanos
+          </a>
+
+          <button class="menu-btn" type="button" aria-label="Abrir menú" data-menu-btn>
+            <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <path d="M4 7h16M4 12h16M4 17h16" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            </svg>
+          </button>
+        </div>
+      </div>
+
+      <div class="container mobile-nav" data-mobile-nav>
+        <a href="portal-administrativo.html" target="_blank" rel="noopener">Portal administrativo</a>
+        <a href="#beneficios">Beneficios</a>
+        <a href="#cursos">Cursos</a>
+        <a href="#proceso">Proceso</a>
+        <a href="#faq">FAQ</a>
+      </div>
+    </header>
+
+    <main id="top">
+      <section class="hero" aria-label="Portada Cursos">
+        <div class="container">
+          <div class="hero-content">
+            <div class="kicker">
+              <img src="https://ddgdelvalle.cl/wp-content/uploads/2026/03/Icono_cursos.png" alt="" width="18" height="18">
+              Cursos DDG Del Valle
+            </div>
+            <h1>Aprendizaje con calidad humana, online y presencial</h1>
+            <p>Formación diseñada para avanzar con confianza: profesionales que se preocupan por cada alumno/a, acompañando el proceso con dedicación, compromiso y atención.</p>
+
+            <div class="hero-actions">
+              <a class="btn btn-accent" href="#cursos">Explorar cursos</a>
+              <a class="btn btn-ghost" href="#beneficios">¿Por qué elegirnos?</a>
+            </div>
+          </div>
+        </div>
+
+        <div class="hero-cut" aria-hidden="true">
+          <svg viewBox="0 0 1440 80" preserveAspectRatio="none" focusable="false">
+            <path d="M0,48 C240,80 480,80 720,48 C960,16 1200,16 1440,48 L1440,80 L0,80 Z" fill="var(--bg)"></path>
+          </svg>
+        </div>
+      </section>
+
+      <section id="beneficios" class="section beneficios">
+        <div class="container">
+          <h2 class="section-title">¿Por qué elegirnos?</h2>
+          <p class="section-sub">Somos una OTEC enfocada en enseñar con dedicación, compromiso y atención.</p>
+
+          <div class="beneficios-grid">
+            <div class="beneficio-item reveal-up" data-delay="0">
+              <div class="beneficio-icon">
+                <img src="https://ddgdelvalle.cl/wp-content/uploads/2026/03/Icono_cursos.png" alt="Cursos" width="32" height="32" loading="lazy">
+              </div>
+              <h3>Cursos presenciales y online</h3>
+              <p>Alternativas para distintas realidades: formación flexible y también presencial cuando se requiere.</p>
+            </div>
+            <div class="beneficio-item reveal-up" data-delay="100">
+              <div class="beneficio-icon">
+                <img src="https://ddgdelvalle.cl/wp-content/uploads/2026/03/icono-ddg.png" alt="Acompañamiento" width="32" height="32" loading="lazy">
+              </div>
+              <h3>Calidad humana y acompañamiento</h3>
+              <p>Profesionales que se preocupan por cada alumno/a: apoyo, orientación y seguimiento constante.</p>
+            </div>
+            <div class="beneficio-item reveal-up" data-delay="200">
+              <div class="beneficio-icon">
+                <img src="https://ddgdelvalle.cl/wp-content/uploads/2026/03/icono_Online.png" alt="Inclusivo" width="32" height="32" loading="lazy">
+              </div>
+              <h3>Enfoque territorial e inclusivo</h3>
+              <p>Acceso a formación rural, enfoque de género, respeto por la diversidad cultural y sostenibilidad.</p>
+            </div>
+            <div class="beneficio-item reveal-up" data-delay="300">
+              <div class="beneficio-icon">
+                <img src="https://ddgdelvalle.cl/wp-content/uploads/2026/03/Icono_cursos.png" alt="Aplicado" width="32" height="32" loading="lazy">
+              </div>
+              <h3>Aprendizaje aplicado</h3>
+              <p>Contenido práctico y herramientas transferibles al trabajo y vida cotidiana, foco en empleabilidad.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="cursos" class="section">
+        <div class="container">
+          <h2 class="section-title">Nuestra oferta formativa</h2>
+          <p class="section-sub">Explora los programas: algunos ya cuentan con ficha informativa y cupos; otros se abrirán próximamente.</p>
+
+          <div class="curso-toolbar">
+            <div class="search-container">
+              <input type="search" id="buscar-curso" placeholder="Buscar cursos (ej. Riego, Suelos, Maquinaria)..." aria-label="Buscar cursos">
+            </div>
+            <nav class="curso-filtros" aria-label="Filtrar cursos" data-curso-filtros>
+              <button type="button" class="filtro-btn is-active" data-filtro="todos">Todos</button>
+              <button type="button" class="filtro-btn" data-filtro="disponible">Disponibles</button>
+              <button type="button" class="filtro-btn" data-filtro="proximamente">Próximamente</button>
+              <button type="button" class="filtro-btn" data-filtro="agro">Agro y campo</button>
+              <button type="button" class="filtro-btn" data-filtro="jardineria">Jardinería</button>
+              <button type="button" class="filtro-btn" data-filtro="laboral">Laboral</button>
+              <button type="button" class="filtro-btn" data-filtro="digital">Digital</button>
+            </nav>
+            <p class="curso-contador" id="curso-contador" aria-live="polite"></p>
+          </div>
+
+          <div class="curso-grid" data-curso-grid>
+            
+            <article class="curso-card reveal-up" data-categoria="laboral" data-estado="proximamente" data-delay="0">
+              <div class="curso-media">
+                <img src="https://ddgdelvalle.cl/wp-content/uploads/2026/04/Apresto-Laboral-.webp" alt="Apresto Laboral" loading="lazy">
+              </div>
+              <div class="curso-card-body">
+                <h3>Apresto Laboral</h3>
+                <p>Preparación integral y herramientas clave para enfrentar con éxito la inserción y permanencia en el mundo del trabajo.</p>
+                <div class="badges">
+                  <span class="badge" style="background:var(--accent); color:#1b2b33; border-color:var(--accent);">Próximamente</span>
+                  <span class="badge">32 hrs</span>
+                </div>
+                <div class="price">En preparación</div>
+                <a class="btn btn-info" style="background:var(--secondary); border-color:var(--secondary); box-shadow:none;" href="https://wa.me/56963163859?text=Hola%2C%20quiero%20que%20me%20avisen%20cuando%20inicie%20el%20curso%20de%20Apresto%20Laboral" target="_blank" rel="noopener">Avisarme cuando inicie</a>
+              </div>
+            </article>
+
+            <article class="curso-card reveal-up" data-categoria="agro" data-estado="disponible" data-delay="120">
+              <a class="curso-media" href="https://ddgdelvalle.cl/curso-de-plaguicidas-en-ovalle/" target="_blank" rel="noopener" aria-label="Ver curso de plaguicidas en Ovalle">
+                <img src="https://ddgdelvalle.cl/wp-content/uploads/2026/04/Plaguicida-.webp" alt="Uso y manejo de plaguicida agrícola" loading="lazy">
+              </a>
+              <div class="curso-card-body">
+                <h3><a href="https://ddgdelvalle.cl/curso-de-plaguicidas-en-ovalle/" target="_blank" rel="noopener" style="color:inherit;text-decoration:none;">Uso y manejo de plaguicida agrícola</a></h3>
+                <p>Capacitación en técnicas seguras, dosificación y normativas vigentes para la aplicación de plaguicidas.</p>
+                <div class="badges">
+                  <span class="badge" style="background:var(--primary); color:#fff; border-color:var(--primary);">Disponible</span>
+                  <span class="badge">32 hrs</span>
+                </div>
+                <div class="price">Presencial · Certificación SAG</div>
+                <a class="btn btn-info" href="https://ddgdelvalle.cl/curso-de-plaguicidas-en-ovalle/" target="_blank" rel="noopener">Ver curso y cupos</a>
+              </div>
+            </article>
+
+            <article class="curso-card reveal-up" data-categoria="digital" data-estado="proximamente" data-delay="240">
+              <div class="curso-media">
+                <img src="https://ddgdelvalle.cl/wp-content/uploads/2026/04/Ofimatica-.webp" alt="Ofimática" loading="lazy">
+              </div>
+              <div class="curso-card-body">
+                <h3>Ofimática</h3>
+                <p>Domina las herramientas digitales y programas esenciales para el trabajo administrativo y de oficina actual.</p>
+                <div class="badges">
+                  <span class="badge" style="background:var(--accent); color:#1b2b33; border-color:var(--accent);">Próximamente</span>
+                  <span class="badge">32 hrs</span>
+                </div>
+                <div class="price">En preparación</div>
+                <a class="btn btn-info" style="background:var(--secondary); border-color:var(--secondary); box-shadow:none;" href="https://wa.me/56963163859?text=Hola%2C%20quiero%20que%20me%20avisen%20cuando%20inicie%20el%20curso%20de%20Ofim%C3%A1tica" target="_blank" rel="noopener">Avisarme cuando inicie</a>
+              </div>
+            </article>
+
+            <article class="curso-card reveal-up" data-categoria="agro" data-estado="disponible" data-delay="0">
+              <a class="curso-media" href="https://ddgdelvalle.cl/eficiencia-hidrica-predial/" target="_blank" rel="noopener" aria-label="Ver curso de eficiencia hídrica predial">
+                <img src="https://ddgdelvalle.cl/wp-content/uploads/2026/04/Riego-.webp" alt="Riego y eficiencia hídrica" loading="lazy">
+              </a>
+              <div class="curso-card-body">
+                <h3><a href="https://ddgdelvalle.cl/eficiencia-hidrica-predial/" target="_blank" rel="noopener" style="color:inherit;text-decoration:none;">Riego y eficiencia hídrica</a></h3>
+                <p>Optimiza el uso del agua en sistemas productivos mediante técnicas de riego eficiente y gestión sustentable.</p>
+                <div class="badges">
+                  <span class="badge" style="background:var(--primary); color:#fff; border-color:var(--primary);">Disponible</span>
+                  <span class="badge">32 hrs</span>
+                </div>
+                <div class="price">Presencial · Riego tecnificado</div>
+                <a class="btn btn-info" href="https://ddgdelvalle.cl/eficiencia-hidrica-predial/" target="_blank" rel="noopener">Ver curso y cupos</a>
+              </div>
+            </article>
+
+            <article class="curso-card reveal-up" data-categoria="laboral" data-estado="disponible" data-delay="180">
+              <a class="curso-media" href="https://ddgdelvalle.cl/insercion-laboral/" target="_blank" rel="noopener" aria-label="Ver curso de inserción laboral">
+                <img src="https://ddgdelvalle.cl/wp-content/uploads/2026/04/Ofimatica-.webp" alt="Estrategias de inserción y adaptación laboral" loading="lazy">
+              </a>
+              <div class="curso-card-body">
+                <h3><a href="https://ddgdelvalle.cl/insercion-laboral/" target="_blank" rel="noopener" style="color:inherit;text-decoration:none;">Estrategias de inserción y adaptación laboral</a></h3>
+                <p>Competencias transversales y ofimática para integrarte con éxito al entorno productivo formal.</p>
+                <div class="badges">
+                  <span class="badge" style="background:var(--primary); color:#fff; border-color:var(--primary);">Disponible</span>
+                  <span class="badge">32 hrs</span>
+                </div>
+                <div class="price">Presencial</div>
+                <a class="btn btn-info" href="https://ddgdelvalle.cl/insercion-laboral/" target="_blank" rel="noopener">Ver curso y cupos</a>
+              </div>
+            </article>
+
+            <article class="curso-card reveal-up" data-categoria="agro" data-estado="proximamente" data-delay="120">
+              <div class="curso-media">
+                <img src="https://ddgdelvalle.cl/wp-content/uploads/2026/04/Mantencion-Maquinaria-.webp" alt="Mantención de maquinaria agrícola" loading="lazy">
+              </div>
+              <div class="curso-card-body">
+                <h3>Mantención de maquinaria agrícola</h3>
+                <p>Aprende a realizar el mantenimiento preventivo y correctivo de maquinaria clave para el mundo del agro.</p>
+                <div class="badges">
+                  <span class="badge" style="background:var(--accent); color:#1b2b33; border-color:var(--accent);">Próximamente</span>
+                  <span class="badge">32 hrs</span>
+                </div>
+                <div class="price">En preparación</div>
+                <a class="btn btn-info" style="background:var(--secondary); border-color:var(--secondary); box-shadow:none;" href="https://wa.me/56963163859?text=Hola%2C%20quiero%20que%20me%20avisen%20cuando%20inicie%20el%20curso%20de%20Mantenci%C3%B3n%20de%20maquinaria%20agr%C3%ADcola" target="_blank" rel="noopener">Avisarme cuando inicie</a>
+              </div>
+            </article>
+
+            <article class="curso-card reveal-up" data-categoria="digital" data-estado="proximamente" data-delay="240">
+              <div class="curso-media">
+                <img src="https://ddgdelvalle.cl/wp-content/uploads/2026/04/IA-.webp" alt="IA en uso cotidiano" loading="lazy">
+              </div>
+              <div class="curso-card-body">
+                <h3>IA en uso cotidiano</h3>
+                <p>Integra la Inteligencia Artificial en tus tareas diarias para optimizar tu tiempo, redacción y productividad.</p>
+                <div class="badges">
+                  <span class="badge" style="background:var(--accent); color:#1b2b33; border-color:var(--accent);">Próximamente</span>
+                  <span class="badge">45 hrs</span>
+                </div>
+                <div class="price">En preparación</div>
+                <a class="btn btn-info" style="background:var(--secondary); border-color:var(--secondary); box-shadow:none;" href="https://wa.me/56963163859?text=Hola%2C%20quiero%20que%20me%20avisen%20cuando%20inicie%20el%20curso%20de%20IA%20ofim%C3%A1tica" target="_blank" rel="noopener">Avisarme cuando inicie</a>
+              </div>
+            </article>
+
+            <article class="curso-card reveal-up" data-categoria="jardineria" data-estado="disponible" data-delay="0">
+              <a class="curso-media" href="curso-jardines-secos-xerojardineria-ovalle.html" aria-label="Ver curso Jardines Secos y Xerojardinería">
+                <img src="https://ddgdelvalle.cl/wp-content/uploads/2026/04/Riego-.webp" alt="Jardines Secos y Xerojardinería" loading="lazy">
+              </a>
+              <div class="curso-card-body">
+                <h3><a href="curso-jardines-secos-xerojardineria-ovalle.html" style="color:inherit;text-decoration:none;">Jardines Secos y Xerojardinería</a></h3>
+                <p>Diseña e implementa jardines de bajo consumo hídrico con técnicas de xerojardinería y paisajismo sostenible.</p>
+                <div class="badges">
+                  <span class="badge" style="background:var(--primary); color:#fff; border-color:var(--primary);">Disponible</span>
+                  <span class="badge">16 hrs</span>
+                </div>
+                <div class="price">Presencial · Ovalle</div>
+                <a class="btn btn-info" href="curso-jardines-secos-xerojardineria-ovalle.html">Ver curso y cupos</a>
+              </div>
+            </article>
+
+            <article class="curso-card reveal-up" data-categoria="agro" data-estado="disponible" data-delay="120">
+              <a class="curso-media" href="curso-cooperativismo-asociatividad-agricultura-ovalle.html" aria-label="Ver curso Cooperativismo y Asociatividad">
+                <img src="https://ddgdelvalle.cl/wp-content/uploads/2026/04/Apresto-Laboral-.webp" alt="Cooperativismo y Asociatividad" loading="lazy">
+              </a>
+              <div class="curso-card-body">
+                <h3><a href="curso-cooperativismo-asociatividad-agricultura-ovalle.html" style="color:inherit;text-decoration:none;">Cooperativismo y Asociatividad</a></h3>
+                <p>Fortalece organizaciones rurales con principios cooperativos, comercialización conjunta y gestión asociativa.</p>
+                <div class="badges">
+                  <span class="badge" style="background:var(--primary); color:#fff; border-color:var(--primary);">Disponible</span>
+                  <span class="badge">16 hrs</span>
+                </div>
+                <div class="price">Presencial · Ovalle</div>
+                <a class="btn btn-info" href="curso-cooperativismo-asociatividad-agricultura-ovalle.html">Ver curso y cupos</a>
+              </div>
+            </article>
+
+            <article class="curso-card reveal-up" data-categoria="agro" data-estado="disponible" data-delay="240">
+              <a class="curso-media" href="curso-agricultura-organica-agroecologica-ovalle.html" aria-label="Ver curso Agricultura Orgánica y Agroecológica">
+                <img src="https://ddgdelvalle.cl/wp-content/uploads/2026/04/Plaguicida-.webp" alt="Agricultura Orgánica y Agroecológica" loading="lazy">
+              </a>
+              <div class="curso-card-body">
+                <h3><a href="curso-agricultura-organica-agroecologica-ovalle.html" style="color:inherit;text-decoration:none;">Agricultura Orgánica y Agroecológica</a></h3>
+                <p>Principios y técnicas de producción orgánica: suelos, fertilización natural y control ecológico de plagas.</p>
+                <div class="badges">
+                  <span class="badge" style="background:var(--primary); color:#fff; border-color:var(--primary);">Disponible</span>
+                  <span class="badge">16 hrs</span>
+                </div>
+                <div class="price">Presencial · Ovalle</div>
+                <a class="btn btn-info" href="curso-agricultura-organica-agroecologica-ovalle.html">Ver curso y cupos</a>
+              </div>
+            </article>
+
+            <article class="curso-card reveal-up" data-categoria="agro" data-estado="disponible" data-delay="180">
+              <a class="curso-media" href="curso-produccion-agricola-invernaderos-ovalle.html" aria-label="Ver curso Producción Agrícola en Invernaderos">
+                <img src="https://ddgdelvalle.cl/wp-content/uploads/2026/04/Riego-.webp" alt="Producción Agrícola en Invernaderos" loading="lazy">
+              </a>
+              <div class="curso-card-body">
+                <h3><a href="curso-produccion-agricola-invernaderos-ovalle.html" style="color:inherit;text-decoration:none;">Producción Agrícola en Invernaderos</a></h3>
+                <p>Diseño, operación y manejo de invernaderos para producción hortícola, medicinal y de almácigos durante todo el año.</p>
+                <div class="badges">
+                  <span class="badge" style="background:var(--primary); color:#fff; border-color:var(--primary);">Disponible</span>
+                  <span class="badge">32 hrs</span>
+                </div>
+                <div class="price">Presencial · Ovalle</div>
+                <a class="btn btn-info" href="curso-produccion-agricola-invernaderos-ovalle.html">Ver curso y cupos</a>
+              </div>
+            </article>
+
+            <article class="curso-card reveal-up" data-categoria="agro" data-estado="disponible" data-delay="60">
+              <a class="curso-media" href="curso-fruticultura-sostenible-huertos-frutales-ovalle.html" aria-label="Ver curso Fruticultura Sostenible">
+                <img src="https://ddgdelvalle.cl/wp-content/uploads/2026/04/Plaguicida-.webp" alt="Fruticultura Sostenible" loading="lazy">
+              </a>
+              <div class="curso-card-body">
+                <h3><a href="curso-fruticultura-sostenible-huertos-frutales-ovalle.html" style="color:inherit;text-decoration:none;">Fruticultura Sostenible</a></h3>
+                <p>Establecimiento y manejo de huertos frutales: poda, riego, nutrición, sanidad y cosecha con enfoque sostenible.</p>
+                <div class="badges">
+                  <span class="badge" style="background:var(--primary); color:#fff; border-color:var(--primary);">Disponible</span>
+                  <span class="badge">32 hrs</span>
+                </div>
+                <div class="price">Presencial · Ovalle</div>
+                <a class="btn btn-info" href="curso-fruticultura-sostenible-huertos-frutales-ovalle.html">Ver curso y cupos</a>
+              </div>
+            </article>
+
+            <article class="curso-card reveal-up" data-categoria="agro" data-estado="disponible" data-delay="300">
+              <a class="curso-media" href="curso-operacion-mantenimiento-maquinaria-agricola-ovalle.html" aria-label="Ver curso Operación y Mantención de Maquinaria Agrícola">
+                <img src="https://ddgdelvalle.cl/wp-content/uploads/2026/04/Mantencion-Maquinaria-.webp" alt="Operación y Mantención de Maquinaria Agrícola" loading="lazy">
+              </a>
+              <div class="curso-card-body">
+                <h3><a href="curso-operacion-mantenimiento-maquinaria-agricola-ovalle.html" style="color:inherit;text-decoration:none;">Operación y Mantención de Maquinaria Agrícola</a></h3>
+                <p>Operación segura, inspección y mantención preventiva de tractores e implementos agrícolas.</p>
+                <div class="badges">
+                  <span class="badge" style="background:var(--primary); color:#fff; border-color:var(--primary);">Disponible</span>
+                  <span class="badge">16 hrs</span>
+                </div>
+                <div class="price">Presencial · Ovalle</div>
+                <a class="btn btn-info" href="curso-operacion-mantenimiento-maquinaria-agricola-ovalle.html">Ver curso y cupos</a>
+              </div>
+            </article>
+
+            <article class="curso-card reveal-up" data-categoria="agro" data-estado="disponible" data-delay="90">
+              <a class="curso-media" href="curso-humus-lombricultura-biopreparados-ovalle.html" aria-label="Ver curso Humus, Lombricultura y Biopreparados">
+                <img src="https://ddgdelvalle.cl/wp-content/uploads/2026/04/Plaguicida-.webp" alt="Humus, Lombricultura y Biopreparados" loading="lazy">
+              </a>
+              <div class="curso-card-body">
+                <h3><a href="curso-humus-lombricultura-biopreparados-ovalle.html" style="color:inherit;text-decoration:none;">Humus, Lombricultura y Biopreparados</a></h3>
+                <p>Produce humus de lombriz y biopreparados agroecológicos para mejorar suelos y fortalecer cultivos.</p>
+                <div class="badges">
+                  <span class="badge" style="background:var(--primary); color:#fff; border-color:var(--primary);">Disponible</span>
+                  <span class="badge">16 hrs</span>
+                </div>
+                <div class="price">Presencial · Ovalle</div>
+                <a class="btn btn-info" href="curso-humus-lombricultura-biopreparados-ovalle.html">Ver curso y cupos</a>
+              </div>
+            </article>
+
+            <article class="curso-card reveal-up" data-categoria="agro" data-estado="disponible" data-delay="210">
+              <a class="curso-media" href="curso-mejoramiento-recuperacion-suelos-agricolas-ovalle.html" aria-label="Ver curso Mejoramiento y Recuperación de Suelos">
+                <img src="https://ddgdelvalle.cl/wp-content/uploads/2026/04/Riego-.webp" alt="Mejoramiento y Recuperación de Suelos" loading="lazy">
+              </a>
+              <div class="curso-card-body">
+                <h3><a href="curso-mejoramiento-recuperacion-suelos-agricolas-ovalle.html" style="color:inherit;text-decoration:none;">Mejoramiento y Recuperación de Suelos</a></h3>
+                <p>Diagnóstico, conservación y recuperación de suelos agrícolas para aumentar fertilidad y productividad.</p>
+                <div class="badges">
+                  <span class="badge" style="background:var(--primary); color:#fff; border-color:var(--primary);">Disponible</span>
+                  <span class="badge">16 hrs</span>
+                </div>
+                <div class="price">Presencial · Ovalle</div>
+                <a class="btn btn-info" href="curso-mejoramiento-recuperacion-suelos-agricolas-ovalle.html">Ver curso y cupos</a>
+              </div>
+            </article>
+
+            <article class="curso-card reveal-up" data-categoria="jardineria" data-estado="disponible" data-delay="150">
+              <a class="curso-media" href="curso-jardineria-mantenimiento-areas-verdes-ovalle.html" aria-label="Ver curso Jardinería y Áreas Verdes">
+                <img src="https://ddgdelvalle.cl/wp-content/uploads/2026/04/Riego-.webp" alt="Jardinería y Áreas Verdes" loading="lazy">
+              </a>
+              <div class="curso-card-body">
+                <h3><a href="curso-jardineria-mantenimiento-areas-verdes-ovalle.html" style="color:inherit;text-decoration:none;">Jardinería y Áreas Verdes</a></h3>
+                <p>Diseño, establecimiento y mantención de jardines y áreas verdes con técnicas profesionales y sostenibles.</p>
+                <div class="badges">
+                  <span class="badge" style="background:var(--primary); color:#fff; border-color:var(--primary);">Disponible</span>
+                  <span class="badge">16 hrs</span>
+                </div>
+                <div class="price">Presencial · Ovalle</div>
+                <a class="btn btn-info" href="curso-jardineria-mantenimiento-areas-verdes-ovalle.html">Ver curso y cupos</a>
+              </div>
+            </article>
+
+            <article class="curso-card reveal-up" data-categoria="agro" data-estado="disponible" data-delay="270">
+              <a class="curso-media" href="curso-topografia-aplicada-agricultura-ovalle.html" aria-label="Ver curso Topografía Aplicada a la Agricultura">
+                <img src="https://ddgdelvalle.cl/wp-content/uploads/2026/04/Riego-.webp" alt="Topografía Aplicada a la Agricultura" loading="lazy">
+              </a>
+              <div class="curso-card-body">
+                <h3><a href="curso-topografia-aplicada-agricultura-ovalle.html" style="color:inherit;text-decoration:none;">Topografía Aplicada a la Agricultura</a></h3>
+                <p>Medición, levantamiento topográfico y planificación de predios para riego, drenaje y conservación de suelos.</p>
+                <div class="badges">
+                  <span class="badge" style="background:var(--primary); color:#fff; border-color:var(--primary);">Disponible</span>
+                  <span class="badge">16 hrs</span>
+                </div>
+                <div class="price">Presencial · Ovalle</div>
+                <a class="btn btn-info" href="curso-topografia-aplicada-agricultura-ovalle.html">Ver curso y cupos</a>
+              </div>
+            </article>
+
+          </div>
+          <p class="curso-vacio" id="curso-vacio" hidden>No hay cursos que coincidan con tu búsqueda o filtro. Prueba otra categoría o limpia el buscador.</p>
+        </div>
+      </section>
+
+      <section id="huella-social" class="section huella-social">
+        <div class="container">
+          <h2 class="section-title">Nuestra Huella Social</h2>
+          <p class="section-sub">Entendemos la capacitación como una herramienta de impacto social y ambiental. Avanzamos hacia un modelo formativo sustentable.</p>
+          <div class="huella-grid">
+            <article class="huella-item reveal-up" data-delay="0">
+              <h3>Reducción de Emisiones</h3>
+              <p>Implementamos prácticas responsables para minimizar nuestro impacto ambiental y reducir nuestra huella de carbono.</p>
+            </article>
+            <article class="huella-item reveal-up" data-delay="120">
+              <h3>Cero Papel</h3>
+              <p>Apostamos por la innovación ecológica con procesos administrativos y formativos 100% digitales.</p>
+            </article>
+            <article class="huella-item reveal-up" data-delay="240">
+              <h3>Apoyo Comunitario</h3>
+              <p>Colaboramos activamente con instituciones educativas que trabajan con estudiantes con necesidades especiales.</p>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <section id="proceso" class="section proceso">
+        <div class="container">
+          <h2 class="section-title">¿Cómo funciona?</h2>
+          <p class="section-sub">Proceso simple y acompañado, con enfoque en aprendizaje real.</p>
+          <div class="pasos">
+            <div class="paso reveal-up" data-delay="0">
+              <div class="paso-number">1</div>
+              <h3>Elige modalidad</h3>
+              <p>Selecciona online o presencial según tu realidad. Te ayudamos a decidir si tienes dudas.</p>
+            </div>
+            <div class="paso reveal-up" data-delay="150">
+              <div class="paso-number">2</div>
+              <h3>Inscripción</h3>
+              <p>Registro y confirmación por el canal que prefieras (WhatsApp, correo o formulario).</p>
+            </div>
+            <div class="paso reveal-up" data-delay="300">
+              <div class="paso-number">3</div>
+              <h3>Acompañamiento</h3>
+              <p>Docentes y equipo de apoyo disponibles para que avances con seguridad y claridad.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section testimonios">
+        <div class="container">
+          <h2 class="section-title">Testimonios</h2>
+          <p class="section-sub">Historias de formación con acompañamiento cercano y pertinencia territorial en zonas rurales.</p>
+          <div class="testimonios-container">
+            <div class="testimonio">
+              <p>"Desde el primer día sentí un acompañamiento cercano. El contenido se conectó con nuestra realidad rural y eso marcó la diferencia."</p>
+              <div class="author">– Alumna/o</div>
+            </div>
+            <div class="testimonio">
+              <p>"Valoré mucho la pertinencia territorial: ejemplos claros de nuestra zona y apoyo constante para avanzar sin quedarme atrás."</p>
+              <div class="author">– Participante</div>
+            </div>
+            <div class="testimonio">
+              <p>"No fue una capacitación genérica. Fue práctica, humana y pensada para quienes vivimos y trabajamos en sectores rurales."</p>
+              <div class="author">– Alumna/o</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="faq" class="section">
+        <div class="container">
+          <h2 class="section-title">Preguntas frecuentes</h2>
+          <p class="section-sub">Respuestas rápidas para solicitar información o iniciar tu inscripción.</p>
+
+          <div class="faq-list" data-faq>
+            <div class="faq-item open">
+              <div class="faq-question" role="button" tabindex="0" aria-expanded="true">
+                ¿Los cursos son online y presenciales?
+                <span class="icon" aria-hidden="true">–</span>
+              </div>
+              <div class="faq-answer">Sí. Contamos con cursos online y también presenciales. La disponibilidad depende del programa y calendario.</div>
+            </div>
+
+            <div class="faq-item">
+              <div class="faq-question" role="button" tabindex="0" aria-expanded="false">
+                ¿Cómo solicito información o me inscribo?
+                <span class="icon" aria-hidden="true">+</span>
+              </div>
+              <div class="faq-answer">Usa el botón en el curso de tu interés y te contactamos para requisitos, fechas y valores.</div>
+            </div>
+
+            <div class="faq-item">
+              <div class="faq-question" role="button" tabindex="0" aria-expanded="false">
+                ¿Tienen acompañamiento durante el curso?
+                <span class="icon" aria-hidden="true">+</span>
+              </div>
+              <div class="faq-answer">Sí. Nuestro sello es la calidad humana y el acompañamiento docente para apoyar el aprendizaje de cada alumno/a.</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="asesoria" aria-label="Orientación inmediata">
+        <div class="container">
+          <div class="asesoria-badge">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+            Orientación sin compromiso
+          </div>
+          <h2>¿No estás seguro/a de<br>qué curso elegir?</h2>
+          <p>Cuéntanos tu situación y un asesor/a te orientará personalmente hacia el programa que mejor se adapte a tus objetivos y horarios.</p>
+          <a
+            class="btn btn-accent"
+            href="https://wa.me/56963163859?text=Hola%2C%20necesito%20asesor%C3%ADa%20para%20elegir%20el%20curso%20adecuado%20para%20m%C3%AD"
+            target="_blank"
+            rel="noopener"
+            aria-label="Hablar con un asesor por WhatsApp">
+            <svg class="wa-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" xmlns="http://www.w3.org/2000/svg">
+              <path d="M20.52 3.449C18.245 1.163 15.21 0 12.045 0 5.463 0 .104 5.357.1 11.938c-.001 2.103.549 4.153 1.593 5.963L0 24l6.304-1.654a11.935 11.935 0 0 0 5.737 1.461h.005c6.58 0 11.94-5.358 11.943-11.94a11.858 11.858 0 0 0-3.469-8.418zm-8.476 18.358h-.004a9.9 9.9 0 0 1-5.05-1.381l-.362-.215-3.754.984 1.002-3.657-.236-.375a9.875 9.875 0 0 1-1.514-5.27c.003-5.457 4.445-9.898 9.906-9.898a9.862 9.862 0 0 1 7.007 2.904 9.856 9.856 0 0 1 2.896 7.006c-.003 5.458-4.445 9.902-9.901 9.902zm5.432-7.41c-.298-.149-1.763-.869-2.036-.968-.273-.099-.472-.148-.671.15-.198.298-.769.968-.943 1.167-.173.198-.347.223-.645.074-.298-.149-1.259-.463-2.396-1.48-.886-.79-1.484-1.764-1.658-2.063-.173-.298-.018-.459.13-.607.133-.133.298-.347.447-.521.149-.173.198-.298.298-.496.099-.199.05-.373-.025-.521-.075-.149-.671-1.617-.92-2.213-.242-.582-.488-.502-.671-.512l-.572-.01a1.097 1.097 0 0 0-.795.372c-.273.298-1.043 1.019-1.043 2.487s1.068 2.884 1.217 3.082c.149.198 2.101 3.206 5.091 4.494.712.307 1.267.49 1.7.628.714.227 1.365.195 1.879.118.573-.085 1.763-.721 2.011-1.417.248-.695.248-1.291.173-1.416-.074-.124-.272-.198-.571-.347z"/>
+            </svg>
+            Hablar con un asesor
+          </a>
+        </div>
+      </section>
+      </main>
+
+    <footer>
+      <div class="container footer-inner">
+        <div>
+          <div style="display:flex;align-items:center;gap:10px;">
+            <img src="https://ddgdelvalle.cl/wp-content/uploads/2026/03/icono-ddg.png" alt="" width="22" height="22" style="object-fit:contain;" loading="lazy">
+            <strong style="color:#fff; font-family:Montserrat, Inter;">DDG Del Valle</strong>
+          </div>
+          <div class="small" style="margin-top:6px;">Curso y capacitación – Región de Coquimbo</div>
+          <div class="small" style="margin-top:8px;">© 2026 DDG Del Valle. Todos los derechos reservados.</div>
+        </div>
+
+        <div>
+          <div class="small">Para inscripciones y consultas:</div>
+          <div class="small" style="margin-top:6px;">Teléfono / WhatsApp: <a href="tel:+56963163859" style="color:#fff; text-decoration: none; font-weight: bold;">+56 9 6316 3859</a></div>
+          <div class="small">Email: <a href="mailto:contacto@ddgdelvalle.cl" style="color:#fff; text-decoration: none; font-weight: bold;">contacto@ddgdelvalle.cl</a></div>
+
+          <div class="footer-links">
+            <a href="#">Política de privacidad</a>
+            <a href="#">Términos y condiciones</a>
+          </div>
+        </div>
+      </div>
+    </footer>
+  </div> <script>
+    (function(){
+      /* ─── Mobile menu ─── */
+      const menuBtn = document.querySelector('[data-menu-btn]');
+      const mobileNav = document.querySelector('[data-mobile-nav]');
+      if(menuBtn && mobileNav){
+        menuBtn.addEventListener('click', () => {
+          const isOpen = mobileNav.style.display === 'block';
+          mobileNav.style.display = isOpen ? 'none' : 'block';
+        });
+      }
+
+      /* ─── FAQ accordion ─── */
+      const faq = document.querySelector('[data-faq]');
+      if(faq){
+        const items = Array.from(faq.querySelectorAll('.faq-item'));
+        const setItem = (item, open) => {
+          const q = item.querySelector('.faq-question');
+          const icon = item.querySelector('.faq-question .icon');
+          item.classList.toggle('open', open);
+          if(q) q.setAttribute('aria-expanded', open ? 'true' : 'false');
+          if(icon) icon.textContent = open ? '–' : '+';
+        };
+        const closeAll = () => items.forEach(i => setItem(i, false));
+
+        items.forEach(item => {
+          const q = item.querySelector('.faq-question');
+          if(!q) return;
+          const toggle = () => {
+            const isOpen = item.classList.contains('open');
+            closeAll();
+            setItem(item, !isOpen);
+          };
+          q.addEventListener('click', toggle);
+          q.addEventListener('keydown', (e) => {
+            if(e.key === 'Enter' || e.key === ' '){
+              e.preventDefault();
+              toggle();
+            }
+          });
+        });
+      }
+
+      /* ─── Reveal on scroll (IntersectionObserver) ─── */
+      const revealEls = document.querySelectorAll('.ddg-page .reveal-up');
+
+      if(!revealEls.length) return;
+
+      /* Fallback gracioso si el browser no soporta IO */
+      if(!('IntersectionObserver' in window)){
+        revealEls.forEach(el => {
+          el.style.opacity = '1';
+          el.style.transform = 'none';
+        });
+        return;
+      }
+
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if(entry.isIntersecting){
+            const el = entry.target;
+            const delay = parseInt(el.dataset.delay || '0', 10);
+            setTimeout(() => el.classList.add('is-visible'), delay);
+            observer.unobserve(el);
+          }
+        });
+      }, {
+        threshold: 0.10,
+        rootMargin: '0px 0px -40px 0px'
+      });
+
+      revealEls.forEach(el => observer.observe(el));
+
+      /* ─── Buscador y filtros de cursos ─── */
+      const buscarCurso = document.getElementById('buscar-curso');
+      const cursoCards = document.querySelectorAll('[data-curso-grid] .curso-card');
+      const filtroBtns = document.querySelectorAll('[data-curso-filtros] .filtro-btn');
+      const cursoContador = document.getElementById('curso-contador');
+      const cursoVacio = document.getElementById('curso-vacio');
+      let filtroActivo = 'todos';
+
+      const filtrarCursos = () => {
+        if(!cursoCards.length) return;
+
+        const term = buscarCurso ? buscarCurso.value.trim().toLowerCase() : '';
+        let visibles = 0;
+
+        cursoCards.forEach(card => {
+          const titulo = card.querySelector('h3');
+          const descripcion = card.querySelector('p');
+          const texto = (
+            (titulo ? titulo.textContent : '') + ' ' +
+            (descripcion ? descripcion.textContent : '')
+          ).toLowerCase();
+
+          const coincideTexto = !term || texto.includes(term);
+          const estado = card.dataset.estado || '';
+          const categoria = card.dataset.categoria || '';
+          let coincideFiltro = true;
+
+          if(filtroActivo === 'disponible' || filtroActivo === 'proximamente'){
+            coincideFiltro = estado === filtroActivo;
+          } else if(filtroActivo !== 'todos'){
+            coincideFiltro = categoria === filtroActivo;
+          }
+
+          const mostrar = coincideTexto && coincideFiltro;
+          card.style.display = mostrar ? '' : 'none';
+          if(mostrar) visibles++;
+        });
+
+        if(cursoContador){
+          cursoContador.textContent = visibles === 1
+            ? '1 curso encontrado'
+            : visibles + ' cursos encontrados';
+        }
+        if(cursoVacio){
+          cursoVacio.hidden = visibles > 0;
+        }
+      };
+
+      if(filtroBtns.length){
+        filtroBtns.forEach(btn => {
+          btn.addEventListener('click', () => {
+            filtroActivo = btn.dataset.filtro || 'todos';
+            filtroBtns.forEach(b => b.classList.toggle('is-active', b === btn));
+            filtrarCursos();
+          });
+        });
+      }
+
+      if(buscarCurso){
+        buscarCurso.addEventListener('input', filtrarCursos);
+      }
+
+      filtrarCursos();
+    })();
+  </script>
+</body>
+</html>

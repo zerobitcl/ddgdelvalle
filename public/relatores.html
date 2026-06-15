@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="es-CL">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DDG del Valle · Panel de Relatores</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,300;0,14..32,400;0,14..32,500;0,14..32,600;0,14..32,700;1,14..32,400&display=swap" rel="stylesheet">
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: { sans: ['Inter', 'ui-sans-serif', 'system-ui'] },
+          colors: {
+            brand: { 50:'#eef2ff', 100:'#e0e7ff', 200:'#c7d2fe', 500:'#6366f1', 600:'#4f46e5', 700:'#4338ca', 800:'#3730a3' }
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    * { box-sizing: border-box; }
+    body { font-family: 'Inter', ui-sans-serif, system-ui; }
+
+    /* Scrollbar minimalista */
+    ::-webkit-scrollbar { width: 5px; height: 5px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+    ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+
+    /* Focus ring global */
+    input:focus-visible, select:focus-visible, textarea:focus-visible, button:focus-visible {
+      outline: 2px solid #6366f1;
+      outline-offset: 2px;
+    }
+
+    /* Animación fade para modales */
+    .modal-enter { animation: fadeIn 0.18s ease-out; }
+    @keyframes fadeIn { from { opacity: 0; transform: scale(.97); } to { opacity: 1; transform: scale(1); } }
+
+    /* Hover fila tabla */
+    tbody tr:hover td { background-color: #f8fafc; }
+
+    /* Input base */
+    .field {
+      width: 100%;
+      padding: 0.5rem 0.75rem;
+      font-size: 0.875rem;
+      border: 1px solid #e2e8f0;
+      border-radius: 0.5rem;
+      background: white;
+      color: #1e293b;
+      transition: border-color 0.15s, box-shadow 0.15s;
+    }
+    .field:focus { border-color: #6366f1; box-shadow: 0 0 0 3px rgba(99,102,241,0.12); outline: none; }
+    .field::placeholder { color: #94a3b8; }
+  </style>
+</head>
+
+<body class="bg-slate-50 text-slate-800 antialiased">
+
+  <!-- ╔══════════════════════════════╗ -->
+  <!-- ║         LOGIN SCREEN         ║ -->
+  <!-- ╚══════════════════════════════╝ -->
+  <div id="loginScreen" class="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-900 via-slate-800 to-brand-800 p-4">
+    <div class="w-full max-w-[400px]">
+
+      <!-- Marca -->
+      <div class="text-center mb-8">
+        <div class="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-white/10 backdrop-blur-sm border border-white/10 mb-4">
+          <!-- Graduation cap SVG inline -->
+          <svg class="w-7 h-7 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M22 10v6M2 10l10-5 10 5-10 5-10-5z"/>
+            <path d="M6 12v5c3.333 2 8.667 2 12 0v-5"/>
+          </svg>
+        </div>
+        <h1 class="text-xl font-semibold text-white tracking-tight">DDG del Valle</h1>
+        <p class="text-slate-400 text-sm mt-1 font-light">Organismo Técnico de Capacitación</p>
+      </div>
+
+      <!-- Card -->
+      <div class="bg-white rounded-2xl shadow-2xl shadow-slate-900/30 p-8">
+        <h2 class="text-base font-semibold text-slate-800 mb-0.5">Iniciar sesión</h2>
+        <p class="text-slate-400 text-xs mb-6">Panel de Gestión de Relatores</p>
+
+        <div class="space-y-4">
+          <div>
+            <label class="block text-xs font-medium text-slate-600 mb-1.5" for="loginUser">Usuario</label>
+            <input id="loginUser" type="text" placeholder="Ingresa tu usuario" class="field" autocomplete="username">
+          </div>
+          <div>
+            <label class="block text-xs font-medium text-slate-600 mb-1.5" for="loginPass">Contraseña</label>
+            <input id="loginPass" type="password" placeholder="••••••••" class="field" autocomplete="current-password">
+          </div>
+
+          <div id="loginError" class="hidden flex items-center gap-2 text-red-600 text-xs bg-red-50 border border-red-100 rounded-lg px-3 py-2.5">
+            <svg class="w-3.5 h-3.5 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
+            </svg>
+            Credenciales incorrectas. Usa <strong class="font-semibold ml-0.5">admin / admin</strong>
+          </div>
+
+          <button id="loginBtn" onclick="handleLogin()"
+            class="w-full bg-brand-600 hover:bg-brand-700 active:bg-brand-800 text-white font-medium py-2.5 rounded-lg text-sm transition-colors mt-1 flex items-center justify-center gap-2">
+            Ingresar al sistema
+          </button>
+        </div>
+
+        <p class="text-center text-slate-300 text-xs mt-6">
+          Demo:
+          <span class="font-mono bg-slate-100 text-slate-600 px-1.5 py-0.5 rounded mx-0.5">admin</span>
+          /
+          <span class="font-mono bg-slate-100 text-slate-600 px-1.5 py-0.5 rounded mx-0.5">admin</span>
+        </p>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ╔══════════════════════════════╗ -->
+  <!-- ║          DASHBOARD           ║ -->
+  <!-- ╚══════════════════════════════╝ -->
+  <div id="dashboard" class="hidden min-h-screen flex flex-col">
+
+    <!-- ── Header ── -->
+    <header class="bg-white border-b border-slate-200/80 sticky top-0 z-30">
+      <div class="max-w-[1600px] mx-auto px-6 h-14 flex items-center justify-between">
+        <!-- Logo -->
+        <div class="flex items-center gap-2.5">
+          <div class="w-7 h-7 rounded-lg bg-brand-600 flex items-center justify-center shrink-0">
+            <svg class="w-3.5 h-3.5 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M22 10v6M2 10l10-5 10 5-10 5-10-5z"/><path d="M6 12v5c3.333 2 8.667 2 12 0v-5"/>
+            </svg>
+          </div>
+          <div class="leading-none">
+            <p class="text-sm font-semibold text-slate-800 leading-none">DDG del Valle</p>
+            <p class="text-[10px] text-slate-400 leading-none mt-0.5">Panel OTEC</p>
+          </div>
+        </div>
+
+        <!-- Right: user + logout -->
+        <div class="flex items-center gap-4">
+          <div class="text-right hidden sm:block">
+            <p class="text-xs font-medium text-slate-700">Administrador</p>
+            <p class="text-[10px] text-slate-400" id="currentDate"></p>
+          </div>
+          <button onclick="handleLogout()" title="Cerrar sesión"
+            class="flex items-center gap-1.5 text-xs text-slate-500 hover:text-slate-800 border border-slate-200 hover:border-slate-300 px-2.5 py-1.5 rounded-lg transition-all">
+            <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/>
+            </svg>
+            Salir
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <!-- ── Main ── -->
+    <main class="flex-1 max-w-[1600px] mx-auto w-full px-6 py-8">
+
+      <!-- Page title -->
+      <div class="mb-6">
+        <h2 class="text-lg font-semibold text-slate-800 leading-none">Panel de Relatores</h2>
+        <p class="text-slate-400 text-sm mt-1.5">Gestión del registro certificado de relatores OTEC</p>
+      </div>
+
+      <!-- ── Stats ── -->
+      <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-6">
+        <div class="bg-white border border-slate-200/80 rounded-xl p-4 flex flex-col gap-1.5">
+          <p class="text-[10px] font-semibold text-slate-400 uppercase tracking-widest">Total</p>
+          <p class="text-2xl font-semibold text-slate-800 tabular-nums leading-none" id="statTotal">0</p>
+          <p class="text-[10px] text-slate-400">relatores</p>
+        </div>
+        <div class="bg-white border border-slate-200/80 rounded-xl p-4 flex flex-col gap-1.5">
+          <p class="text-[10px] font-semibold text-slate-400 uppercase tracking-widest">Activos</p>
+          <p class="text-2xl font-semibold text-emerald-600 tabular-nums leading-none" id="statActivos">0</p>
+          <p class="text-[10px] text-slate-400">en vigencia</p>
+        </div>
+        <div class="bg-white border border-slate-200/80 rounded-xl p-4 flex flex-col gap-1.5">
+          <p class="text-[10px] font-semibold text-slate-400 uppercase tracking-widest">Pendientes</p>
+          <p class="text-2xl font-semibold text-amber-500 tabular-nums leading-none" id="statPendientes">0</p>
+          <p class="text-[10px] text-slate-400">por verificar</p>
+        </div>
+        <div class="bg-white border border-slate-200/80 rounded-xl p-4 flex flex-col gap-1.5">
+          <p class="text-[10px] font-semibold text-slate-400 uppercase tracking-widest">Inactivos</p>
+          <p class="text-2xl font-semibold text-slate-400 tabular-nums leading-none" id="statInactivos">0</p>
+          <p class="text-[10px] text-slate-400">sin vigencia</p>
+        </div>
+      </div>
+
+      <!-- ── Table Card ── -->
+      <div class="bg-white border border-slate-200/80 rounded-xl overflow-hidden shadow-sm shadow-slate-100">
+
+        <!-- Toolbar -->
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 px-5 py-4 border-b border-slate-100">
+          <!-- Search -->
+          <div class="relative">
+            <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-slate-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+            </svg>
+            <input id="searchInput" type="text" placeholder="Buscar por nombre, RUT o curso…" oninput="filterTable()"
+              class="field pl-8 w-full sm:w-72 text-xs py-2">
+          </div>
+          <!-- Add button -->
+          <button onclick="openAddModal()"
+            class="inline-flex items-center justify-center gap-2 bg-brand-600 hover:bg-brand-700 active:bg-brand-800 text-white text-xs font-medium px-4 py-2 rounded-lg transition-colors shrink-0">
+            <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
+            </svg>
+            Agregar Relator
+          </button>
+        </div>
+
+        <!-- Table wrapper -->
+        <div class="overflow-x-auto">
+          <table class="w-full text-sm border-collapse">
+            <thead>
+              <tr class="border-b border-slate-100 bg-slate-50/70">
+                <th class="px-4 py-3 text-left text-[10px] font-semibold text-slate-400 uppercase tracking-widest whitespace-nowrap">Curso / Taller</th>
+                <th class="px-4 py-3 text-left text-[10px] font-semibold text-slate-400 uppercase tracking-widest whitespace-nowrap">Nombre Completo</th>
+                <th class="px-4 py-3 text-left text-[10px] font-semibold text-slate-400 uppercase tracking-widest whitespace-nowrap">RUT</th>
+                <th class="px-4 py-3 text-left text-[10px] font-semibold text-slate-400 uppercase tracking-widest whitespace-nowrap">Profesión</th>
+                <th class="px-4 py-3 text-left text-[10px] font-semibold text-slate-400 uppercase tracking-widest whitespace-nowrap">Correo</th>
+                <th class="px-4 py-3 text-left text-[10px] font-semibold text-slate-400 uppercase tracking-widest whitespace-nowrap">Vigencia</th>
+                <th class="px-4 py-3 text-left text-[10px] font-semibold text-slate-400 uppercase tracking-widest whitespace-nowrap">Carpeta</th>
+                <th class="px-4 py-3 text-left text-[10px] font-semibold text-slate-400 uppercase tracking-widest whitespace-nowrap">Transferencia</th>
+                <th class="px-4 py-3 text-left text-[10px] font-semibold text-slate-400 uppercase tracking-widest whitespace-nowrap">Teléfono</th>
+                <th class="px-4 py-3 text-left text-[10px] font-semibold text-slate-400 uppercase tracking-widest whitespace-nowrap">Acciones</th>
+              </tr>
+            </thead>
+            <tbody id="tableBody"></tbody>
+          </table>
+        </div>
+
+        <!-- Empty state -->
+        <div id="emptyState" class="hidden py-20 text-center">
+          <div class="inline-flex items-center justify-center w-12 h-12 rounded-full bg-slate-100 mb-4">
+            <svg class="w-5 h-5 text-slate-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+            </svg>
+          </div>
+          <p class="text-sm font-medium text-slate-500">Sin resultados</p>
+          <p class="text-xs text-slate-400 mt-1">Intenta con otro término de búsqueda</p>
+        </div>
+
+        <!-- Footer table -->
+        <div class="px-5 py-3 border-t border-slate-100 flex items-center justify-between">
+          <p class="text-xs text-slate-400" id="tableCount">— relatores</p>
+          <p class="text-xs text-slate-300">DDG del Valle · OTEC</p>
+        </div>
+      </div>
+    </main>
+  </div>
+
+
+  <!-- ╔══════════════════════════════╗ -->
+  <!-- ║     MODAL: ADD / EDIT        ║ -->
+  <!-- ╚══════════════════════════════╝ -->
+  <div id="formModal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-sm">
+    <div class="modal-enter bg-white rounded-2xl shadow-2xl w-full max-w-2xl max-h-[92vh] flex flex-col">
+
+      <!-- Modal header -->
+      <div class="flex items-center justify-between px-6 py-4 border-b border-slate-100 shrink-0">
+        <h3 class="text-sm font-semibold text-slate-800" id="modalTitle">Agregar Relator</h3>
+        <button onclick="closeFormModal()" class="w-7 h-7 flex items-center justify-center rounded-lg text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition-all">
+          <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+          </svg>
+        </button>
+      </div>
+
+      <!-- Modal body (scrollable) -->
+      <div class="overflow-y-auto flex-1 px-6 py-5">
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+
+          <div class="sm:col-span-2">
+            <label class="block text-xs font-medium text-slate-600 mb-1.5">Curso / Taller <span class="text-red-400">*</span></label>
+            <input id="fCurso" type="text" placeholder="Ej: Primeros Auxilios" class="field">
+          </div>
+
+          <div>
+            <label class="block text-xs font-medium text-slate-600 mb-1.5">Nombre Completo <span class="text-red-400">*</span></label>
+            <input id="fNombre" type="text" placeholder="Nombre y apellidos" class="field">
+          </div>
+
+          <div>
+            <label class="block text-xs font-medium text-slate-600 mb-1.5">RUT <span class="text-red-400">*</span></label>
+            <input id="fRut" type="text" placeholder="12.345.678-9" class="field">
+          </div>
+
+          <div>
+            <label class="block text-xs font-medium text-slate-600 mb-1.5">Carrera / Profesión</label>
+            <input id="fCarrera" type="text" placeholder="Ej: Ingeniería en Prevención" class="field">
+          </div>
+
+          <div>
+            <label class="block text-xs font-medium text-slate-600 mb-1.5">Correo Electrónico</label>
+            <input id="fCorreo" type="email" placeholder="correo@ejemplo.com" class="field">
+          </div>
+
+          <div>
+            <label class="block text-xs font-medium text-slate-600 mb-1.5">Teléfono</label>
+            <input id="fTelefono" type="text" placeholder="+56 9 1234 5678" class="field">
+          </div>
+
+          <div>
+            <label class="block text-xs font-medium text-slate-600 mb-1.5">Vigencia</label>
+            <select id="fVigencia" class="field appearance-none bg-no-repeat bg-[right_0.7rem_center] pr-8"
+              style="background-image:url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%2394a3b8' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E\")">
+              <option value="Activo">Activo</option>
+              <option value="Inactivo">Inactivo</option>
+              <option value="Pendiente">Pendiente</option>
+            </select>
+          </div>
+
+          <div class="sm:col-span-2">
+            <label class="block text-xs font-medium text-slate-600 mb-1.5">Enlace Carpeta Digital</label>
+            <input id="fCarpeta" type="url" placeholder="https://drive.google.com/…" class="field">
+          </div>
+
+          <!-- Separador transferencia -->
+          <div class="sm:col-span-2 pt-2">
+            <div class="flex items-center gap-3">
+              <div class="flex-1 h-px bg-slate-100"></div>
+              <p class="text-[10px] font-semibold text-slate-400 uppercase tracking-widest shrink-0">Datos de Transferencia</p>
+              <div class="flex-1 h-px bg-slate-100"></div>
+            </div>
+          </div>
+
+          <div>
+            <label class="block text-xs font-medium text-slate-600 mb-1.5">Banco</label>
+            <input id="fBanco" type="text" placeholder="Ej: BancoEstado" class="field">
+          </div>
+
+          <div>
+            <label class="block text-xs font-medium text-slate-600 mb-1.5">Tipo de Cuenta</label>
+            <select id="fTipoCuenta" class="field appearance-none bg-no-repeat bg-[right_0.7rem_center] pr-8"
+              style="background-image:url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%2394a3b8' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E\")">
+              <option>Cuenta Corriente</option>
+              <option>Cuenta Vista</option>
+              <option>Cuenta de Ahorro</option>
+              <option>Cuenta RUT</option>
+            </select>
+          </div>
+
+          <div>
+            <label class="block text-xs font-medium text-slate-600 mb-1.5">N° de Cuenta</label>
+            <input id="fNumeroCuenta" type="text" placeholder="00-123-45678-9" class="field">
+          </div>
+
+          <div>
+            <label class="block text-xs font-medium text-slate-600 mb-1.5">Correo para transferencia</label>
+            <input id="fCorreoTransf" type="email" placeholder="pagos@ejemplo.com" class="field">
+          </div>
+        </div>
+
+        <!-- Error message -->
+        <div id="formError" class="hidden mt-4 flex items-center gap-2 text-red-600 text-xs bg-red-50 border border-red-100 rounded-lg px-3 py-2.5">
+          <svg class="w-3.5 h-3.5 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
+          </svg>
+          <span id="formErrorMsg"></span>
+        </div>
+      </div>
+
+      <!-- Modal footer -->
+      <div class="flex items-center justify-end gap-2.5 px-6 py-4 border-t border-slate-100 shrink-0">
+        <button onclick="closeFormModal()"
+          class="px-4 py-2 text-xs font-medium text-slate-600 hover:text-slate-800 border border-slate-200 hover:border-slate-300 rounded-lg transition-all">
+          Cancelar
+        </button>
+        <button onclick="saveRelator()"
+          class="px-5 py-2 bg-brand-600 hover:bg-brand-700 text-white text-xs font-medium rounded-lg transition-colors">
+          Guardar Relator
+        </button>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ╔══════════════════════════════╗ -->
+  <!-- ║    MODAL: TRANSFERENCIA      ║ -->
+  <!-- ╚══════════════════════════════╝ -->
+  <div id="transferModal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-sm">
+    <div class="modal-enter bg-white rounded-2xl shadow-2xl w-full max-w-sm">
+
+      <div class="flex items-center justify-between px-5 py-4 border-b border-slate-100">
+        <div class="flex items-center gap-2.5">
+          <div class="w-7 h-7 rounded-lg bg-emerald-50 border border-emerald-100 flex items-center justify-center">
+            <svg class="w-3.5 h-3.5 text-emerald-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/>
+            </svg>
+          </div>
+          <h3 class="text-sm font-semibold text-slate-800">Datos de Transferencia</h3>
+        </div>
+        <button onclick="closeTransferModal()" class="w-7 h-7 flex items-center justify-center rounded-lg text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition-all">
+          <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+          </svg>
+        </button>
+      </div>
+
+      <div class="px-5 py-4 space-y-0.5" id="transferContent">
+        <!-- JS rendered -->
+      </div>
+
+      <div class="px-5 pb-5 pt-3">
+        <button onclick="closeTransferModal()"
+          class="w-full text-xs font-medium text-slate-600 border border-slate-200 hover:bg-slate-50 py-2 rounded-lg transition-colors">
+          Cerrar
+        </button>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ╔══════════════════════════════╗ -->
+  <!-- ║    MODAL: CONFIRM DELETE     ║ -->
+  <!-- ╚══════════════════════════════╝ -->
+  <div id="deleteModal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-sm">
+    <div class="modal-enter bg-white rounded-2xl shadow-2xl w-full max-w-sm p-6 text-center">
+      <div class="w-12 h-12 bg-red-50 border border-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
+        <svg class="w-5 h-5 text-red-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 011-1h4a1 1 0 011 1v2"/>
+        </svg>
+      </div>
+      <h3 class="text-sm font-semibold text-slate-800 mb-1">¿Eliminar relator?</h3>
+      <p class="text-xs text-slate-400 mb-5 leading-relaxed">Esta acción es permanente y no se puede deshacer. El relator será removido del sistema.</p>
+      <div class="flex items-center gap-2.5">
+        <button onclick="closeDeleteModal()"
+          class="flex-1 text-xs font-medium text-slate-600 border border-slate-200 hover:bg-slate-50 py-2 rounded-lg transition-colors">
+          Cancelar
+        </button>
+        <button onclick="confirmDelete()"
+          class="flex-1 text-xs font-medium bg-red-500 hover:bg-red-600 text-white py-2 rounded-lg transition-colors">
+          Eliminar
+        </button>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ╔══════════════════════════════╗ -->
+  <!-- ║     TOAST NOTIFICATION       ║ -->
+  <!-- ╚══════════════════════════════╝ -->
+  <div id="toast" class="hidden fixed bottom-6 right-6 z-50">
+    <div class="flex items-center gap-2.5 bg-slate-800 text-white px-4 py-3 rounded-xl shadow-xl shadow-slate-900/20 text-xs font-medium">
+      <div id="toastIcon" class="shrink-0">
+        <!-- dynamically filled -->
+      </div>
+      <span id="toastMsg">Operación completada</span>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
