@@ -1,0 +1,1710 @@
+[
+    {
+        "id": "821d4caaab5729aa",
+        "recibido_en": "2026-06-22T15:34:40+00:00",
+        "ip_hash": "2736fa65a5bb5e9e95977fb273e31f7a5f16500cc48bd9b7a39da04988c16de4",
+        "user_agent": "Mozilla\/5.0 (Linux; Android 10; K) AppleWebKit\/537.36 (KHTML, like Gecko) Chrome\/149.0.0.0 Mobile Safari\/537.36",
+        "cliente": {
+            "timestamp": "2026-06-22T15:34:39.462Z",
+            "promedioGlobal": 5
+        },
+        "secciones": {
+            "I": {
+                "seccion": "Programa de Capacitación",
+                "preguntas": {
+                    "q1": {
+                        "numero": 1,
+                        "pregunta": "Profundidad de los contenidos tratados.",
+                        "valor": 5,
+                        "etiqueta": "Excelente"
+                    },
+                    "q2": {
+                        "numero": 2,
+                        "pregunta": "Actualización de los temas tratados en el curso.",
+                        "valor": 5,
+                        "etiqueta": "Excelente"
+                    },
+                    "q3": {
+                        "numero": 3,
+                        "pregunta": "Tiempo asignado para el curso.",
+                        "valor": 5,
+                        "etiqueta": "Excelente"
+                    },
+                    "q4": {
+                        "numero": 4,
+                        "pregunta": "Utilidad de los contenidos tratados.",
+                        "valor": 5,
+                        "etiqueta": "Excelente"
+                    },
+                    "q5": {
+                        "numero": 5,
+                        "pregunta": "El taller cumplió con mis expectativas.",
+                        "valor": 5,
+                        "etiqueta": "Excelente"
+                    }
+                },
+                "promedio": 5,
+                "etiquetaPromedio": "Excelente"
+            },
+            "II": {
+                "seccion": "Organización de la Actividad",
+                "preguntas": {
+                    "q6": {
+                        "numero": 6,
+                        "pregunta": "Medios y recursos de apoyo al proceso de aprendizaje (data show, retroproyector, etc.).",
+                        "valor": 5,
+                        "etiqueta": "Excelente"
+                    },
+                    "q7": {
+                        "numero": 7,
+                        "pregunta": "Calidad del material de apoyo (apuntes, guías u otro).",
+                        "valor": 5,
+                        "etiqueta": "Excelente"
+                    },
+                    "q8": {
+                        "numero": 8,
+                        "pregunta": "Atención brindada por el personal de nuestra organización.",
+                        "valor": 5,
+                        "etiqueta": "Excelente"
+                    },
+                    "q9": {
+                        "numero": 9,
+                        "pregunta": "Cantidad de alumnos por curso.",
+                        "valor": 5,
+                        "etiqueta": "Excelente"
+                    }
+                },
+                "promedio": 5,
+                "etiquetaPromedio": "Excelente"
+            },
+            "III": {
+                "seccion": "Relator N° 1",
+                "preguntas": {
+                    "q10": {
+                        "numero": 10,
+                        "pregunta": "El relator demuestra dominio de los contenidos.",
+                        "valor": 5,
+                        "etiqueta": "Excelente"
+                    },
+                    "q11": {
+                        "numero": 11,
+                        "pregunta": "El relator comienza y termina la clase en los horarios establecidos.",
+                        "valor": 5,
+                        "etiqueta": "Excelente"
+                    },
+                    "q12": {
+                        "numero": 12,
+                        "pregunta": "La presentación personal es adecuada.",
+                        "valor": 5,
+                        "etiqueta": "Excelente"
+                    },
+                    "q13": {
+                        "numero": 13,
+                        "pregunta": "El relator mantiene la atención del curso.",
+                        "valor": 5,
+                        "etiqueta": "Excelente"
+                    },
+                    "q14": {
+                        "numero": 14,
+                        "pregunta": "El relator crea condiciones para que el alumno consulte y responde adecuadamente a dichas preguntas.",
+                        "valor": 5,
+                        "etiqueta": "Excelente"
+                    },
+                    "q15": {
+                        "numero": 15,
+                        "pregunta": "El relator utiliza metodologías participativas.",
+                        "valor": 5,
+                        "etiqueta": "Excelente"
+                    },
+                    "q16": {
+                        "numero": 16,
+                        "pregunta": "El relator usa un lenguaje técnico y académico en las clases.",
+                        "valor": 5,
+                        "etiqueta": "Excelente"
+                    },
+                    "q17": {
+                        "numero": 17,
+                        "pregunta": "Las clases son amenas y dinámicas.",
+                        "valor": 5,
+                        "etiqueta": "Excelente"
+                    },
+                    "q18": {
+                        "numero": 18,
+                        "pregunta": "Las clases denotan planificación y preocupación por parte del relator.",
+                        "valor": 5,
+                        "etiqueta": "Excelente"
+                    },
+                    "q19": {
+                        "numero": 19,
+                        "pregunta": "Se encuentra satisfecho como para tomar otro curso con el mismo relator.",
+                        "valor": 5,
+                        "etiqueta": "Excelente"
+                    }
+                },
+                "promedio": 5,
+                "etiquetaPromedio": "Excelente"
+            }
+        },
+        "comentarios": "Muy buen curso"
+    },
+    {
+        "id": "35ab20b31be3fb3f",
+        "recibido_en": "2026-06-22T17:01:56+00:00",
+        "ip_hash": "3b195b9ac25679dd2647e169e0e8930defad23794319b92c17c3222fddc4486a",
+        "user_agent": "Mozilla\/5.0 (Linux; Android 10; K) AppleWebKit\/537.36 (KHTML, like Gecko) Chrome\/149.0.0.0 Mobile Safari\/537.36",
+        "cliente": {
+            "timestamp": "2026-06-22T17:01:56.381Z",
+            "promedioGlobal": 5
+        },
+        "secciones": {
+            "I": {
+                "seccion": "Programa de Capacitación",
+                "preguntas": {
+                    "q1": {
+                        "numero": 1,
+                        "pregunta": "Profundidad de los contenidos tratados.",
+                        "valor": 5,
+                        "etiqueta": "Excelente"
+                    },
+                    "q2": {
+                        "numero": 2,
+                        "pregunta": "Actualización de los temas tratados en el curso.",
+                        "valor": 5,
+                        "etiqueta": "Excelente"
+                    },
+                    "q3": {
+                        "numero": 3,
+                        "pregunta": "Tiempo asignado para el curso.",
+                        "valor": 5,
+                        "etiqueta": "Excelente"
+                    },
+                    "q4": {
+                        "numero": 4,
+                        "pregunta": "Utilidad de los contenidos tratados.",
+                        "valor": 5,
+                        "etiqueta": "Excelente"
+                    },
+                    "q5": {
+                        "numero": 5,
+                        "pregunta": "El taller cumplió con mis expectativas.",
+                        "valor": 5,
+                        "etiqueta": "Excelente"
+                    }
+                },
+                "promedio": 5,
+                "etiquetaPromedio": "Excelente"
+            },
+            "II": {
+                "seccion": "Organización de la Actividad",
+                "preguntas": {
+                    "q6": {
+                        "numero": 6,
+                        "pregunta": "Medios y recursos de apoyo al proceso de aprendizaje (data show, retroproyector, etc.).",
+                        "valor": 5,
+                        "etiqueta": "Excelente"
+                    },
+                    "q7": {
+                        "numero": 7,
+                        "pregunta": "Calidad del material de apoyo (apuntes, guías u otro).",
+                        "valor": 5,
+                        "etiqueta": "Excelente"
+                    },
+                    "q8": {
+                        "numero": 8,
+                        "pregunta": "Atención brindada por el personal de nuestra organización.",
+                        "valor": 5,
+                        "etiqueta": "Excelente"
+                    },
+                    "q9": {
+                        "numero": 9,
+                        "pregunta": "Cantidad de alumnos por curso.",
+                        "valor": 5,
+                        "etiqueta": "Excelente"
+                    }
+                },
+                "promedio": 5,
+                "etiquetaPromedio": "Excelente"
+            },
+            "III": {
+                "seccion": "Relator N° 1",
+                "preguntas": {
+                    "q10": {
+                        "numero": 10,
+                        "pregunta": "El relator demuestra dominio de los contenidos.",
+                        "valor": 5,
+                        "etiqueta": "Excelente"
+                    },
+                    "q11": {
+                        "numero": 11,
+                        "pregunta": "El relator comienza y termina la clase en los horarios establecidos.",
+                        "valor": 5,
+                        "etiqueta": "Excelente"
+                    },
+                    "q12": {
+                        "numero": 12,
+                        "pregunta": "La presentación personal es adecuada.",
+                        "valor": 5,
+                        "etiqueta": "Excelente"
+                    },
+                    "q13": {
+                        "numero": 13,
+                        "pregunta": "El relator mantiene la atención del curso.",
+                        "valor": 5,
+                        "etiqueta": "Excelente"
+                    },
+                    "q14": {
+                        "numero": 14,
+                        "pregunta": "El relator crea condiciones para que el alumno consulte y responde adecuadamente a dichas preguntas.",
+                        "valor": 5,
+                        "etiqueta": "Excelente"
+                    },
+                    "q15": {
+                        "numero": 15,
+                        "pregunta": "El relator utiliza metodologías participativas.",
+                        "valor": 5,
+                        "etiqueta": "Excelente"
+                    },
+                    "q16": {
+                        "numero": 16,
+                        "pregunta": "El relator usa un lenguaje técnico y académico en las clases.",
+                        "valor": 5,
+                        "etiqueta": "Excelente"
+                    },
+                    "q17": {
+                        "numero": 17,
+                        "pregunta": "Las clases son amenas y dinámicas.",
+                        "valor": 5,
+                        "etiqueta": "Excelente"
+                    },
+                    "q18": {
+                        "numero": 18,
+                        "pregunta": "Las clases denotan planificación y preocupación por parte del relator.",
+                        "valor": 5,
+                        "etiqueta": "Excelente"
+                    },
+                    "q19": {
+                        "numero": 19,
+                        "pregunta": "Se encuentra satisfecho como para tomar otro curso con el mismo relator.",
+                        "valor": 5,
+                        "etiqueta": "Excelente"
+                    }
+                },
+                "promedio": 5,
+                "etiquetaPromedio": "Excelente"
+            }
+        },
+        "comentarios": "Muy bien organizado y excelentes profesores. Se denota una preocupación de prestar un servicio de excelencia,  por lo tanto; superó mis expectativas"
+    },
+    {
+        "id": "c877b81b05f1671e",
+        "recibido_en": "2026-06-22T17:06:57+00:00",
+        "ip_hash": "9eb739af588af59c73dd4b38abb0f916105725a45b9875e9fe2c80fd2ac35dfd",
+        "user_agent": "Mozilla\/5.0 (Linux; Android 10; K) AppleWebKit\/537.36 (KHTML, like Gecko) Chrome\/149.0.0.0 Mobile Safari\/537.36",
+        "cliente": {
+            "timestamp": "2026-06-22T17:06:56.973Z",
+            "promedioGlobal": 5
+        },
+        "secciones": {
+            "I": {
+                "seccion": "Programa de Capacitación",
+                "preguntas": {
+                    "q1": {
+                        "numero": 1,
+                        "pregunta": "Profundidad de los contenidos tratados.",
+                        "valor": 5,
+                        "etiqueta": "Excelente"
+                    },
+                    "q2": {
+                        "numero": 2,
+                        "pregunta": "Actualización de los temas tratados en el curso.",
+                        "valor": 5,
+                        "etiqueta": "Excelente"
+                    },
+                    "q3": {
+                        "numero": 3,
+                        "pregunta": "Tiempo asignado para el curso.",
+                        "valor": 5,
+                        "etiqueta": "Excelente"
+                    },
+                    "q4": {
+                        "numero": 4,
+                        "pregunta": "Utilidad de los contenidos tratados.",
+                        "valor": 5,
+                        "etiqueta": "Excelente"
+                    },
+                    "q5": {
+                        "numero": 5,
+                        "pregunta": "El taller cumplió con mis expectativas.",
+                        "valor": 5,
+                        "etiqueta": "Excelente"
+                    }
+                },
+                "promedio": 5,
+                "etiquetaPromedio": "Excelente"
+            },
+            "II": {
+                "seccion": "Organización de la Actividad",
+                "preguntas": {
+                    "q6": {
+                        "numero": 6,
+                        "pregunta": "Medios y recursos de apoyo al proceso de aprendizaje (data show, retroproyector, etc.).",
+                        "valor": 5,
+                        "etiqueta": "Excelente"
+                    },
+                    "q7": {
+                        "numero": 7,
+                        "pregunta": "Calidad del material de apoyo (apuntes, guías u otro).",
+                        "valor": 5,
+                        "etiqueta": "Excelente"
+                    },
+                    "q8": {
+                        "numero": 8,
+                        "pregunta": "Atención brindada por el personal de nuestra organización.",
+                        "valor": 5,
+                        "etiqueta": "Excelente"
+                    },
+                    "q9": {
+                        "numero": 9,
+                        "pregunta": "Cantidad de alumnos por curso.",
+                        "valor": 5,
+                        "etiqueta": "Excelente"
+                    }
+                },
+                "promedio": 5,
+                "etiquetaPromedio": "Excelente"
+            },
+            "III": {
+                "seccion": "Relator N° 1",
+                "preguntas": {
+                    "q10": {
+                        "numero": 10,
+                        "pregunta": "El relator demuestra dominio de los contenidos.",
+                        "valor": 5,
+                        "etiqueta": "Excelente"
+                    },
+                    "q11": {
+                        "numero": 11,
+                        "pregunta": "El relator comienza y termina la clase en los horarios establecidos.",
+                        "valor": 5,
+                        "etiqueta": "Excelente"
+                    },
+                    "q12": {
+                        "numero": 12,
+                        "pregunta": "La presentación personal es adecuada.",
+                        "valor": 5,
+                        "etiqueta": "Excelente"
+                    },
+                    "q13": {
+                        "numero": 13,
+                        "pregunta": "El relator mantiene la atención del curso.",
+                        "valor": 5,
+                        "etiqueta": "Excelente"
+                    },
+                    "q14": {
+                        "numero": 14,
+                        "pregunta": "El relator crea condiciones para que el alumno consulte y responde adecuadamente a dichas preguntas.",
+                        "valor": 5,
+                        "etiqueta": "Excelente"
+                    },
+                    "q15": {
+                        "numero": 15,
+                        "pregunta": "El relator utiliza metodologías participativas.",
+                        "valor": 5,
+                        "etiqueta": "Excelente"
+                    },
+                    "q16": {
+                        "numero": 16,
+                        "pregunta": "El relator usa un lenguaje técnico y académico en las clases.",
+                        "valor": 5,
+                        "etiqueta": "Excelente"
+                    },
+                    "q17": {
+                        "numero": 17,
+                        "pregunta": "Las clases son amenas y dinámicas.",
+                        "valor": 5,
+                        "etiqueta": "Excelente"
+                    },
+                    "q18": {
+                        "numero": 18,
+                        "pregunta": "Las clases denotan planificación y preocupación por parte del relator.",
+                        "valor": 5,
+                        "etiqueta": "Excelente"
+                    },
+                    "q19": {
+                        "numero": 19,
+                        "pregunta": "Se encuentra satisfecho como para tomar otro curso con el mismo relator.",
+                        "valor": 5,
+                        "etiqueta": "Excelente"
+                    }
+                },
+                "promedio": 5,
+                "etiquetaPromedio": "Excelente"
+            }
+        },
+        "comentarios": null
+    },
+    {
+        "id": "d4d21c17574159cc",
+        "recibido_en": "2026-06-22T17:17:00+00:00",
+        "ip_hash": "4c9513fb1369686a6201678129430809ec5cdaa802d8c718953e7bd7a86581fd",
+        "user_agent": "Mozilla\/5.0 (Linux; Android 10; K) AppleWebKit\/537.36 (KHTML, like Gecko) Chrome\/149.0.0.0 Mobile Safari\/537.36",
+        "cliente": {
+            "timestamp": "2026-06-22T17:16:58.135Z",
+            "promedioGlobal": 5
+        },
+        "secciones": {
+            "I": {
+                "seccion": "Programa de Capacitación",
+                "preguntas": {
+                    "q1": {
+                        "numero": 1,
+                        "pregunta": "Profundidad de los contenidos tratados.",
+                        "valor": 5,
+                        "etiqueta": "Excelente"
+                    },
+                    "q2": {
+                        "numero": 2,
+                        "pregunta": "Actualización de los temas tratados en el curso.",
+                        "valor": 5,
+                        "etiqueta": "Excelente"
+                    },
+                    "q3": {
+                        "numero": 3,
+                        "pregunta": "Tiempo asignado para el curso.",
+                        "valor": 5,
+                        "etiqueta": "Excelente"
+                    },
+                    "q4": {
+                        "numero": 4,
+                        "pregunta": "Utilidad de los contenidos tratados.",
+                        "valor": 5,
+                        "etiqueta": "Excelente"
+                    },
+                    "q5": {
+                        "numero": 5,
+                        "pregunta": "El taller cumplió con mis expectativas.",
+                        "valor": 5,
+                        "etiqueta": "Excelente"
+                    }
+                },
+                "promedio": 5,
+                "etiquetaPromedio": "Excelente"
+            },
+            "II": {
+                "seccion": "Organización de la Actividad",
+                "preguntas": {
+                    "q6": {
+                        "numero": 6,
+                        "pregunta": "Medios y recursos de apoyo al proceso de aprendizaje (data show, retroproyector, etc.).",
+                        "valor": 5,
+                        "etiqueta": "Excelente"
+                    },
+                    "q7": {
+                        "numero": 7,
+                        "pregunta": "Calidad del material de apoyo (apuntes, guías u otro).",
+                        "valor": 5,
+                        "etiqueta": "Excelente"
+                    },
+                    "q8": {
+                        "numero": 8,
+                        "pregunta": "Atención brindada por el personal de nuestra organización.",
+                        "valor": 5,
+                        "etiqueta": "Excelente"
+                    },
+                    "q9": {
+                        "numero": 9,
+                        "pregunta": "Cantidad de alumnos por curso.",
+                        "valor": 5,
+                        "etiqueta": "Excelente"
+                    }
+                },
+                "promedio": 5,
+                "etiquetaPromedio": "Excelente"
+            },
+            "III": {
+                "seccion": "Relator N° 1",
+                "preguntas": {
+                    "q10": {
+                        "numero": 10,
+                        "pregunta": "El relator demuestra dominio de los contenidos.",
+                        "valor": 5,
+                        "etiqueta": "Excelente"
+                    },
+                    "q11": {
+                        "numero": 11,
+                        "pregunta": "El relator comienza y termina la clase en los horarios establecidos.",
+                        "valor": 5,
+                        "etiqueta": "Excelente"
+                    },
+                    "q12": {
+                        "numero": 12,
+                        "pregunta": "La presentación personal es adecuada.",
+                        "valor": 5,
+                        "etiqueta": "Excelente"
+                    },
+                    "q13": {
+                        "numero": 13,
+                        "pregunta": "El relator mantiene la atención del curso.",
+                        "valor": 5,
+                        "etiqueta": "Excelente"
+                    },
+                    "q14": {
+                        "numero": 14,
+                        "pregunta": "El relator crea condiciones para que el alumno consulte y responde adecuadamente a dichas preguntas.",
+                        "valor": 5,
+                        "etiqueta": "Excelente"
+                    },
+                    "q15": {
+                        "numero": 15,
+                        "pregunta": "El relator utiliza metodologías participativas.",
+                        "valor": 5,
+                        "etiqueta": "Excelente"
+                    },
+                    "q16": {
+                        "numero": 16,
+                        "pregunta": "El relator usa un lenguaje técnico y académico en las clases.",
+                        "valor": 5,
+                        "etiqueta": "Excelente"
+                    },
+                    "q17": {
+                        "numero": 17,
+                        "pregunta": "Las clases son amenas y dinámicas.",
+                        "valor": 5,
+                        "etiqueta": "Excelente"
+                    },
+                    "q18": {
+                        "numero": 18,
+                        "pregunta": "Las clases denotan planificación y preocupación por parte del relator.",
+                        "valor": 5,
+                        "etiqueta": "Excelente"
+                    },
+                    "q19": {
+                        "numero": 19,
+                        "pregunta": "Se encuentra satisfecho como para tomar otro curso con el mismo relator.",
+                        "valor": 5,
+                        "etiqueta": "Excelente"
+                    }
+                },
+                "promedio": 5,
+                "etiquetaPromedio": "Excelente"
+            }
+        },
+        "comentarios": "Exelente taller gran  preocupación en entregar información detallada y clara.\nExelente atención y muchos respeto"
+    },
+    {
+        "id": "9f2fd4823b11e2da",
+        "recibido_en": "2026-06-22T17:39:46+00:00",
+        "ip_hash": "97b90e7add5b6b304711f83d2800cac520c411f8c939bed0bb0ef903087c7cd3",
+        "user_agent": "Mozilla\/5.0 (iPhone; CPU iPhone OS 17_6_1 like Mac OS X) AppleWebKit\/605.1.15 (KHTML, like Gecko) Version\/17.6 Mobile\/15E148 Safari\/604.1",
+        "cliente": {
+            "timestamp": "2026-06-22T17:39:45.915Z",
+            "promedioGlobal": 4
+        },
+        "secciones": {
+            "I": {
+                "seccion": "Programa de Capacitación",
+                "preguntas": {
+                    "q1": {
+                        "numero": 1,
+                        "pregunta": "Profundidad de los contenidos tratados.",
+                        "valor": 4,
+                        "etiqueta": "Bueno"
+                    },
+                    "q2": {
+                        "numero": 2,
+                        "pregunta": "Actualización de los temas tratados en el curso.",
+                        "valor": 4,
+                        "etiqueta": "Bueno"
+                    },
+                    "q3": {
+                        "numero": 3,
+                        "pregunta": "Tiempo asignado para el curso.",
+                        "valor": 4,
+                        "etiqueta": "Bueno"
+                    },
+                    "q4": {
+                        "numero": 4,
+                        "pregunta": "Utilidad de los contenidos tratados.",
+                        "valor": 4,
+                        "etiqueta": "Bueno"
+                    },
+                    "q5": {
+                        "numero": 5,
+                        "pregunta": "El taller cumplió con mis expectativas.",
+                        "valor": 4,
+                        "etiqueta": "Bueno"
+                    }
+                },
+                "promedio": 4,
+                "etiquetaPromedio": "Bueno"
+            },
+            "II": {
+                "seccion": "Organización de la Actividad",
+                "preguntas": {
+                    "q6": {
+                        "numero": 6,
+                        "pregunta": "Medios y recursos de apoyo al proceso de aprendizaje (data show, retroproyector, etc.).",
+                        "valor": 4,
+                        "etiqueta": "Bueno"
+                    },
+                    "q7": {
+                        "numero": 7,
+                        "pregunta": "Calidad del material de apoyo (apuntes, guías u otro).",
+                        "valor": 4,
+                        "etiqueta": "Bueno"
+                    },
+                    "q8": {
+                        "numero": 8,
+                        "pregunta": "Atención brindada por el personal de nuestra organización.",
+                        "valor": 4,
+                        "etiqueta": "Bueno"
+                    },
+                    "q9": {
+                        "numero": 9,
+                        "pregunta": "Cantidad de alumnos por curso.",
+                        "valor": 4,
+                        "etiqueta": "Bueno"
+                    }
+                },
+                "promedio": 4,
+                "etiquetaPromedio": "Bueno"
+            },
+            "III": {
+                "seccion": "Relator N° 1",
+                "preguntas": {
+                    "q10": {
+                        "numero": 10,
+                        "pregunta": "El relator demuestra dominio de los contenidos.",
+                        "valor": 4,
+                        "etiqueta": "Bueno"
+                    },
+                    "q11": {
+                        "numero": 11,
+                        "pregunta": "El relator comienza y termina la clase en los horarios establecidos.",
+                        "valor": 4,
+                        "etiqueta": "Bueno"
+                    },
+                    "q12": {
+                        "numero": 12,
+                        "pregunta": "La presentación personal es adecuada.",
+                        "valor": 4,
+                        "etiqueta": "Bueno"
+                    },
+                    "q13": {
+                        "numero": 13,
+                        "pregunta": "El relator mantiene la atención del curso.",
+                        "valor": 4,
+                        "etiqueta": "Bueno"
+                    },
+                    "q14": {
+                        "numero": 14,
+                        "pregunta": "El relator crea condiciones para que el alumno consulte y responde adecuadamente a dichas preguntas.",
+                        "valor": 4,
+                        "etiqueta": "Bueno"
+                    },
+                    "q15": {
+                        "numero": 15,
+                        "pregunta": "El relator utiliza metodologías participativas.",
+                        "valor": 4,
+                        "etiqueta": "Bueno"
+                    },
+                    "q16": {
+                        "numero": 16,
+                        "pregunta": "El relator usa un lenguaje técnico y académico en las clases.",
+                        "valor": 4,
+                        "etiqueta": "Bueno"
+                    },
+                    "q17": {
+                        "numero": 17,
+                        "pregunta": "Las clases son amenas y dinámicas.",
+                        "valor": 4,
+                        "etiqueta": "Bueno"
+                    },
+                    "q18": {
+                        "numero": 18,
+                        "pregunta": "Las clases denotan planificación y preocupación por parte del relator.",
+                        "valor": 4,
+                        "etiqueta": "Bueno"
+                    },
+                    "q19": {
+                        "numero": 19,
+                        "pregunta": "Se encuentra satisfecho como para tomar otro curso con el mismo relator.",
+                        "valor": 4,
+                        "etiqueta": "Bueno"
+                    }
+                },
+                "promedio": 4,
+                "etiquetaPromedio": "Bueno"
+            }
+        },
+        "comentarios": null
+    },
+    {
+        "id": "ef0decd76c11ddb9",
+        "recibido_en": "2026-06-22T17:57:22+00:00",
+        "ip_hash": "ebe6ee56984441b40dbdff72ea7bb87b1e7452e379961c9d38e0ffd9d3fe3b1a",
+        "user_agent": "Mozilla\/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit\/537.36 (KHTML, like Gecko) Chrome\/149.0.0.0 Safari\/537.36",
+        "cliente": {
+            "timestamp": "2026-06-22T17:57:02.732Z",
+            "promedioGlobal": 5
+        },
+        "secciones": {
+            "I": {
+                "seccion": "Programa de Capacitación",
+                "preguntas": {
+                    "q1": {
+                        "numero": 1,
+                        "pregunta": "Profundidad de los contenidos tratados.",
+                        "valor": 5,
+                        "etiqueta": "Excelente"
+                    },
+                    "q2": {
+                        "numero": 2,
+                        "pregunta": "Actualización de los temas tratados en el curso.",
+                        "valor": 5,
+                        "etiqueta": "Excelente"
+                    },
+                    "q3": {
+                        "numero": 3,
+                        "pregunta": "Tiempo asignado para el curso.",
+                        "valor": 5,
+                        "etiqueta": "Excelente"
+                    },
+                    "q4": {
+                        "numero": 4,
+                        "pregunta": "Utilidad de los contenidos tratados.",
+                        "valor": 5,
+                        "etiqueta": "Excelente"
+                    },
+                    "q5": {
+                        "numero": 5,
+                        "pregunta": "El taller cumplió con mis expectativas.",
+                        "valor": 5,
+                        "etiqueta": "Excelente"
+                    }
+                },
+                "promedio": 5,
+                "etiquetaPromedio": "Excelente"
+            },
+            "II": {
+                "seccion": "Organización de la Actividad",
+                "preguntas": {
+                    "q6": {
+                        "numero": 6,
+                        "pregunta": "Medios y recursos de apoyo al proceso de aprendizaje (data show, retroproyector, etc.).",
+                        "valor": 5,
+                        "etiqueta": "Excelente"
+                    },
+                    "q7": {
+                        "numero": 7,
+                        "pregunta": "Calidad del material de apoyo (apuntes, guías u otro).",
+                        "valor": 5,
+                        "etiqueta": "Excelente"
+                    },
+                    "q8": {
+                        "numero": 8,
+                        "pregunta": "Atención brindada por el personal de nuestra organización.",
+                        "valor": 5,
+                        "etiqueta": "Excelente"
+                    },
+                    "q9": {
+                        "numero": 9,
+                        "pregunta": "Cantidad de alumnos por curso.",
+                        "valor": 5,
+                        "etiqueta": "Excelente"
+                    }
+                },
+                "promedio": 5,
+                "etiquetaPromedio": "Excelente"
+            }
+        }
+    },
+    {
+        "id": "e269d92eac242118",
+        "recibido_en": "2026-06-22T18:40:08+00:00",
+        "ip_hash": "ba66efecaf0db14465d063210ffa518d40045b8a6573a192b1de9809b782398b",
+        "user_agent": "Mozilla\/5.0 (Linux; Android 10; K) AppleWebKit\/537.36 (KHTML, like Gecko) Chrome\/149.0.0.0 Mobile Safari\/537.36",
+        "cliente": {
+            "timestamp": "2026-06-22T18:40:08.179Z",
+            "promedioGlobal": 5
+        },
+        "secciones": {
+            "I": {
+                "seccion": "Programa de Capacitación",
+                "preguntas": {
+                    "q1": {
+                        "numero": 1,
+                        "pregunta": "Profundidad de los contenidos tratados.",
+                        "valor": 5,
+                        "etiqueta": "Excelente"
+                    },
+                    "q2": {
+                        "numero": 2,
+                        "pregunta": "Actualización de los temas tratados en el curso.",
+                        "valor": 5,
+                        "etiqueta": "Excelente"
+                    },
+                    "q3": {
+                        "numero": 3,
+                        "pregunta": "Tiempo asignado para el curso.",
+                        "valor": 5,
+                        "etiqueta": "Excelente"
+                    },
+                    "q4": {
+                        "numero": 4,
+                        "pregunta": "Utilidad de los contenidos tratados.",
+                        "valor": 5,
+                        "etiqueta": "Excelente"
+                    },
+                    "q5": {
+                        "numero": 5,
+                        "pregunta": "El taller cumplió con mis expectativas.",
+                        "valor": 5,
+                        "etiqueta": "Excelente"
+                    }
+                },
+                "promedio": 5,
+                "etiquetaPromedio": "Excelente"
+            },
+            "II": {
+                "seccion": "Organización de la Actividad",
+                "preguntas": {
+                    "q6": {
+                        "numero": 6,
+                        "pregunta": "Medios y recursos de apoyo al proceso de aprendizaje (data show, retroproyector, etc.).",
+                        "valor": 5,
+                        "etiqueta": "Excelente"
+                    },
+                    "q7": {
+                        "numero": 7,
+                        "pregunta": "Calidad del material de apoyo (apuntes, guías u otro).",
+                        "valor": 5,
+                        "etiqueta": "Excelente"
+                    },
+                    "q8": {
+                        "numero": 8,
+                        "pregunta": "Atención brindada por el personal de nuestra organización.",
+                        "valor": 5,
+                        "etiqueta": "Excelente"
+                    },
+                    "q9": {
+                        "numero": 9,
+                        "pregunta": "Cantidad de alumnos por curso.",
+                        "valor": 5,
+                        "etiqueta": "Excelente"
+                    }
+                },
+                "promedio": 5,
+                "etiquetaPromedio": "Excelente"
+            },
+            "III": {
+                "seccion": "Relator N° 1",
+                "preguntas": {
+                    "q10": {
+                        "numero": 10,
+                        "pregunta": "El relator demuestra dominio de los contenidos.",
+                        "valor": 5,
+                        "etiqueta": "Excelente"
+                    },
+                    "q11": {
+                        "numero": 11,
+                        "pregunta": "El relator comienza y termina la clase en los horarios establecidos.",
+                        "valor": 5,
+                        "etiqueta": "Excelente"
+                    },
+                    "q12": {
+                        "numero": 12,
+                        "pregunta": "La presentación personal es adecuada.",
+                        "valor": 5,
+                        "etiqueta": "Excelente"
+                    },
+                    "q13": {
+                        "numero": 13,
+                        "pregunta": "El relator mantiene la atención del curso.",
+                        "valor": 5,
+                        "etiqueta": "Excelente"
+                    },
+                    "q14": {
+                        "numero": 14,
+                        "pregunta": "El relator crea condiciones para que el alumno consulte y responde adecuadamente a dichas preguntas.",
+                        "valor": 5,
+                        "etiqueta": "Excelente"
+                    },
+                    "q15": {
+                        "numero": 15,
+                        "pregunta": "El relator utiliza metodologías participativas.",
+                        "valor": 5,
+                        "etiqueta": "Excelente"
+                    },
+                    "q16": {
+                        "numero": 16,
+                        "pregunta": "El relator usa un lenguaje técnico y académico en las clases.",
+                        "valor": 5,
+                        "etiqueta": "Excelente"
+                    },
+                    "q17": {
+                        "numero": 17,
+                        "pregunta": "Las clases son amenas y dinámicas.",
+                        "valor": 5,
+                        "etiqueta": "Excelente"
+                    },
+                    "q18": {
+                        "numero": 18,
+                        "pregunta": "Las clases denotan planificación y preocupación por parte del relator.",
+                        "valor": 5,
+                        "etiqueta": "Excelente"
+                    },
+                    "q19": {
+                        "numero": 19,
+                        "pregunta": "Se encuentra satisfecho como para tomar otro curso con el mismo relator.",
+                        "valor": 5,
+                        "etiqueta": "Excelente"
+                    }
+                },
+                "promedio": 5,
+                "etiquetaPromedio": "Excelente"
+            }
+        },
+        "comentarios": "Excelente el curso los profesores muy motivados y con un conocimiento extraordinario fue el mejor curso"
+    },
+    {
+        "id": "1e767d187b03e71c",
+        "recibido_en": "2026-06-22T18:42:18+00:00",
+        "ip_hash": "a46c136e249cb5c28956260700b8c0eccd4ae899d7f164e988a7ee236d49a63d",
+        "user_agent": "Mozilla\/5.0 (Linux; Android 10; K) AppleWebKit\/537.36 (KHTML, like Gecko) Chrome\/149.0.0.0 Mobile Safari\/537.36",
+        "cliente": {
+            "timestamp": "2026-06-22T18:42:17.571Z",
+            "promedioGlobal": 4.95
+        },
+        "secciones": {
+            "I": {
+                "seccion": "Programa de Capacitación",
+                "preguntas": {
+                    "q1": {
+                        "numero": 1,
+                        "pregunta": "Profundidad de los contenidos tratados.",
+                        "valor": 5,
+                        "etiqueta": "Excelente"
+                    },
+                    "q2": {
+                        "numero": 2,
+                        "pregunta": "Actualización de los temas tratados en el curso.",
+                        "valor": 5,
+                        "etiqueta": "Excelente"
+                    },
+                    "q3": {
+                        "numero": 3,
+                        "pregunta": "Tiempo asignado para el curso.",
+                        "valor": 4,
+                        "etiqueta": "Bueno"
+                    },
+                    "q4": {
+                        "numero": 4,
+                        "pregunta": "Utilidad de los contenidos tratados.",
+                        "valor": 5,
+                        "etiqueta": "Excelente"
+                    },
+                    "q5": {
+                        "numero": 5,
+                        "pregunta": "El taller cumplió con mis expectativas.",
+                        "valor": 5,
+                        "etiqueta": "Excelente"
+                    }
+                },
+                "promedio": 4.8,
+                "etiquetaPromedio": "Excelente"
+            },
+            "II": {
+                "seccion": "Organización de la Actividad",
+                "preguntas": {
+                    "q6": {
+                        "numero": 6,
+                        "pregunta": "Medios y recursos de apoyo al proceso de aprendizaje (data show, retroproyector, etc.).",
+                        "valor": 5,
+                        "etiqueta": "Excelente"
+                    },
+                    "q7": {
+                        "numero": 7,
+                        "pregunta": "Calidad del material de apoyo (apuntes, guías u otro).",
+                        "valor": 5,
+                        "etiqueta": "Excelente"
+                    },
+                    "q8": {
+                        "numero": 8,
+                        "pregunta": "Atención brindada por el personal de nuestra organización.",
+                        "valor": 5,
+                        "etiqueta": "Excelente"
+                    },
+                    "q9": {
+                        "numero": 9,
+                        "pregunta": "Cantidad de alumnos por curso.",
+                        "valor": 5,
+                        "etiqueta": "Excelente"
+                    }
+                },
+                "promedio": 5,
+                "etiquetaPromedio": "Excelente"
+            },
+            "III": {
+                "seccion": "Relator N° 1",
+                "preguntas": {
+                    "q10": {
+                        "numero": 10,
+                        "pregunta": "El relator demuestra dominio de los contenidos.",
+                        "valor": 5,
+                        "etiqueta": "Excelente"
+                    },
+                    "q11": {
+                        "numero": 11,
+                        "pregunta": "El relator comienza y termina la clase en los horarios establecidos.",
+                        "valor": 5,
+                        "etiqueta": "Excelente"
+                    },
+                    "q12": {
+                        "numero": 12,
+                        "pregunta": "La presentación personal es adecuada.",
+                        "valor": 5,
+                        "etiqueta": "Excelente"
+                    },
+                    "q13": {
+                        "numero": 13,
+                        "pregunta": "El relator mantiene la atención del curso.",
+                        "valor": 5,
+                        "etiqueta": "Excelente"
+                    },
+                    "q14": {
+                        "numero": 14,
+                        "pregunta": "El relator crea condiciones para que el alumno consulte y responde adecuadamente a dichas preguntas.",
+                        "valor": 5,
+                        "etiqueta": "Excelente"
+                    },
+                    "q15": {
+                        "numero": 15,
+                        "pregunta": "El relator utiliza metodologías participativas.",
+                        "valor": 5,
+                        "etiqueta": "Excelente"
+                    },
+                    "q16": {
+                        "numero": 16,
+                        "pregunta": "El relator usa un lenguaje técnico y académico en las clases.",
+                        "valor": 5,
+                        "etiqueta": "Excelente"
+                    },
+                    "q17": {
+                        "numero": 17,
+                        "pregunta": "Las clases son amenas y dinámicas.",
+                        "valor": 5,
+                        "etiqueta": "Excelente"
+                    },
+                    "q18": {
+                        "numero": 18,
+                        "pregunta": "Las clases denotan planificación y preocupación por parte del relator.",
+                        "valor": 5,
+                        "etiqueta": "Excelente"
+                    },
+                    "q19": {
+                        "numero": 19,
+                        "pregunta": "Se encuentra satisfecho como para tomar otro curso con el mismo relator.",
+                        "valor": 5,
+                        "etiqueta": "Excelente"
+                    }
+                },
+                "promedio": 5,
+                "etiquetaPromedio": "Excelente"
+            }
+        },
+        "comentarios": "Excelente capacitación ,me motivo para seguir capacitandome en diferentes áreas."
+    },
+    {
+        "id": "06cc97a43c4a18b1",
+        "recibido_en": "2026-06-22T18:42:26+00:00",
+        "ip_hash": "5da452a70b0361cacf3e156d9eca82802321d8c68c30c82945d89fd5f45cfcbe",
+        "user_agent": "Mozilla\/5.0 (Linux; Android 10; K) AppleWebKit\/537.36 (KHTML, like Gecko) Chrome\/149.0.0.0 Mobile Safari\/537.36",
+        "cliente": {
+            "timestamp": "2026-06-22T18:42:26.016Z",
+            "promedioGlobal": 4.84
+        },
+        "secciones": {
+            "I": {
+                "seccion": "Programa de Capacitación",
+                "preguntas": {
+                    "q1": {
+                        "numero": 1,
+                        "pregunta": "Profundidad de los contenidos tratados.",
+                        "valor": 5,
+                        "etiqueta": "Excelente"
+                    },
+                    "q2": {
+                        "numero": 2,
+                        "pregunta": "Actualización de los temas tratados en el curso.",
+                        "valor": 5,
+                        "etiqueta": "Excelente"
+                    },
+                    "q3": {
+                        "numero": 3,
+                        "pregunta": "Tiempo asignado para el curso.",
+                        "valor": 4,
+                        "etiqueta": "Bueno"
+                    },
+                    "q4": {
+                        "numero": 4,
+                        "pregunta": "Utilidad de los contenidos tratados.",
+                        "valor": 5,
+                        "etiqueta": "Excelente"
+                    },
+                    "q5": {
+                        "numero": 5,
+                        "pregunta": "El taller cumplió con mis expectativas.",
+                        "valor": 5,
+                        "etiqueta": "Excelente"
+                    }
+                },
+                "promedio": 4.8,
+                "etiquetaPromedio": "Excelente"
+            },
+            "II": {
+                "seccion": "Organización de la Actividad",
+                "preguntas": {
+                    "q6": {
+                        "numero": 6,
+                        "pregunta": "Medios y recursos de apoyo al proceso de aprendizaje (data show, retroproyector, etc.).",
+                        "valor": 5,
+                        "etiqueta": "Excelente"
+                    },
+                    "q7": {
+                        "numero": 7,
+                        "pregunta": "Calidad del material de apoyo (apuntes, guías u otro).",
+                        "valor": 4,
+                        "etiqueta": "Bueno"
+                    },
+                    "q8": {
+                        "numero": 8,
+                        "pregunta": "Atención brindada por el personal de nuestra organización.",
+                        "valor": 5,
+                        "etiqueta": "Excelente"
+                    },
+                    "q9": {
+                        "numero": 9,
+                        "pregunta": "Cantidad de alumnos por curso.",
+                        "valor": 4,
+                        "etiqueta": "Bueno"
+                    }
+                },
+                "promedio": 4.5,
+                "etiquetaPromedio": "Excelente"
+            },
+            "III": {
+                "seccion": "Relator N° 1",
+                "preguntas": {
+                    "q10": {
+                        "numero": 10,
+                        "pregunta": "El relator demuestra dominio de los contenidos.",
+                        "valor": 5,
+                        "etiqueta": "Excelente"
+                    },
+                    "q11": {
+                        "numero": 11,
+                        "pregunta": "El relator comienza y termina la clase en los horarios establecidos.",
+                        "valor": 5,
+                        "etiqueta": "Excelente"
+                    },
+                    "q12": {
+                        "numero": 12,
+                        "pregunta": "La presentación personal es adecuada.",
+                        "valor": 5,
+                        "etiqueta": "Excelente"
+                    },
+                    "q13": {
+                        "numero": 13,
+                        "pregunta": "El relator mantiene la atención del curso.",
+                        "valor": 5,
+                        "etiqueta": "Excelente"
+                    },
+                    "q14": {
+                        "numero": 14,
+                        "pregunta": "El relator crea condiciones para que el alumno consulte y responde adecuadamente a dichas preguntas.",
+                        "valor": 5,
+                        "etiqueta": "Excelente"
+                    },
+                    "q15": {
+                        "numero": 15,
+                        "pregunta": "El relator utiliza metodologías participativas.",
+                        "valor": 5,
+                        "etiqueta": "Excelente"
+                    },
+                    "q16": {
+                        "numero": 16,
+                        "pregunta": "El relator usa un lenguaje técnico y académico en las clases.",
+                        "valor": 5,
+                        "etiqueta": "Excelente"
+                    },
+                    "q17": {
+                        "numero": 17,
+                        "pregunta": "Las clases son amenas y dinámicas.",
+                        "valor": 5,
+                        "etiqueta": "Excelente"
+                    },
+                    "q18": {
+                        "numero": 18,
+                        "pregunta": "Las clases denotan planificación y preocupación por parte del relator.",
+                        "valor": 5,
+                        "etiqueta": "Excelente"
+                    },
+                    "q19": {
+                        "numero": 19,
+                        "pregunta": "Se encuentra satisfecho como para tomar otro curso con el mismo relator.",
+                        "valor": 5,
+                        "etiqueta": "Excelente"
+                    }
+                },
+                "promedio": 5,
+                "etiquetaPromedio": "Excelente"
+            }
+        },
+        "comentarios": "Fue una excelente capacitación \nMuy buenos relatores"
+    },
+    {
+        "id": "0c500cec06869747",
+        "recibido_en": "2026-06-22T18:43:08+00:00",
+        "ip_hash": "c853a27b1846e45b408d9cc9fad717fa785229da1799ef5ea07ad778e8e863c3",
+        "user_agent": "Mozilla\/5.0 (Linux; Android 10; K) AppleWebKit\/537.36 (KHTML, like Gecko) Chrome\/149.0.0.0 Mobile Safari\/537.36",
+        "cliente": {
+            "timestamp": "2026-06-22T18:43:08.605Z",
+            "promedioGlobal": 4.95
+        },
+        "secciones": {
+            "I": {
+                "seccion": "Programa de Capacitación",
+                "preguntas": {
+                    "q1": {
+                        "numero": 1,
+                        "pregunta": "Profundidad de los contenidos tratados.",
+                        "valor": 5,
+                        "etiqueta": "Excelente"
+                    },
+                    "q2": {
+                        "numero": 2,
+                        "pregunta": "Actualización de los temas tratados en el curso.",
+                        "valor": 5,
+                        "etiqueta": "Excelente"
+                    },
+                    "q3": {
+                        "numero": 3,
+                        "pregunta": "Tiempo asignado para el curso.",
+                        "valor": 5,
+                        "etiqueta": "Excelente"
+                    },
+                    "q4": {
+                        "numero": 4,
+                        "pregunta": "Utilidad de los contenidos tratados.",
+                        "valor": 5,
+                        "etiqueta": "Excelente"
+                    },
+                    "q5": {
+                        "numero": 5,
+                        "pregunta": "El taller cumplió con mis expectativas.",
+                        "valor": 5,
+                        "etiqueta": "Excelente"
+                    }
+                },
+                "promedio": 5,
+                "etiquetaPromedio": "Excelente"
+            },
+            "II": {
+                "seccion": "Organización de la Actividad",
+                "preguntas": {
+                    "q6": {
+                        "numero": 6,
+                        "pregunta": "Medios y recursos de apoyo al proceso de aprendizaje (data show, retroproyector, etc.).",
+                        "valor": 4,
+                        "etiqueta": "Bueno"
+                    },
+                    "q7": {
+                        "numero": 7,
+                        "pregunta": "Calidad del material de apoyo (apuntes, guías u otro).",
+                        "valor": 5,
+                        "etiqueta": "Excelente"
+                    },
+                    "q8": {
+                        "numero": 8,
+                        "pregunta": "Atención brindada por el personal de nuestra organización.",
+                        "valor": 5,
+                        "etiqueta": "Excelente"
+                    },
+                    "q9": {
+                        "numero": 9,
+                        "pregunta": "Cantidad de alumnos por curso.",
+                        "valor": 5,
+                        "etiqueta": "Excelente"
+                    }
+                },
+                "promedio": 4.75,
+                "etiquetaPromedio": "Excelente"
+            },
+            "III": {
+                "seccion": "Relator N° 1",
+                "preguntas": {
+                    "q10": {
+                        "numero": 10,
+                        "pregunta": "El relator demuestra dominio de los contenidos.",
+                        "valor": 5,
+                        "etiqueta": "Excelente"
+                    },
+                    "q11": {
+                        "numero": 11,
+                        "pregunta": "El relator comienza y termina la clase en los horarios establecidos.",
+                        "valor": 5,
+                        "etiqueta": "Excelente"
+                    },
+                    "q12": {
+                        "numero": 12,
+                        "pregunta": "La presentación personal es adecuada.",
+                        "valor": 5,
+                        "etiqueta": "Excelente"
+                    },
+                    "q13": {
+                        "numero": 13,
+                        "pregunta": "El relator mantiene la atención del curso.",
+                        "valor": 5,
+                        "etiqueta": "Excelente"
+                    },
+                    "q14": {
+                        "numero": 14,
+                        "pregunta": "El relator crea condiciones para que el alumno consulte y responde adecuadamente a dichas preguntas.",
+                        "valor": 5,
+                        "etiqueta": "Excelente"
+                    },
+                    "q15": {
+                        "numero": 15,
+                        "pregunta": "El relator utiliza metodologías participativas.",
+                        "valor": 5,
+                        "etiqueta": "Excelente"
+                    },
+                    "q16": {
+                        "numero": 16,
+                        "pregunta": "El relator usa un lenguaje técnico y académico en las clases.",
+                        "valor": 5,
+                        "etiqueta": "Excelente"
+                    },
+                    "q17": {
+                        "numero": 17,
+                        "pregunta": "Las clases son amenas y dinámicas.",
+                        "valor": 5,
+                        "etiqueta": "Excelente"
+                    },
+                    "q18": {
+                        "numero": 18,
+                        "pregunta": "Las clases denotan planificación y preocupación por parte del relator.",
+                        "valor": 5,
+                        "etiqueta": "Excelente"
+                    },
+                    "q19": {
+                        "numero": 19,
+                        "pregunta": "Se encuentra satisfecho como para tomar otro curso con el mismo relator.",
+                        "valor": 5,
+                        "etiqueta": "Excelente"
+                    }
+                },
+                "promedio": 5,
+                "etiquetaPromedio": "Excelente"
+            }
+        },
+        "comentarios": null
+    },
+    {
+        "id": "cbd803047a546bb4",
+        "recibido_en": "2026-06-22T18:43:47+00:00",
+        "ip_hash": "275c8f2b4dd854564270417159d20d55f813e3dcdd60003841940f940f725b4d",
+        "user_agent": "Mozilla\/5.0 (Linux; Android 10; K) AppleWebKit\/537.36 (KHTML, like Gecko) Chrome\/149.0.0.0 Mobile Safari\/537.36",
+        "cliente": {
+            "timestamp": "2026-06-22T18:43:46.160Z",
+            "promedioGlobal": 5
+        },
+        "secciones": {
+            "I": {
+                "seccion": "Programa de Capacitación",
+                "preguntas": {
+                    "q1": {
+                        "numero": 1,
+                        "pregunta": "Profundidad de los contenidos tratados.",
+                        "valor": 5,
+                        "etiqueta": "Excelente"
+                    },
+                    "q2": {
+                        "numero": 2,
+                        "pregunta": "Actualización de los temas tratados en el curso.",
+                        "valor": 5,
+                        "etiqueta": "Excelente"
+                    },
+                    "q3": {
+                        "numero": 3,
+                        "pregunta": "Tiempo asignado para el curso.",
+                        "valor": 5,
+                        "etiqueta": "Excelente"
+                    },
+                    "q4": {
+                        "numero": 4,
+                        "pregunta": "Utilidad de los contenidos tratados.",
+                        "valor": 5,
+                        "etiqueta": "Excelente"
+                    },
+                    "q5": {
+                        "numero": 5,
+                        "pregunta": "El taller cumplió con mis expectativas.",
+                        "valor": 5,
+                        "etiqueta": "Excelente"
+                    }
+                },
+                "promedio": 5,
+                "etiquetaPromedio": "Excelente"
+            },
+            "II": {
+                "seccion": "Organización de la Actividad",
+                "preguntas": {
+                    "q6": {
+                        "numero": 6,
+                        "pregunta": "Medios y recursos de apoyo al proceso de aprendizaje (data show, retroproyector, etc.).",
+                        "valor": 5,
+                        "etiqueta": "Excelente"
+                    },
+                    "q7": {
+                        "numero": 7,
+                        "pregunta": "Calidad del material de apoyo (apuntes, guías u otro).",
+                        "valor": 5,
+                        "etiqueta": "Excelente"
+                    },
+                    "q8": {
+                        "numero": 8,
+                        "pregunta": "Atención brindada por el personal de nuestra organización.",
+                        "valor": 5,
+                        "etiqueta": "Excelente"
+                    },
+                    "q9": {
+                        "numero": 9,
+                        "pregunta": "Cantidad de alumnos por curso.",
+                        "valor": 5,
+                        "etiqueta": "Excelente"
+                    }
+                },
+                "promedio": 5,
+                "etiquetaPromedio": "Excelente"
+            },
+            "III": {
+                "seccion": "Relator N° 1",
+                "preguntas": {
+                    "q10": {
+                        "numero": 10,
+                        "pregunta": "El relator demuestra dominio de los contenidos.",
+                        "valor": 5,
+                        "etiqueta": "Excelente"
+                    },
+                    "q11": {
+                        "numero": 11,
+                        "pregunta": "El relator comienza y termina la clase en los horarios establecidos.",
+                        "valor": 5,
+                        "etiqueta": "Excelente"
+                    },
+                    "q12": {
+                        "numero": 12,
+                        "pregunta": "La presentación personal es adecuada.",
+                        "valor": 5,
+                        "etiqueta": "Excelente"
+                    },
+                    "q13": {
+                        "numero": 13,
+                        "pregunta": "El relator mantiene la atención del curso.",
+                        "valor": 5,
+                        "etiqueta": "Excelente"
+                    },
+                    "q14": {
+                        "numero": 14,
+                        "pregunta": "El relator crea condiciones para que el alumno consulte y responde adecuadamente a dichas preguntas.",
+                        "valor": 5,
+                        "etiqueta": "Excelente"
+                    },
+                    "q15": {
+                        "numero": 15,
+                        "pregunta": "El relator utiliza metodologías participativas.",
+                        "valor": 5,
+                        "etiqueta": "Excelente"
+                    },
+                    "q16": {
+                        "numero": 16,
+                        "pregunta": "El relator usa un lenguaje técnico y académico en las clases.",
+                        "valor": 5,
+                        "etiqueta": "Excelente"
+                    },
+                    "q17": {
+                        "numero": 17,
+                        "pregunta": "Las clases son amenas y dinámicas.",
+                        "valor": 5,
+                        "etiqueta": "Excelente"
+                    },
+                    "q18": {
+                        "numero": 18,
+                        "pregunta": "Las clases denotan planificación y preocupación por parte del relator.",
+                        "valor": 5,
+                        "etiqueta": "Excelente"
+                    },
+                    "q19": {
+                        "numero": 19,
+                        "pregunta": "Se encuentra satisfecho como para tomar otro curso con el mismo relator.",
+                        "valor": 5,
+                        "etiqueta": "Excelente"
+                    }
+                },
+                "promedio": 5,
+                "etiquetaPromedio": "Excelente"
+            }
+        },
+        "comentarios": null
+    },
+    {
+        "id": "fd7659a8681357d1",
+        "recibido_en": "2026-06-22T18:49:57+00:00",
+        "ip_hash": "8695486b5f1c906d93e05742b0187cfc9996435323388bd63d04648ea203b203",
+        "user_agent": "Mozilla\/5.0 (Linux; Android 10; K) AppleWebKit\/537.36 (KHTML, like Gecko) Chrome\/149.0.0.0 Mobile Safari\/537.36",
+        "cliente": {
+            "timestamp": "2026-06-22T18:49:55.682Z",
+            "promedioGlobal": 4.84
+        },
+        "secciones": {
+            "I": {
+                "seccion": "Programa de Capacitación",
+                "preguntas": {
+                    "q1": {
+                        "numero": 1,
+                        "pregunta": "Profundidad de los contenidos tratados.",
+                        "valor": 5,
+                        "etiqueta": "Excelente"
+                    },
+                    "q2": {
+                        "numero": 2,
+                        "pregunta": "Actualización de los temas tratados en el curso.",
+                        "valor": 5,
+                        "etiqueta": "Excelente"
+                    },
+                    "q3": {
+                        "numero": 3,
+                        "pregunta": "Tiempo asignado para el curso.",
+                        "valor": 4,
+                        "etiqueta": "Bueno"
+                    },
+                    "q4": {
+                        "numero": 4,
+                        "pregunta": "Utilidad de los contenidos tratados.",
+                        "valor": 5,
+                        "etiqueta": "Excelente"
+                    },
+                    "q5": {
+                        "numero": 5,
+                        "pregunta": "El taller cumplió con mis expectativas.",
+                        "valor": 5,
+                        "etiqueta": "Excelente"
+                    }
+                },
+                "promedio": 4.8,
+                "etiquetaPromedio": "Excelente"
+            },
+            "II": {
+                "seccion": "Organización de la Actividad",
+                "preguntas": {
+                    "q6": {
+                        "numero": 6,
+                        "pregunta": "Medios y recursos de apoyo al proceso de aprendizaje (data show, retroproyector, etc.).",
+                        "valor": 5,
+                        "etiqueta": "Excelente"
+                    },
+                    "q7": {
+                        "numero": 7,
+                        "pregunta": "Calidad del material de apoyo (apuntes, guías u otro).",
+                        "valor": 4,
+                        "etiqueta": "Bueno"
+                    },
+                    "q8": {
+                        "numero": 8,
+                        "pregunta": "Atención brindada por el personal de nuestra organización.",
+                        "valor": 5,
+                        "etiqueta": "Excelente"
+                    },
+                    "q9": {
+                        "numero": 9,
+                        "pregunta": "Cantidad de alumnos por curso.",
+                        "valor": 5,
+                        "etiqueta": "Excelente"
+                    }
+                },
+                "promedio": 4.75,
+                "etiquetaPromedio": "Excelente"
+            },
+            "III": {
+                "seccion": "Relator N° 1",
+                "preguntas": {
+                    "q10": {
+                        "numero": 10,
+                        "pregunta": "El relator demuestra dominio de los contenidos.",
+                        "valor": 5,
+                        "etiqueta": "Excelente"
+                    },
+                    "q11": {
+                        "numero": 11,
+                        "pregunta": "El relator comienza y termina la clase en los horarios establecidos.",
+                        "valor": 5,
+                        "etiqueta": "Excelente"
+                    },
+                    "q12": {
+                        "numero": 12,
+                        "pregunta": "La presentación personal es adecuada.",
+                        "valor": 4,
+                        "etiqueta": "Bueno"
+                    },
+                    "q13": {
+                        "numero": 13,
+                        "pregunta": "El relator mantiene la atención del curso.",
+                        "valor": 5,
+                        "etiqueta": "Excelente"
+                    },
+                    "q14": {
+                        "numero": 14,
+                        "pregunta": "El relator crea condiciones para que el alumno consulte y responde adecuadamente a dichas preguntas.",
+                        "valor": 5,
+                        "etiqueta": "Excelente"
+                    },
+                    "q15": {
+                        "numero": 15,
+                        "pregunta": "El relator utiliza metodologías participativas.",
+                        "valor": 5,
+                        "etiqueta": "Excelente"
+                    },
+                    "q16": {
+                        "numero": 16,
+                        "pregunta": "El relator usa un lenguaje técnico y académico en las clases.",
+                        "valor": 5,
+                        "etiqueta": "Excelente"
+                    },
+                    "q17": {
+                        "numero": 17,
+                        "pregunta": "Las clases son amenas y dinámicas.",
+                        "valor": 5,
+                        "etiqueta": "Excelente"
+                    },
+                    "q18": {
+                        "numero": 18,
+                        "pregunta": "Las clases denotan planificación y preocupación por parte del relator.",
+                        "valor": 5,
+                        "etiqueta": "Excelente"
+                    },
+                    "q19": {
+                        "numero": 19,
+                        "pregunta": "Se encuentra satisfecho como para tomar otro curso con el mismo relator.",
+                        "valor": 5,
+                        "etiqueta": "Excelente"
+                    }
+                },
+                "promedio": 4.9,
+                "etiquetaPromedio": "Excelente"
+            }
+        },
+        "comentarios": "Fue un gran curso ,cumplio las expectativas con exito,los temas de gran interes y los profes muy claros y practicos facil de entender a los proyecciones de las nuevas tecnologias muy necesaria a lo que se nos viene en cuanto a energia renovable.\nAgradecido y muy satisfecho."
+    }
+]

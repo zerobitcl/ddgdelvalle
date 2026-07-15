@@ -1,0 +1,4 @@
+# Bloqueo total de acceso público al directorio de datos.
+# Sólo PHP (vía guardar.php / admin.php) puede leerlo desde el filesystem.
+Require all denied
+Deny from all

@@ -1,0 +1,32 @@
+# Secrets / entorno
+.env
+.env.*
+!.env.example
+wp-config.php
+registro/config.php
+.private/
+
+# PDFs generados en runtime
+registro/pdfs/*.pdf
+!registro/pdfs/.gitkeep
+
+# Caché / temporales
+.tmb/
+*.log
+*.tmp
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# IDE / OS
+.idea/
+.vscode/
+*.swp
+*~
+
+# WordPress cache / backups locales
+wp-content/cache/
+wp-content/upgrade/
+wp-content/backup*/
+wp-content/debug.log
+*.bak

@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Presupuesto — DDG Del Valle Capacitaciones</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: { sans: ['Inter', 'system-ui', 'sans-serif'] },
+          colors: {
+            ddg: { DEFAULT: '#2C4855', soft: 'rgba(44, 72, 85, 0.08)', line: 'rgba(44, 72, 85, 0.12)' },
+          },
+        },
+      },
+    };
+  </script>
+  <style>
+    :root { --ddg: #2C4855; --paper: #fafafa; }
+    body { font-family: 'Inter', system-ui, sans-serif; }
+    details > summary { list-style: none; }
+    details > summary::-webkit-details-marker { display: none; }
+    /* Documento A4: estilos usados al renderizar el HTML inyectado (el CDN no ve clases dinámicas) */
+    #doc-print, #doc-print * { box-sizing: border-box; }
+    .p-doc {
+      width: 210mm;
+      min-height: 297mm;
+      background: #fff;
+      color: #1e293b;
+      font-size: 10.5pt;
+      line-height: 1.5;
+      font-family: 'Inter', system-ui, sans-serif;
+      padding: 14mm 16mm 18mm;
+    }
+    .p-doc__kicker { font-size: 9px; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: #64748b; margin: 0 0 2mm; }
+    .p-doc__title { font-size: 20pt; font-weight: 700; letter-spacing: -0.02em; color: var(--ddg); margin: 0 0 1mm; }
+    .p-doc__sub { font-size: 9pt; color: #94a3b8; margin: 0 0 6mm; }
+    .p-doc__logoBox { display: inline-block; background: #fffef8; padding: 2.5mm 3.5mm; border-radius: 2pt; border: 0.3pt solid #e2e8f0; box-shadow: 0 1px 4px rgba(15, 23, 42, 0.08); margin-bottom: 4mm; }
+    .p-doc__logo { height: 36px; width: auto; max-width: 200px; object-fit: contain; display: block; margin: 0; }
+    .p-doc__otecline { display: table; width: 100%; font-size: 9.5pt; border-collapse: collapse; margin: 0 0 1.5mm; }
+    .p-doc__otecline span:first-child { color: #64748b; width: 28%; }
+    .p-doc__otecline span:last-child { font-weight: 500; color: #0f172a; }
+    .p-doc__section { margin-top: 7mm; page-break-inside: avoid; }
+    .p-doc__chunk { page-break-inside: avoid; break-inside: avoid; }
+    .p-doc__break-before { page-break-before: always; break-before: page; }
+    .p-doc__h2 { font-size: 10pt; font-weight: 700; color: var(--ddg); text-transform: uppercase; letter-spacing: 0.06em; margin: 0 0 3mm; padding-bottom: 1.5mm; border-bottom: 1.5pt solid var(--ddg); }
+    .p-doc__table { width: 100%; border-collapse: collapse; font-size: 9.5pt; }
+    .p-doc__table th, .p-doc__table td { text-align: left; padding: 2.2mm 2mm; border-bottom: 0.4pt solid #e2e8f0; }
+    .p-doc__table th { color: #64748b; font-weight: 600; font-size: 8.5pt; text-transform: uppercase; letter-spacing: 0.04em; }
+    .p-doc__table .num { text-align: right; font-variant-numeric: tabular-nums; }
+    .p-doc__gloss { background: #f8fafc; }
+    .p-doc__gloss td { font-size: 9pt; }
+    .p-doc__metaGrid { display: table; width: 100%; border-collapse: separate; border-spacing: 0 1.6mm; margin-bottom: 3mm; }
+    .p-doc__metaRow { display: table-row; }
+    .p-doc__metaK, .p-doc__metaV { display: table-cell; vertical-align: top; font-size: 9.3pt; }
+    .p-doc__metaK { width: 28%; color: #64748b; padding-right: 2mm; }
+    .p-doc__metaV { color: #0f172a; font-weight: 500; }
+    .p-doc__textCard {
+      border: 0.4pt solid #e2e8f0;
+      border-left: 2pt solid var(--ddg);
+      background: #f8fafc;
+      padding: 3.2mm 3.5mm;
+      margin: 0 0 3mm;
+      border-radius: 2pt;
+      page-break-inside: avoid;
+    }
+    .p-doc__textCardLabel { margin: 0 0 1mm; font-size: 8.3pt; color: #64748b; text-transform: uppercase; letter-spacing: 0.05em; font-weight: 700; }
+    .p-doc__textCardVal { margin: 0; font-size: 9.15pt; color: #334155; text-align: justify; }
+    .p-doc__glossNote td { padding-top: 1.4mm; font-size: 8.7pt; color: #475569; line-height: 1.52; border-bottom: 0.4pt solid #e2e8f0; }
+    .p-doc__totbar { display: table; width: 100%; margin-top: 2mm; background: #f1f5f9; color: #0f172a; }
+    .p-doc__totbar > div { display: table-cell; padding: 3mm 3mm; font-size: 10pt; }
+    .p-doc__totbar > div:last-child { text-align: right; font-weight: 700; font-size: 12pt; color: var(--ddg); }
+    .p-doc__resumen { margin-top: 5mm; padding: 3.5mm 4mm; background: #2C4855; color: #fff; border-radius: 2pt; }
+    .p-doc__resumen .l { font-size: 9pt; font-weight: 500; letter-spacing: 0.04em; text-transform: uppercase; opacity: 0.9; }
+    .p-doc__resumen .v { font-size: 18pt; font-weight: 700; margin-top: 1mm; }
+    .p-doc__legal { margin-top: 6mm; font-size: 8.8pt; line-height: 1.6; color: #475569; text-align: justify; border-top: 0.4pt solid #e2e8f0; padding-top: 4mm; }
+    .p-doc__legal strong { color: #334155; }
+    .p-doc__hr { height: 0; border: 0; border-top: 0.4pt solid #e2e8f0; margin: 4mm 0; }
+  </style>
+</head>
+<body class="min-h-screen bg-slate-100/90 text-slate-900 antialiased">
+  <header class="shrink-0 border-b border-slate-200/80 bg-white/90 backdrop-blur-sm">
+    <div class="max-w-[1600px] mx-auto px-4 sm:px-5 py-3 flex flex-wrap items-center justify-between gap-3">
+      <div>
+        <p class="text-[10px] font-semibold tracking-[0.2em] uppercase text-slate-400">OTEC</p>
+        <h1 class="text-base sm:text-lg font-semibold text-ddg">Generador de presupuestos</h1>
+      </div>
+      <button type="button" id="btn-pdf" class="inline-flex items-center justify-center gap-2 rounded-lg bg-ddg px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-[#23404a] disabled:cursor-not-allowed disabled:opacity-60">
+        <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a2 2 0 002 2h12a2 2 0 002-2v-1M12 12v6m0 0l-2.5-2.5M12 12l2.5 2.5M12 3v1" /></svg>
+        <span id="btn-pdf-label">Descargar PDF</span>
+      </button>
+    </div>
+  </header>
+
+  <div class="max-w-[1600px] mx-auto flex flex-col lg:flex-row min-h-[calc(100vh-3.5rem)]">
+    <!-- Controles -->
+    <aside class="w-full lg:w-[min(100%,22rem)] xl:w-[24rem] shrink-0 border-b lg:border-b-0 lg:border-r border-slate-200/80 bg-white flex flex-col max-h-[48vh] lg:max-h-none lg:min-h-[calc(100vh-3.5rem)]">
+      <p class="px-4 pt-4 text-[11px] text-slate-500">Edita los datos. La vista previa y el PDF se actualizan al instante.</p>
+      <div class="overflow-y-auto flex-1 px-3 pb-4 pt-2 space-y-2" id="form-accordions">
+        <details class="group rounded-lg border border-slate-200/90 bg-slate-50/50 open:shadow-sm" open>
+          <summary class="cursor-pointer list-none select-none px-3 py-2.5 text-sm font-semibold text-ddg flex items-center justify-between">
+            <span>Datos OTEC</span>
+            <span class="text-slate-400 text-xs group-open:rotate-180 transition-transform">▼</span>
+          </summary>
+          <div class="px-3 pb-3 space-y-2.5 text-sm border-t border-slate-200/60 pt-2">
+            <label class="block"><span class="text-[11px] font-medium text-slate-500">Nombre</span><input data-k="otecName" class="form-inp mt-0.5 w-full rounded border border-slate-200 bg-white px-2 py-1.5 text-sm" type="text" /></label>
+            <label class="block"><span class="text-[11px] font-medium text-slate-500">RUT</span><input data-k="otecRut" class="form-inp mt-0.5 w-full rounded border border-slate-200 bg-white px-2 py-1.5 text-sm" type="text" /></label>
+            <label class="block"><span class="text-[11px] font-medium text-slate-500">Región</span><input data-k="otecRegion" class="form-inp mt-0.5 w-full rounded border border-slate-200 bg-white px-2 py-1.5 text-sm" type="text" /></label>
+            <label class="block"><span class="text-[11px] font-medium text-slate-500">Correo</span><input data-k="otecEmail" class="form-inp mt-0.5 w-full rounded border border-slate-200 bg-white px-2 py-1.5 text-sm" type="email" /></label>
+          </div>
+        </details>
+        <details class="group rounded-lg border border-slate-200/90 bg-slate-50/50" open>
+          <summary class="cursor-pointer list-none select-none px-3 py-2.5 text-sm font-semibold text-ddg flex items-center justify-between">
+            <span>Curso 1</span>
+            <span class="text-slate-400 text-xs">▼</span>
+          </summary>
+          <div class="px-3 pb-3 space-y-2.5 text-sm border-t border-slate-200/60 pt-2" data-c="1">
+            <label class="block"><span class="text-[11px] font-medium text-slate-500">Nombre</span><input data-k="c1.name" class="form-inp mt-0.5 w-full rounded border border-slate-200 bg-white px-2 py-1.5" type="text" /></label>
+            <div class="grid grid-cols-2 gap-2">
+              <label class="block"><span class="text-[11px] font-medium text-slate-500">Modalidad</span><input data-k="c1.modalidad" class="form-inp mt-0.5 w-full rounded border border-slate-200 bg-white px-2 py-1.5" type="text" /></label>
+              <label class="block"><span class="text-[11px] font-medium text-slate-500">Horas</span><input data-k="c1.horas" class="form-inp mt-0.5 w-full rounded border border-slate-200 bg-white px-2 py-1.5" type="text" /></label>
+            </div>
+            <div class="grid grid-cols-2 gap-2">
+              <label class="block"><span class="text-[11px] font-medium text-slate-500">Módulos</span><input data-k="c1.modulos" class="form-inp mt-0.5 w-full rounded border border-slate-200 bg-white px-2 py-1.5" type="text" /></label>
+              <label class="block"><span class="text-[11px] font-medium text-slate-500">Mín. participantes</span><input data-k="c1.minParticipantes" class="form-inp num-inp mt-0.5 w-full rounded border border-slate-200 bg-white px-2 py-1.5" type="text" inputmode="numeric" /></label>
+            </div>
+            <div class="grid grid-cols-2 gap-2">
+              <label class="block"><span class="text-[11px] font-medium text-slate-500">Valor total (CLP)</span><input data-k="c1.valorTotal" class="form-inp num-inp mt-0.5 w-full rounded border border-slate-200 bg-white px-2 py-1.5" type="text" inputmode="numeric" /></label>
+              <label class="block"><span class="text-[11px] font-medium text-slate-500">Valor participante</span><input data-k="c1.valorParticipante" class="form-inp num-inp mt-0.5 w-full rounded border border-slate-200 bg-white px-2 py-1.5" type="text" inputmode="numeric" /></label>
+            </div>
+            <p class="text-[10px] font-semibold text-slate-500 pt-1">Desglose / glosa</p>
+            <label class="block"><span class="text-[11px] text-slate-500">Ítem 1 + monto</span>
+              <div class="mt-0.5 flex gap-1"><input data-k="c1.g1l" class="form-inp flex-1 rounded border border-slate-200 bg-white px-2 py-1.5 text-xs" type="text" placeholder="Descripción" /><input data-k="c1.g1" class="form-inp num-inp w-28 rounded border border-slate-200 bg-white px-2 py-1.5 text-xs" type="text" inputmode="numeric" /></div></label>
+            <label class="block"><span class="text-[11px] text-slate-500">Ítem 2 + monto</span>
+              <div class="mt-0.5 flex gap-1"><input data-k="c1.g2l" class="form-inp flex-1 rounded border border-slate-200 bg-white px-2 py-1.5 text-xs" type="text" /><input data-k="c1.g2" class="form-inp num-inp w-28 rounded border border-slate-200 bg-white px-2 py-1.5 text-xs" type="text" inputmode="numeric" /></div></label>
+            <label class="block"><span class="text-[11px] text-slate-500">Ítem 3 + monto</span>
+              <div class="mt-0.5 flex gap-1"><input data-k="c1.g3l" class="form-inp flex-1 rounded border border-slate-200 bg-white px-2 py-1.5 text-xs" type="text" /><input data-k="c1.g3" class="form-inp num-inp w-28 rounded border border-slate-200 bg-white px-2 py-1.5 text-xs" type="text" inputmode="numeric" /></div></label>
+          </div>
+        </details>
+        <details class="group rounded-lg border border-slate-200/90 bg-slate-50/50" open>
+          <summary class="cursor-pointer list-none select-none px-3 py-2.5 text-sm font-semibold text-ddg flex items-center justify-between">
+            <span>Curso 2</span>
+            <span class="text-slate-400 text-xs">▼</span>
+          </summary>
+          <div class="px-3 pb-3 space-y-2.5 text-sm border-t border-slate-200/60 pt-2">
+            <label class="block"><span class="text-[11px] font-medium text-slate-500">Nombre</span><input data-k="c2.name" class="form-inp mt-0.5 w-full rounded border border-slate-200 bg-white px-2 py-1.5" type="text" /></label>
+            <div class="grid grid-cols-2 gap-2">
+              <label class="block"><span class="text-[11px] font-medium text-slate-500">Modalidad</span><input data-k="c2.modalidad" class="form-inp mt-0.5 w-full rounded border border-slate-200 bg-white px-2 py-1.5" type="text" /></label>
+              <label class="block"><span class="text-[11px] font-medium text-slate-500">Horas</span><input data-k="c2.horas" class="form-inp mt-0.5 w-full rounded border border-slate-200 bg-white px-2 py-1.5" type="text" /></label>
+            </div>
+            <div class="grid grid-cols-2 gap-2">
+              <label class="block"><span class="text-[11px] font-medium text-slate-500">Módulos</span><input data-k="c2.modulos" class="form-inp mt-0.5 w-full rounded border border-slate-200 bg-white px-2 py-1.5" type="text" /></label>
+              <label class="block"><span class="text-[11px] font-medium text-slate-500">Jornadas</span><input data-k="c2.jornadas" class="form-inp mt-0.5 w-full rounded border border-slate-200 bg-white px-2 py-1.5" type="text" /></label>
+            </div>
+            <label class="block"><span class="text-[11px] font-medium text-slate-500">Valor total (CLP)</span><input data-k="c2.valorTotal" class="form-inp num-inp mt-0.5 w-full rounded border border-slate-200 bg-white px-2 py-1.5" type="text" inputmode="numeric" /></label>
+            <p class="text-[10px] font-semibold text-slate-500 pt-1">Desglose / glosa</p>
+            <label class="block"><div class="mt-0.5 flex gap-1"><input data-k="c2.g1l" class="form-inp flex-1 rounded border border-slate-200 bg-white px-2 py-1.5 text-xs" type="text" /><input data-k="c2.g1" class="form-inp num-inp w-28 rounded border border-slate-200 bg-white px-2 py-1.5 text-xs" type="text" inputmode="numeric" /></div></label>
+            <label class="block"><div class="mt-0.5 flex gap-1"><input data-k="c2.g2l" class="form-inp flex-1 rounded border border-slate-200 bg-white px-2 py-1.5 text-xs" type="text" /><input data-k="c2.g2" class="form-inp num-inp w-28 rounded border border-slate-200 bg-white px-2 py-1.5 text-xs" type="text" inputmode="numeric" /></div></label>
+            <label class="block"><div class="mt-0.5 flex gap-1"><input data-k="c2.g3l" class="form-inp flex-1 rounded border border-slate-200 bg-white px-2 py-1.5 text-xs" type="text" /><input data-k="c2.g3" class="form-inp num-inp w-28 rounded border border-slate-200 bg-white px-2 py-1.5 text-xs" type="text" inputmode="numeric" /></div></label>
+          </div>
+        </details>
+        <details class="group rounded-lg border border-slate-200/90 bg-slate-50/50" open>
+          <summary class="cursor-pointer list-none select-none px-3 py-2.5 text-sm font-semibold text-ddg flex items-center justify-between">
+            <span>Resumen y condiciones</span>
+            <span class="text-slate-400 text-xs">▼</span>
+          </summary>
+          <div class="px-3 pb-3 space-y-2.5 text-sm border-t border-slate-200/60 pt-2">
+            <p class="text-xs text-slate-500">Total <span class="font-semibold text-ddg" id="hint-total">—</span> (suma automática de los valores totales de cada curso).</p>
+            <label class="block"><span class="text-[11px] font-medium text-slate-500">Condiciones comerciales</span><textarea data-k="condiciones" class="form-inp mt-0.5 w-full rounded border border-slate-200 bg-white px-2 py-2 text-xs min-h-[120px] leading-relaxed" rows="5"></textarea></label>
+          </div>
+        </details>
+      </div>
+    </aside>
+
+    <!-- Vista previa A4 -->
+    <main class="flex-1 min-w-0 bg-[var(--paper)] flex items-start justify-center p-3 sm:p-5 overflow-auto">
+      <div class="origin-top" id="preview-scale-wrap">
+        <article id="doc-print" class="p-doc shadow-[0_12px_40px_rgba(15,23,42,0.12)]" aria-label="Vista previa del presupuesto"></article>
+      </div>
+    </main>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  <script>
+(function () {
+  'use strict';
+
+  const LOGO_URL = 'https://ddgdelvalle.cl/wp-content/uploads/2026/03/cropped-LOGO-DDG_color.png';
+
+  const defaultState = {
+    otecName: 'DDG DEL VALLE CAPACITACIONES SPA',
+    otecRut: '77.534.533-0',
+    otecRegion: 'Coquimbo',
+    otecEmail: 'daniela.alvarez@ddgdelvalle.cl',
+    c1: {
+      name: 'Peluquería Básico',
+      modalidad: 'Presencial',
+      horas: '25 horas',
+      modulos: '4',
+      minParticipantes: 30,
+      relator: 'Estela',
+      formasPago: 'Transferencia | tarjeta',
+      descripcion: 'El curso de Peluquería Básica entrega los conocimientos fundamentales para iniciarse en el área de la peluquería y el cuidado capilar. Durante la capacitación, los participantes aprenderán a identificar herramientas, comprender la estructura del cabello y aplicar técnicas básicas de corte, peinado y coloración. La formación se orienta al desarrollo de habilidades prácticas que permitan realizar servicios iniciales de peluquería, respetando normas de higiene, atención al cliente y protocolos de trabajo en salón. Este curso está enfocado en personas que desean adquirir un oficio en el área de la belleza y comenzar a desempeñarse en peluquerías, emprendimientos personales o servicios a domicilio.',
+      valorTotal: 2034000,
+      valorParticipante: 67700,
+      g1l: 'Servicio de capacitación', g1: 1101000,
+      g1d: 'Incluye planificación, coordinación y ejecución del programa formativo, relatoría especializada y desarrollo de contenidos teóricos y prácticos del curso de peluquería básica.',
+      g2l: 'Materiales de práctica', g2: 483000,
+      g2d: 'Considera los insumos necesarios para el desarrollo de las prácticas durante el curso, tales como productos, elementos de protección y otros materiales utilizados durante el proceso formativo.',
+      g3l: 'Alimentación por jornada', g3: 450000,
+      g3d: 'Incluye colación individual para los participantes durante cada jornada de capacitación.',
+    },
+    c2: {
+      name: 'Peluquería Avanzado',
+      modalidad: 'Presencial',
+      horas: '40 horas',
+      modulos: '4',
+      jornadas: '8',
+      relator: 'Estela',
+      descripcion: 'El curso de Peluquería Avanzada está orientado al perfeccionamiento técnico de profesionales o personas con conocimientos previos en peluquería que deseen ampliar sus habilidades en corte, colorimetría y diseño capilar. Durante la capacitación se profundizará en técnicas modernas de corte, coloración avanzada y peinados profesionales, incorporando criterios de visagismo y tendencias actuales para la creación de estilos personalizados. Además, se abordarán aspectos relacionados con el desarrollo profesional en el área de la peluquería y estrategias para potenciar servicios en salones de belleza o emprendimientos independientes.',
+      valorTotal: 2901000,
+      g1l: 'Servicio de capacitación', g1: 1668000,
+      g1d: 'Incluye planificación, coordinación y ejecución del programa formativo, relatoría especializada y desarrollo de contenidos teóricos y prácticos del curso de peluquería avanzada.',
+      g2l: 'Materiales de práctica', g2: 513000,
+      g2d: 'Considera los insumos necesarios para el desarrollo de las prácticas durante el curso, tales como productos, elementos de protección y otros materiales utilizados durante el proceso formativo.',
+      g3l: 'Alimentación por jornada', g3: 720000,
+      g3d: 'Incluye colación individual para los participantes durante cada jornada de capacitación.',
+    },
+    condiciones: 'El presente presupuesto puede estar sujeto a modificaciones de acuerdo con la disponibilidad de insumos, variaciones en los costos de materiales o ajustes logísticos necesarios para la correcta ejecución del curso. Asimismo, cualquier cambio en la cantidad de participantes, duración del programa o requerimientos específicos solicitados por la institución podrá implicar una actualización del valor total del servicio. La ejecución del curso estará sujeta a la confirmación de la cantidad mínima de participantes y a la coordinación previa de fechas, horarios y condiciones operativas entre las partes involucradas.',
+  };
+
+  const fmt = n => (typeof n === 'number' && !Number.isNaN(n)
+    ? new Intl.NumberFormat('es-CL', { style: 'currency', currency: 'CLP', maximumFractionDigits: 0 }).format(n)
+    : '—');
+  const parseNum = s => { const t = String(s).replace(/\D/g, ''); return t ? parseInt(t, 10) : 0; };
+
+  function get(obj, path) {
+    return path.split('.').reduce((o, k) => o && o[k] !== undefined ? o[k] : undefined, obj);
+  }
+  function set(obj, path, val) {
+    const p = path.split('.'); let t = obj;
+    for (let i = 0; i < p.length - 1; i++) {
+      if (!t[p[i]]) t[p[i]] = {};
+      t = t[p[i]];
+    }
+    t[p[p.length - 1]] = val;
+  }
+
+  const state = JSON.parse(JSON.stringify(defaultState));
+  const docEl = document.getElementById('doc-print');
+  const scaleWrap = document.getElementById('preview-scale-wrap');
+
+  function escapeHtml(s) {
+    if (s == null) return '';
+    return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+  }
+
+  function buildHtml() {
+    const t1 = state.c1.valorTotal;
+    const t2 = state.c2.valorTotal;
+    const suma = (typeof t1 === 'number' ? t1 : parseNum(t1)) + (typeof t2 === 'number' ? t2 : parseNum(t2));
+    return (
+      '<div class="p-doc__chunk" data-chunk="intro">' +
+      '<div class="p-doc__logoBox"><img class="p-doc__logo" crossorigin="anonymous" src="' + escapeHtml(LOGO_URL) + '" alt="DDG" /></div>' +
+      '<p class="p-doc__kicker">Documento de referencia comercial</p>' +
+      '<h1 class="p-doc__title">Presupuesto de capacitación</h1>' +
+      '<p class="p-doc__sub">Vista para evaluación de propuesta — no constituye factura</p>' +
+      '<div class="p-doc__otecline"><span>Organismo</span><span>' + escapeHtml(state.otecName) + '</span></div>' +
+      '<div class="p-doc__otecline"><span>RUT</span><span>' + escapeHtml(state.otecRut) + '</span></div>' +
+      '<div class="p-doc__otecline"><span>Región</span><span>' + escapeHtml(state.otecRegion) + '</span></div>' +
+      '<div class="p-doc__otecline"><span>Correo</span><span>' + escapeHtml(state.otecEmail) + '</span></div>' +
+      '</div>' +
+
+      buildCursoSection({
+        index: 1,
+        curso: state.c1,
+        valorTotal: typeof t1 === 'number' ? t1 : parseNum(t1),
+        metaRows: [
+          ['Modalidad', state.c1.modalidad],
+          ['Horas', state.c1.horas],
+          ['Módulos', state.c1.modulos],
+          ['Mínimo de participantes', String(state.c1.minParticipantes)],
+          ['Relator/a', state.c1.relator],
+          ['Formas de pago', state.c1.formasPago],
+          ['Valor total', fmt(typeof t1 === 'number' ? t1 : parseNum(t1))],
+          ['Valor por participante', fmt(typeof state.c1.valorParticipante === 'number' ? state.c1.valorParticipante : parseNum(state.c1.valorParticipante))],
+        ],
+      }) +
+      buildCursoSection({
+        index: 2,
+        curso: state.c2,
+        valorTotal: typeof t2 === 'number' ? t2 : parseNum(t2),
+        metaRows: [
+          ['Modalidad', state.c2.modalidad],
+          ['Horas', state.c2.horas],
+          ['Módulos', state.c2.modulos],
+          ['Jornadas', state.c2.jornadas],
+          ['Relator/a', state.c2.relator],
+          ['Valor total', fmt(typeof t2 === 'number' ? t2 : parseNum(t2))],
+        ],
+      }) +
+
+      '<div class="p-doc__chunk" data-chunk="cierre">' +
+      '<div class="p-doc__resumen"><div class="l">Inversión total (cursos indicados)</div><div class="v">' + fmt(suma) + '</div></div>' +
+      '<p class="p-doc__legal"><strong>Condiciones comerciales</strong><br/>' + nl2br(escapeHtml(state.condiciones)) + '</p>' +
+      '</div>'
+    );
+  }
+  function buildCursoSection(cfg) {
+    const c = cfg.curso;
+    return (
+      '<div class="p-doc__section p-doc__chunk" data-chunk="curso-' + cfg.index + '">' +
+      '<h2 class="p-doc__h2">' + cfg.index + ' · ' + escapeHtml(c.name) + '</h2>' +
+      textCard('Descripción general', c.descripcion) +
+      '<div class="p-doc__metaGrid">' + cfg.metaRows.map(function (pair) { return metaRow(pair[0], pair[1]); }).join('') + '</div>' +
+      '<p style="margin:3mm 0 1.5mm;font-size:8.5pt;font-weight:600;color:#64748b;text-transform:uppercase;letter-spacing:0.05em">Desglose / glosa</p>' +
+      '<table class="p-doc__table p-doc__gloss"><tbody>' +
+      gRow(c.g1l, c.g1, c.g1d) + gRow(c.g2l, c.g2, c.g2d) + gRow(c.g3l, c.g3, c.g3d) +
+      '</tbody></table>' +
+      subtot('Subtotal módulo ' + cfg.index, cfg.valorTotal) +
+      '</div>'
+    );
+  }
+  function metaRow(l, v) {
+    return '<div class="p-doc__metaRow"><div class="p-doc__metaK">' + escapeHtml(l) + '</div><div class="p-doc__metaV">' + escapeHtml(String(v != null ? v : '')) + '</div></div>';
+  }
+  function textCard(label, text) {
+    return '<div class="p-doc__textCard"><p class="p-doc__textCardLabel">' + escapeHtml(label) + '</p><p class="p-doc__textCardVal">' + nl2br(escapeHtml(String(text != null ? text : ''))) + '</p></div>';
+  }
+  function gRow(label, n, detalle) {
+    const v = typeof n === 'number' ? n : parseNum(n);
+    return '<tr><td>' + escapeHtml(label) + '</td><td class="num">' + fmt(v) + '</td></tr>' +
+      '<tr class="p-doc__glossNote"><td colspan="2">' + escapeHtml(String(detalle != null ? detalle : '')) + '</td></tr>';
+  }
+  function subtot(t, n) {
+    return '<div class="p-doc__totbar"><div>' + escapeHtml(t) + '</div><div>' + fmt(n) + '</div></div>';
+  }
+  function nl2br(s) { return s.replace(/\n/g, '<br/>'); }
+
+  function applySmartPageBreaks() {
+    const chunks = Array.from(docEl.querySelectorAll('[data-chunk]'));
+    if (!chunks.length) return;
+
+    chunks.forEach(function (chunk) { chunk.classList.remove('p-doc__break-before'); });
+
+    const pxPerMm = docEl.getBoundingClientRect().width / 210;
+    const usablePageMm = 297 - 14 - 18;
+    const pageLimitPx = pxPerMm * usablePageMm;
+
+    let acc = 0;
+    chunks.forEach(function (chunk) {
+      const h = chunk.getBoundingClientRect().height;
+      if (acc > 0 && (acc + h) > pageLimitPx) {
+        chunk.classList.add('p-doc__break-before');
+        acc = h;
+      } else {
+        acc += h;
+      }
+    });
+  }
+
+  function render() {
+    docEl.innerHTML = buildHtml();
+    applySmartPageBreaks();
+    document.getElementById('hint-total').textContent = fmt(computeSuma());
+  }
+
+  function computeSuma() {
+    const a = typeof state.c1.valorTotal === 'number' ? state.c1.valorTotal : parseNum(state.c1.valorTotal);
+    const b = typeof state.c2.valorTotal === 'number' ? state.c2.valorTotal : parseNum(state.c2.valorTotal);
+    return a + b;
+  }
+
+  function syncFormFromState() {
+    document.querySelectorAll('[data-k]').forEach(function (el) {
+      const k = el.getAttribute('data-k');
+      const v = get(state, k);
+      if (el.classList.contains('num-inp') && !/\.g[123]l$/.test(k)) {
+        if (v != null && v !== '') { el.value = typeof v === 'number' ? String(v) : String(v); } else { el.value = ''; }
+      } else {
+        el.value = v != null ? String(v) : '';
+      }
+    });
+  }
+
+  function applyInputToState(el) {
+    const k = el.getAttribute('data-k');
+    if (!k) return;
+    const raw = el.value;
+    if (!el.classList.contains('num-inp') || /\.g[123]l$/.test(k)) {
+      set(state, k, raw);
+      return;
+    }
+    if (k.indexOf('minParticipantes') !== -1) {
+      set(state, k, parseInt(String(raw).replace(/\D/g, ''), 10) || 0);
+      return;
+    }
+    set(state, k, parseNum(raw) || 0);
+  }
+
+  function bindForm() {
+    document.getElementById('form-accordions').addEventListener('input', function (e) {
+      const el = e.target;
+      if (!el || !el.getAttribute('data-k')) return;
+      applyInputToState(el);
+      render();
+    });
+    document.getElementById('form-accordions').addEventListener('change', function (e) {
+      const el = e.target;
+      if (el && el.getAttribute('data-k')) { applyInputToState(el); render(); }
+    });
+  }
+
+  function fitPreview() {
+    const main = document.querySelector('main');
+    if (!main || !scaleWrap) return;
+    const pad = 40;
+    const w = main.clientWidth - pad;
+    const docW = docEl.getBoundingClientRect().width;
+    const s = Math.min(1, w / docW) * 0.98;
+    scaleWrap.style.transform = 'scale(' + s + ')';
+    scaleWrap.style.transformOrigin = 'top center';
+    const h = docEl.getBoundingClientRect().height * s;
+    scaleWrap.parentElement.style.minHeight = Math.max(h + 32, 400) + 'px';
+  }
+
+  const btn = document.getElementById('btn-pdf');
+  const btnLabel = document.getElementById('btn-pdf-label');
+  const labelIdle = 'Descargar PDF';
+
+  btn.addEventListener('click', function () {
+    if (btn.disabled) return;
+    const prevT = scaleWrap.style.transform;
+    const prevO = scaleWrap.style.transformOrigin;
+    scaleWrap.style.transform = 'none';
+    scaleWrap.style.transformOrigin = 'top center';
+    btn.disabled = true;
+    btnLabel.textContent = 'Cargando…';
+    var el = document.getElementById('doc-print');
+    var opt = {
+      margin: 8,
+      filename: 'presupuesto-ddg-del-valle.pdf',
+      image: { type: 'jpeg', quality: 0.96 },
+      html2canvas: { scale: 2, useCORS: true, letterRendering: true, logging: false, backgroundColor: '#ffffff' },
+      jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
+      pagebreak: { mode: ['css', 'legacy', 'avoid-all'] },
+    };
+    function finish() {
+      scaleWrap.style.transform = prevT;
+      scaleWrap.style.transformOrigin = prevO;
+      fitPreview();
+      btn.disabled = false;
+      btnLabel.textContent = labelIdle;
+    }
+    requestAnimationFrame(function () {
+      setTimeout(function () {
+        var chain = window.html2pdf().set(opt).from(el).save();
+        Promise.resolve(chain).then(finish).catch(function (e) {
+          console.error(e);
+          finish();
+          alert('Error al generar el PDF. Si el logo no se ve en el archivo, puede ser CORS: sube el logo al mismo dominio o desactiva bloqueo de contenido mixto.');
+        });
+      }, 50);
+    });
+  });
+
+  /* Init */
+  render();
+  syncFormFromState();
+  bindForm();
+  window.addEventListener('resize', fitPreview);
+  setTimeout(fitPreview, 0);
+})();
+  </script>
+</body>
+</html>
