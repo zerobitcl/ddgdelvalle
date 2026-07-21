@@ -25,8 +25,25 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['login'])) {
 
 $autenticado = !empty($_SESSION['alumno_auth']);
 
+/* Ruta local del PPTX (lectura desde filesystem) */
+$PPTX_LOCAL = __DIR__ . '/datos/Presentacion-Riego-p1.pptx';
+/* URL pública absoluta: Office Online la descarga desde sus servidores */
 $PPTX_URL = 'https://ddgdelvalle.cl/datos/Presentacion-Riego-p1.pptx';
 $PPTX_EMBED = 'https://view.officeapps.live.com/op/embed.aspx?src=' . rawurlencode($PPTX_URL);
+
+/* Descarga autenticada sin exponer otros archivos de /datos/ */
+if ($autenticado && isset($_GET['download']) && $_GET['download'] === 'pptx') {
+    if (!is_file($PPTX_LOCAL)) {
+        http_response_code(404);
+        exit('Archivo no encontrado.');
+    }
+    header('Content-Type: application/vnd.openxmlformats-officedocument.presentationml.presentation');
+    header('Content-Disposition: attachment; filename="Presentacion-Riego-p1.pptx"');
+    header('Content-Length: ' . filesize($PPTX_LOCAL));
+    header('Cache-Control: private, no-store');
+    readfile($PPTX_LOCAL);
+    exit;
+}
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -201,7 +218,7 @@ $PPTX_EMBED = 'https://view.officeapps.live.com/op/embed.aspx?src=' . rawurlenco
           </iframe>
         </div>
         <div class="mt-5 flex justify-center no-print">
-          <a href="<?= htmlspecialchars($PPTX_URL) ?>" download
+          <a href="?download=pptx"
              class="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-agua-600 to-agro-600 px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-agua-600/25 transition hover:from-agua-700 hover:to-agro-700 hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-agua-500 focus:ring-offset-2">
             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
               <path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />

@@ -1,4 +1,18 @@
-# Bloqueo total de acceso público al directorio de datos.
-# Sólo PHP (vía guardar.php / admin.php) puede leerlo desde el filesystem.
-Require all denied
-Deny from all
+# Bloqueo de acceso público al directorio de datos.
+# Excepción: presentaciones .pptx/.ppt (visor Office Online del módulo alumno).
+# resultados.json y el resto siguen denegados.
+
+<IfModule mod_authz_core.c>
+  Require all denied
+  <FilesMatch "(?i)\.(pptx|ppt)$">
+    Require all granted
+  </FilesMatch>
+</IfModule>
+
+<IfModule !mod_authz_core.c>
+  Order Deny,Allow
+  Deny from all
+  <FilesMatch "(?i)\.(pptx|ppt)$">
+    Allow from all
+  </FilesMatch>
+</IfModule>
