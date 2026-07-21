@@ -1,0 +1,653 @@
+<?php
+session_start();
+
+$USUARIO_VALIDO = 'alumno';
+$CLAVE_VALIDA   = 'riego2026';
+$error_login    = '';
+
+if (isset($_GET['logout'])) {
+    session_destroy();
+    header('Location: ' . strtok($_SERVER['REQUEST_URI'], '?'));
+    exit;
+}
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['login'])) {
+    $user = trim($_POST['usuario'] ?? '');
+    $pass = trim($_POST['clave'] ?? '');
+    if ($user === $USUARIO_VALIDO && $pass === $CLAVE_VALIDA) {
+        $_SESSION['alumno_auth'] = true;
+        $_SESSION['alumno_user'] = $user;
+        header('Location: ' . strtok($_SERVER['REQUEST_URI'], '?'));
+        exit;
+    }
+    $error_login = 'Usuario o contraseña incorrectos.';
+}
+
+$autenticado = !empty($_SESSION['alumno_auth']);
+
+$PPTX_URL = 'https://ddgdelvalle.cl/datos/Presentacion-Riego-p1.pptx';
+$PPTX_EMBED = 'https://view.officeapps.live.com/op/embed.aspx?src=' . rawurlencode($PPTX_URL);
+?>
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Módulo Alumno · Riego y Evapotranspiración</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            agro: {
+              50:  '#f0fdf6',
+              100: '#dcfce9',
+              500: '#16a34a',
+              600: '#15803d',
+              700: '#166534',
+              800: '#14532d',
+            },
+            agua: {
+              50:  '#f0f9ff',
+              100: '#e0f2fe',
+              500: '#0ea5e9',
+              600: '#0284c7',
+              700: '#0369a1',
+            }
+          },
+          fontFamily: {
+            sans: ['"DM Sans"', 'system-ui', 'sans-serif'],
+            display: ['"Fraunces"', 'Georgia', 'serif'],
+          }
+        }
+      }
+    }
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=Fraunces:opsz,wght@9..144,600;9..144,700&display=swap" rel="stylesheet">
+  <style>
+    body {
+      background:
+        radial-gradient(ellipse 80% 50% at 10% -10%, rgba(14, 165, 233, 0.12), transparent),
+        radial-gradient(ellipse 60% 40% at 90% 0%, rgba(22, 163, 74, 0.1), transparent),
+        linear-gradient(180deg, #f8fafc 0%, #f0fdf6 40%, #f0f9ff 100%);
+      min-height: 100vh;
+    }
+    .card {
+      background: #fff;
+      border-radius: 1rem;
+      box-shadow: 0 1px 3px rgba(15, 23, 42, 0.06), 0 8px 24px rgba(15, 23, 42, 0.04);
+      border: 1px solid rgba(226, 232, 240, 0.9);
+    }
+    .field {
+      width: 100%;
+      border: 1.5px solid #cbd5e1;
+      border-radius: 0.5rem;
+      padding: 0.5rem 0.75rem;
+      font-size: 0.9rem;
+      transition: border-color .15s, box-shadow .15s;
+      background: #fff;
+    }
+    .field:focus {
+      outline: none;
+      border-color: #0ea5e9;
+      box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.15);
+    }
+    .field-inline {
+      display: inline-block;
+      width: auto;
+      min-width: 5.5rem;
+      max-width: 9rem;
+      margin: 0 0.2rem;
+      text-align: center;
+      vertical-align: middle;
+    }
+    .field-ok { border-color: #16a34a !important; background: #f0fdf4; }
+    .field-bad { border-color: #dc2626 !important; background: #fef2f2; }
+    .ratio-16-9 { position: relative; width: 100%; padding-bottom: 56.25%; }
+    .ratio-16-9 iframe {
+      position: absolute; inset: 0; width: 100%; height: 100%; border: 0; border-radius: 0.75rem;
+    }
+    @media print {
+      .no-print { display: none !important; }
+      body { background: #fff; }
+      .card { box-shadow: none; border: 1px solid #e2e8f0; break-inside: avoid; }
+      .field { border: 1px solid #94a3b8; }
+    }
+  </style>
+</head>
+<body class="font-sans text-slate-800 antialiased">
+
+<?php if (!$autenticado): ?>
+  <!-- ============ LOGIN ============ -->
+  <div class="min-h-screen flex items-center justify-center px-4 py-10">
+    <div class="card w-full max-w-md p-8 sm:p-10">
+      <div class="text-center mb-8">
+        <div class="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-agua-500 to-agro-600 text-white shadow-lg shadow-agua-500/25">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M12 3c.5 2.5-1 5-3.5 6.5C6 11 4.5 13 4.5 15.5A7.5 7.5 0 0012 23a7.5 7.5 0 007.5-7.5C19.5 11 15 6 12 3z" />
+          </svg>
+        </div>
+        <h1 class="font-display text-2xl font-bold text-slate-900">Portal de Estudio</h1>
+        <p class="mt-1 text-sm text-slate-500">Módulo de riego · Acceso privado del alumno</p>
+      </div>
+
+      <?php if ($error_login): ?>
+        <div class="mb-5 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700" role="alert">
+          <?= htmlspecialchars($error_login) ?>
+        </div>
+      <?php endif; ?>
+
+      <form method="POST" action="" class="space-y-5" autocomplete="off">
+        <div>
+          <label for="usuario" class="mb-1.5 block text-sm font-medium text-slate-700">Usuario</label>
+          <input type="text" id="usuario" name="usuario" required autofocus
+                 class="field" placeholder="Ingresa tu usuario">
+        </div>
+        <div>
+          <label for="clave" class="mb-1.5 block text-sm font-medium text-slate-700">Contraseña</label>
+          <input type="password" id="clave" name="clave" required
+                 class="field" placeholder="Ingresa tu contraseña">
+        </div>
+        <button type="submit" name="login" value="1"
+                class="w-full rounded-xl bg-gradient-to-r from-agro-600 to-agua-600 px-4 py-3 text-sm font-semibold text-white shadow-md shadow-agro-600/20 transition hover:from-agro-700 hover:to-agua-700 focus:outline-none focus:ring-2 focus:ring-agro-500 focus:ring-offset-2">
+          Ingresar al módulo
+        </button>
+      </form>
+    </div>
+  </div>
+
+<?php else: ?>
+  <!-- ============ PORTAL ============ -->
+  <header class="no-print sticky top-0 z-40 border-b border-slate-200/80 bg-white/85 backdrop-blur-md">
+    <div class="mx-auto flex max-w-5xl items-center justify-between gap-4 px-4 py-3 sm:px-6">
+      <div class="flex items-center gap-3">
+        <div class="flex h-9 w-9 items-center justify-center rounded-lg bg-gradient-to-br from-agua-500 to-agro-600 text-white">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M12 3c.5 2.5-1 5-3.5 6.5C6 11 4.5 13 4.5 15.5A7.5 7.5 0 0012 23a7.5 7.5 0 007.5-7.5C19.5 11 15 6 12 3z" />
+          </svg>
+        </div>
+        <div>
+          <p class="font-display text-sm font-bold text-slate-900 leading-tight">Módulo Alumno</p>
+          <p class="text-xs text-slate-500">Evapotranspiración y demanda de riego</p>
+        </div>
+      </div>
+      <a href="?logout=1"
+         class="inline-flex items-center gap-1.5 rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-xs font-medium text-slate-600 transition hover:border-red-200 hover:bg-red-50 hover:text-red-700">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+        </svg>
+        Cerrar sesión
+      </a>
+    </div>
+  </header>
+
+  <main class="mx-auto max-w-5xl px-4 py-8 sm:px-6 sm:py-10 space-y-8">
+
+    <!-- Presentación -->
+    <section class="card overflow-hidden">
+      <div class="border-b border-slate-100 bg-gradient-to-r from-agua-50 to-agro-50 px-5 py-4 sm:px-6">
+        <h2 class="font-display text-lg font-bold text-slate-900">Presentación del módulo</h2>
+        <p class="mt-0.5 text-sm text-slate-500">Visualiza el material y descárgalo para estudiar offline.</p>
+      </div>
+      <div class="p-5 sm:p-6">
+        <div class="ratio-16-9 overflow-hidden rounded-xl bg-slate-100 ring-1 ring-slate-200">
+          <iframe
+            src="<?= htmlspecialchars($PPTX_EMBED) ?>"
+            title="Presentación del módulo"
+            allowfullscreen>
+          </iframe>
+        </div>
+        <div class="mt-5 flex justify-center no-print">
+          <a href="<?= htmlspecialchars($PPTX_URL) ?>" download
+             class="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-agua-600 to-agro-600 px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-agua-600/25 transition hover:from-agua-700 hover:to-agro-700 hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-agua-500 focus:ring-offset-2">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+            </svg>
+            Descargar Presentación
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- Ejercicios -->
+    <section class="space-y-6">
+      <div class="px-1">
+        <h2 class="font-display text-2xl font-bold text-slate-900">Ejemplo 1. Cálculo de Evapotranspiración de cultivo</h2>
+        <p class="mt-2 text-sm leading-relaxed text-slate-600">
+          En los distritos agroclimáticos del Valle del Mataquito, según la siguiente tabla complete las siguientes páginas.
+        </p>
+      </div>
+
+      <!-- Tabla ETo -->
+      <div class="card overflow-hidden">
+        <div class="border-b border-slate-100 px-5 py-4 sm:px-6">
+          <h3 class="font-semibold text-slate-900">Estación: Las Lomas</h3>
+          <p class="text-xs text-slate-500">Red Agrometeorológica de INIA · ETo mensual (mm)</p>
+        </div>
+        <div class="overflow-x-auto">
+          <table class="w-full min-w-[480px] text-left text-sm">
+            <thead>
+              <tr class="bg-slate-50 text-xs uppercase tracking-wide text-slate-500">
+                <th class="px-5 py-3 font-semibold sm:px-6">Mes</th>
+                <th class="px-5 py-3 font-semibold sm:px-6">ETo (mm)</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-100" id="tabla-eto">
+              <tr><td class="px-5 py-2.5 sm:px-6">May-2025</td><td class="px-5 py-2.5 font-medium sm:px-6">19,43</td></tr>
+              <tr class="bg-slate-50/50"><td class="px-5 py-2.5 sm:px-6">Jun-2025</td><td class="px-5 py-2.5 font-medium sm:px-6">10,83</td></tr>
+              <tr><td class="px-5 py-2.5 sm:px-6">Jul-2025</td><td class="px-5 py-2.5 font-medium sm:px-6">14,07</td></tr>
+              <tr class="bg-slate-50/50"><td class="px-5 py-2.5 sm:px-6">Ago-2025</td><td class="px-5 py-2.5 font-medium sm:px-6">24,08</td></tr>
+              <tr><td class="px-5 py-2.5 sm:px-6">Sep-2025</td><td class="px-5 py-2.5 font-medium sm:px-6">43,48</td></tr>
+              <tr class="bg-slate-50/50"><td class="px-5 py-2.5 sm:px-6">Oct-2025</td><td class="px-5 py-2.5 font-medium sm:px-6">72,26</td></tr>
+              <tr><td class="px-5 py-2.5 sm:px-6">Nov-2025</td><td class="px-5 py-2.5 font-medium sm:px-6">102,57</td></tr>
+              <tr class="bg-slate-50/50"><td class="px-5 py-2.5 sm:px-6">Dic-2025</td><td class="px-5 py-2.5 font-medium sm:px-6">116,45</td></tr>
+              <tr class="bg-amber-50"><td class="px-5 py-2.5 font-semibold text-amber-900 sm:px-6">Ene-2026</td><td class="px-5 py-2.5 font-bold text-amber-800 sm:px-6">138,02</td></tr>
+              <tr class="bg-slate-50/50"><td class="px-5 py-2.5 sm:px-6">Feb-2026</td><td class="px-5 py-2.5 font-medium sm:px-6">85,92</td></tr>
+              <tr><td class="px-5 py-2.5 sm:px-6">Mar-2026</td><td class="px-5 py-2.5 font-medium sm:px-6">35,29</td></tr>
+              <tr class="bg-slate-50/50"><td class="px-5 py-2.5 sm:px-6">Abr-2026</td><td class="px-5 py-2.5 font-medium sm:px-6">38,26</td></tr>
+              <tr><td class="px-5 py-2.5 sm:px-6">May-2026</td><td class="px-5 py-2.5 font-medium sm:px-6">22,20</td></tr>
+              <tr class="bg-slate-50/50"><td class="px-5 py-2.5 sm:px-6">Jun-2026</td><td class="px-5 py-2.5 font-medium sm:px-6">16,91</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Preguntas 1–4 -->
+      <div class="card p-5 sm:p-6 space-y-6">
+        <h3 class="font-display text-lg font-bold text-slate-900">Preguntas</h3>
+
+        <div class="space-y-2">
+          <p class="text-sm font-medium text-slate-700">1. Determine el mes de máxima ETo y su medición.</p>
+          <div class="grid gap-3 sm:grid-cols-2">
+            <div>
+              <label class="mb-1 block text-xs text-slate-500">Mes</label>
+              <input type="text" id="q1_mes" class="field" placeholder="Ej: Ene-2026" data-check="mes_max">
+            </div>
+            <div>
+              <label class="mb-1 block text-xs text-slate-500">ETo (mm)</label>
+              <input type="number" id="q1_eto" class="field" step="0.01" placeholder="mm" data-check="eto_max">
+            </div>
+          </div>
+        </div>
+
+        <div class="space-y-2">
+          <p class="text-sm font-medium text-slate-700">2. ¿Cuánto es el registro de mm/día en el mes de máxima ETo? <span class="font-normal text-slate-500">(Asuma 31 días)</span></p>
+          <div class="flex flex-wrap items-center gap-2 text-sm text-slate-600">
+            <span>ETo diaria =</span>
+            <input type="number" id="q2_mm_dia" class="field field-inline" step="0.01" data-check="eto_diaria">
+            <span>mm/día</span>
+          </div>
+          <p class="text-xs text-slate-400">Fórmula: ETo mensual ÷ 31</p>
+        </div>
+
+        <div class="space-y-3">
+          <p class="text-sm font-medium text-slate-700">3. Determine el ETc de cerezo (Kc = 0,9) y el ETc de frambuesa (Kc = 0,75).</p>
+          <div class="grid gap-3 sm:grid-cols-2">
+            <div class="rounded-xl bg-agro-50/60 p-4 ring-1 ring-agro-100">
+              <p class="mb-2 text-xs font-semibold uppercase tracking-wide text-agro-700">Cerezo · Kc 0,9</p>
+              <div class="flex flex-wrap items-center gap-2 text-sm">
+                <span>ETc =</span>
+                <input type="number" id="q3_cerezo" class="field field-inline" step="0.01" data-check="etc_cerezo">
+                <span>mm/día</span>
+              </div>
+            </div>
+            <div class="rounded-xl bg-agua-50/60 p-4 ring-1 ring-agua-100">
+              <p class="mb-2 text-xs font-semibold uppercase tracking-wide text-agua-700">Frambuesa · Kc 0,75</p>
+              <div class="flex flex-wrap items-center gap-2 text-sm">
+                <span>ETc =</span>
+                <input type="number" id="q3_frambuesa" class="field field-inline" step="0.01" data-check="etc_frambuesa">
+                <span>mm/día</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="space-y-3">
+          <p class="text-sm font-medium text-slate-700">4. Transforme el resultado del ejercicio 3 a m³/ha/día. <span class="font-normal text-slate-500">(1 mm = 10 m³/ha)</span></p>
+          <div class="grid gap-3 sm:grid-cols-2">
+            <div class="flex flex-wrap items-center gap-2 text-sm">
+              <span>Cerezo:</span>
+              <input type="number" id="q4_cerezo" class="field field-inline" step="0.01" data-check="m3_cerezo">
+              <span>m³/ha/día</span>
+            </div>
+            <div class="flex flex-wrap items-center gap-2 text-sm">
+              <span>Frambuesa:</span>
+              <input type="number" id="q4_frambuesa" class="field field-inline" step="0.01" data-check="m3_frambuesa">
+              <span>m³/ha/día</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Caso práctico -->
+      <div class="card p-5 sm:p-6 space-y-6">
+        <h3 class="font-display text-lg font-bold text-slate-900">Caso práctico de cálculo</h3>
+        <p class="text-sm leading-relaxed text-slate-600">
+          En un sector de Mataquito, la máxima evaporación se registró en el mes de diciembre y alcanzó los
+          <strong>150 mm/mes</strong>, equivalente a <strong>4,83 mm/día</strong>. Si estamos cultivando
+          <strong>10 ha de cerezo</strong> con un marco de plantación de <strong>4 × 2</strong>
+          (1.250 plantas/ha), la demanda del cultivo o ETc (con Kc: 0,9) será igual a:
+        </p>
+
+        <div class="rounded-xl bg-slate-50 p-4 ring-1 ring-slate-100 space-y-3">
+          <p class="text-sm font-medium text-slate-700">ETc = ETo × Kc</p>
+          <div class="flex flex-wrap items-center gap-2 text-sm">
+            <span>ETc:</span>
+            <input type="number" id="caso_etc" class="field field-inline" step="0.01" data-check="caso_etc"
+                   placeholder="resultado">
+            <span>=</span>
+            <input type="number" id="caso_etc_mm" class="field field-inline" step="0.01" data-check="caso_etc"
+                   placeholder="mm/día">
+            <span>mm/día</span>
+          </div>
+        </div>
+
+        <div class="space-y-3">
+          <p class="text-sm font-medium text-slate-700">¿Cómo transformar mm/día en litros/planta/día?</p>
+          <p class="text-sm text-slate-600 font-mono bg-slate-50 rounded-lg px-3 py-2 ring-1 ring-slate-100">
+            D.N.C = (ETc × M.P × P.C (%)) / 100
+          </p>
+          <p class="text-xs text-slate-500">
+            M.P = área por planta = 4 × 2 = 8 m² · P.C (porcentaje de cubrimiento) = <strong>90%</strong>
+          </p>
+          <div class="space-y-2 text-sm">
+            <div class="flex flex-wrap items-center gap-2">
+              <span>D.N.C =</span>
+              <input type="text" id="caso_dnc_formula" class="field" style="max-width:22rem" placeholder="(ETc × 8 × 90) / 100">
+            </div>
+            <div class="flex flex-wrap items-center gap-2">
+              <span>D.N.C =</span>
+              <input type="number" id="caso_dnc" class="field field-inline" step="0.01" data-check="dnc">
+              <span>Litros/planta/día</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tabla eficiencia -->
+        <div>
+          <p class="mb-3 text-sm font-medium text-slate-700">
+            Los métodos de riego no tienen 100% de eficiencia. Tabla de referencia:
+          </p>
+          <div class="overflow-x-auto rounded-xl ring-1 ring-slate-200">
+            <table class="w-full min-w-[360px] text-sm">
+              <thead>
+                <tr class="bg-agua-50 text-xs uppercase tracking-wide text-agua-700">
+                  <th class="px-4 py-2.5 text-left font-semibold">Método</th>
+                  <th class="px-4 py-2.5 text-left font-semibold">Eficiencia</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-slate-100">
+                <tr><td class="px-4 py-2">Tendido</td><td class="px-4 py-2">30%</td></tr>
+                <tr class="bg-slate-50/50"><td class="px-4 py-2">Surcos</td><td class="px-4 py-2">45%</td></tr>
+                <tr><td class="px-4 py-2">Aspersión</td><td class="px-4 py-2">75%</td></tr>
+                <tr class="bg-slate-50/50"><td class="px-4 py-2">Micro-aspersión</td><td class="px-4 py-2">85%</td></tr>
+                <tr class="bg-agro-50"><td class="px-4 py-2 font-semibold text-agro-800">Goteo</td><td class="px-4 py-2 font-semibold text-agro-800">90%</td></tr>
+                <tr class="bg-slate-50/50"><td class="px-4 py-2">Cinta</td><td class="px-4 py-2">90%</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="space-y-2">
+          <p class="text-sm font-medium text-slate-700">
+            Calcule la Demanda Bruta o Real del Cultivo (D.B.C), usando riego por goteo (90%).
+          </p>
+          <p class="text-sm text-slate-600 font-mono bg-slate-50 rounded-lg px-3 py-2 ring-1 ring-slate-100">
+            D.B.C = (D.N.C × 100) / 90
+          </p>
+          <div class="flex flex-wrap items-center gap-2 text-sm">
+            <span>D.B.C =</span>
+            <input type="number" id="caso_dbc" class="field field-inline" step="0.01" data-check="dbc">
+            <span>Litros/planta/día</span>
+          </div>
+        </div>
+
+        <div class="space-y-3 border-t border-slate-100 pt-5">
+          <h4 class="font-semibold text-slate-900">Tiempo de Riego Diario (T.R.D)</h4>
+          <p class="text-sm text-slate-600 font-mono bg-slate-50 rounded-lg px-3 py-2 ring-1 ring-slate-100">
+            T.R.D = D.B.C / (n.g × Qg)
+          </p>
+          <p class="text-xs text-slate-500">
+            n.g = 2 goteros/planta · Qg = 4 L/hr
+          </p>
+          <div class="flex flex-wrap items-center gap-2 text-sm">
+            <span>T.R.D =</span>
+            <input type="number" id="caso_trd" class="field field-inline" step="0.01" data-check="trd">
+            <span>Horas/Día</span>
+          </div>
+        </div>
+
+        <div class="space-y-4 border-t border-slate-100 pt-5">
+          <p class="text-sm font-medium text-slate-700">
+            ¿Cuántas horas/días dispongo para el riego del huerto?
+            <span class="font-normal text-slate-500">(Pequeños agricultores: 12 h · Grandes: 18 h)</span>
+          </p>
+
+          <div class="rounded-xl bg-agro-50/50 p-4 ring-1 ring-agro-100 space-y-2">
+            <p class="text-xs font-semibold uppercase tracking-wide text-agro-700">Pequeños agricultores</p>
+            <div class="flex flex-wrap items-center gap-2 text-sm">
+              <span>Nº sectores = 12 /</span>
+              <input type="number" id="sect_peq_trd" class="field field-inline" step="0.01" data-check="trd" placeholder="T.R.D">
+              <span>=</span>
+              <input type="number" id="sect_peq" class="field field-inline" step="0.01" data-check="sectores_peq">
+              <span>sectores</span>
+            </div>
+          </div>
+
+          <div class="rounded-xl bg-agua-50/50 p-4 ring-1 ring-agua-100 space-y-2">
+            <p class="text-xs font-semibold uppercase tracking-wide text-agua-700">Grandes agricultores</p>
+            <div class="flex flex-wrap items-center gap-2 text-sm">
+              <span>Nº sectores = 18 /</span>
+              <input type="number" id="sect_gran_trd" class="field field-inline" step="0.01" data-check="trd" placeholder="T.R.D">
+              <span>=</span>
+              <input type="number" id="sect_gran" class="field field-inline" step="0.01" data-check="sectores_gran">
+              <span>sectores</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Desarrollo cualitativo -->
+      <div class="card p-5 sm:p-6 space-y-5">
+        <h3 class="font-display text-lg font-bold text-slate-900">Desarrollo de preguntas</h3>
+
+        <div>
+          <label for="resp_21" class="mb-2 block text-sm font-medium text-slate-700">
+            2.1.— Justifique brevemente cómo y/o por qué la implementación de un sistema de riego tecnificado puede ayudar en los periodos de escasez hídrica. Realice un análisis de su sistema productivo predial.
+          </label>
+          <textarea id="resp_21" rows="5" class="field" placeholder="Escriba su justificación aquí..."></textarea>
+        </div>
+
+        <div>
+          <label for="resp_22" class="mb-2 block text-sm font-medium text-slate-700">
+            2.2.— Según los datos de evapotranspiración, señale los tres meses de mayor demanda de agua para los cultivos y explique 3 factores que ocurren en esos meses a los cultivos de frutales.
+          </label>
+          <textarea id="resp_22" rows="5" class="field" placeholder="Meses de mayor demanda y factores..."></textarea>
+        </div>
+      </div>
+
+      <!-- Acciones -->
+      <div class="card p-5 sm:p-6 no-print">
+        <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+          <div>
+            <h3 class="font-semibold text-slate-900">Evaluación e impresión</h3>
+            <p class="text-xs text-slate-500">Valida tus cálculos numéricos o guarda tus respuestas en PDF.</p>
+          </div>
+          <div class="flex flex-col gap-2 sm:flex-row">
+            <button type="button" id="btn-evaluar"
+                    class="inline-flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-agro-600 to-agro-700 px-5 py-2.5 text-sm font-semibold text-white shadow-md shadow-agro-600/20 transition hover:from-agro-700 hover:to-agro-800 focus:outline-none focus:ring-2 focus:ring-agro-500 focus:ring-offset-2">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+              Evaluar mis cálculos
+            </button>
+            <button type="button" id="btn-imprimir"
+                    class="inline-flex items-center justify-center gap-2 rounded-xl border border-agua-200 bg-agua-50 px-5 py-2.5 text-sm font-semibold text-agua-700 transition hover:bg-agua-100 focus:outline-none focus:ring-2 focus:ring-agua-500 focus:ring-offset-2">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" />
+              </svg>
+              Imprimir mis respuestas
+            </button>
+          </div>
+        </div>
+        <div id="resultado-eval" class="mt-4 hidden rounded-xl px-4 py-3 text-sm font-medium" role="status"></div>
+      </div>
+    </section>
+
+    <footer class="pb-8 text-center text-xs text-slate-400 no-print">
+      Portal de estudio privado · Valle del Mataquito · Riego tecnificado
+    </footer>
+  </main>
+
+  <script>
+  (function () {
+    /* —— Valores esperados (fórmulas del enunciado) —— */
+    var ETO_MAX = 138.02;
+    var DIAS = 31;
+    var ETO_DIARIA = ETO_MAX / DIAS;           // ≈ 4.4523
+    var ETC_CEREZO = ETO_DIARIA * 0.9;         // ≈ 4.007
+    var ETC_FRAMB = ETO_DIARIA * 0.75;         // ≈ 3.339
+    var M3_CEREZO = ETC_CEREZO * 10;           // ≈ 40.07
+    var M3_FRAMB = ETC_FRAMB * 10;             // ≈ 33.39
+
+    var CASO_ETO = 4.83;
+    var CASO_ETC = CASO_ETO * 0.9;             // 4.347
+    var MP = 8;                                // 4 × 2 m²
+    var PC = 90;
+    var DNC = (CASO_ETC * MP * PC) / 100;      // ≈ 31.298
+    var DBC = (DNC * 100) / 90;                // ≈ 34.776
+    var NG = 2;
+    var QG = 4;
+    var TRD = DBC / (NG * QG);                 // ≈ 4.347
+    var SECT_PEQ = 12 / TRD;                   // ≈ 2.76
+    var SECT_GRAN = 18 / TRD;                  // ≈ 4.14
+
+    var TOL = 0.05; // tolerancia de redondeo
+
+    function num(id) {
+      var el = document.getElementById(id);
+      if (!el) return NaN;
+      var v = String(el.value).trim().replace(',', '.');
+      if (v === '') return NaN;
+      return parseFloat(v);
+    }
+
+    function approx(a, b) {
+      return !isNaN(a) && Math.abs(a - b) <= TOL;
+    }
+
+    function mark(id, ok) {
+      var el = document.getElementById(id);
+      if (!el) return;
+      el.classList.remove('field-ok', 'field-bad');
+      if (ok === null) return;
+      el.classList.add(ok ? 'field-ok' : 'field-bad');
+    }
+
+    function mesOk(val) {
+      if (!val) return false;
+      var n = val.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+      return (
+        n.indexOf('ene') !== -1 ||
+        n.indexOf('enero') !== -1 ||
+        n.indexOf('jan') !== -1
+      ) && (n.indexOf('2026') !== -1 || n.indexOf('26') !== -1 || true);
+    }
+
+    function evaluar() {
+      var checks = [];
+      var mesVal = (document.getElementById('q1_mes').value || '').trim();
+      var okMes = mesOk(mesVal);
+      mark('q1_mes', okMes);
+      checks.push(okMes);
+
+      var okEto = approx(num('q1_eto'), ETO_MAX);
+      mark('q1_eto', okEto);
+      checks.push(okEto);
+
+      var okDia = approx(num('q2_mm_dia'), ETO_DIARIA);
+      mark('q2_mm_dia', okDia);
+      checks.push(okDia);
+
+      var okCer = approx(num('q3_cerezo'), ETC_CEREZO);
+      mark('q3_cerezo', okCer);
+      checks.push(okCer);
+
+      var okFra = approx(num('q3_frambuesa'), ETC_FRAMB);
+      mark('q3_frambuesa', okFra);
+      checks.push(okFra);
+
+      var okM3c = approx(num('q4_cerezo'), M3_CEREZO);
+      mark('q4_cerezo', okM3c);
+      checks.push(okM3c);
+
+      var okM3f = approx(num('q4_frambuesa'), M3_FRAMB);
+      mark('q4_frambuesa', okM3f);
+      checks.push(okM3f);
+
+      var etc1 = approx(num('caso_etc'), CASO_ETC);
+      var etc2 = approx(num('caso_etc_mm'), CASO_ETC);
+      mark('caso_etc', etc1);
+      mark('caso_etc_mm', etc2);
+      checks.push(etc1, etc2);
+
+      var okDnc = approx(num('caso_dnc'), DNC);
+      mark('caso_dnc', okDnc);
+      checks.push(okDnc);
+
+      var okDbc = approx(num('caso_dbc'), DBC);
+      mark('caso_dbc', okDbc);
+      checks.push(okDbc);
+
+      var okTrd = approx(num('caso_trd'), TRD);
+      mark('caso_trd', okTrd);
+      checks.push(okTrd);
+
+      var okTrdP = approx(num('sect_peq_trd'), TRD);
+      var okTrdG = approx(num('sect_gran_trd'), TRD);
+      mark('sect_peq_trd', okTrdP);
+      mark('sect_gran_trd', okTrdG);
+      checks.push(okTrdP, okTrdG);
+
+      var okSp = approx(num('sect_peq'), SECT_PEQ);
+      var okSg = approx(num('sect_gran'), SECT_GRAN);
+      mark('sect_peq', okSp);
+      mark('sect_gran', okSg);
+      checks.push(okSp, okSg);
+
+      var correctos = checks.filter(Boolean).length;
+      var total = checks.length;
+      var box = document.getElementById('resultado-eval');
+      box.classList.remove('hidden', 'bg-green-50', 'text-green-800', 'border-green-200', 'bg-red-50', 'text-red-800', 'border-red-200', 'border');
+
+      if (correctos === total) {
+        box.classList.add('bg-green-50', 'text-green-800', 'border', 'border-green-200');
+        box.textContent = '¡Excelente! Todos los cálculos numéricos son correctos (' + correctos + '/' + total + ').';
+      } else {
+        box.classList.add('bg-red-50', 'text-red-800', 'border', 'border-red-200');
+        box.textContent = 'Revisa tus cálculos: ' + correctos + ' de ' + total + ' respuestas numéricas correctas. Los campos en rojo necesitan corrección (tolerancia ±0,05).';
+      }
+      box.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+
+    document.getElementById('btn-evaluar').addEventListener('click', evaluar);
+    document.getElementById('btn-imprimir').addEventListener('click', function () {
+      window.print();
+    });
+
+    /* Sync T.R.D helpers: al completar caso_trd, sugerir en sectores */
+    document.getElementById('caso_trd').addEventListener('change', function () {
+      var v = this.value;
+      var p = document.getElementById('sect_peq_trd');
+      var g = document.getElementById('sect_gran_trd');
+      if (v && !p.value) p.value = v;
+      if (v && !g.value) g.value = v;
+    });
+  })();
+  </script>
+<?php endif; ?>
+</body>
+</html>
