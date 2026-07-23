@@ -25,24 +25,41 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['login'])) {
 
 $autenticado = !empty($_SESSION['alumno_auth']);
 
-/* Ruta local del PPTX (lectura desde filesystem) */
-$PPTX_LOCAL = __DIR__ . '/datos/Presentacion-Riego-p1.pptx';
-/* URL pública absoluta: Office Online la descarga desde sus servidores */
-$PPTX_URL = 'https://ddgdelvalle.cl/datos/Presentacion-Riego-p1.pptx';
-$PPTX_EMBED = 'https://view.officeapps.live.com/op/embed.aspx?src=' . rawurlencode($PPTX_URL);
+/* URLs públicas absolutas: Office Online las descarga desde sus servidores */
+$PPTX_URLS = [
+    '1' => 'https://ddgdelvalle.cl/datos/Presentacion-Riego-p1.pptx',
+    '2' => 'https://ddgdelvalle.cl/datos/riego_2.pptx',
+    '3' => 'https://ddgdelvalle.cl/datos/riego_3.pptx',
+];
 
-/* Descarga autenticada sin exponer otros archivos de /datos/ */
-if ($autenticado && isset($_GET['download']) && $_GET['download'] === 'pptx') {
-    if (!is_file($PPTX_LOCAL)) {
-        http_response_code(404);
-        exit('Archivo no encontrado.');
+/* Rutas locales del PPTX (lectura desde filesystem) */
+$PPTX_LOCAL = [
+    '1' => __DIR__ . '/datos/Presentacion-Riego-p1.pptx',
+    '2' => __DIR__ . '/datos/riego_2.pptx',
+    '3' => __DIR__ . '/datos/riego_3.pptx',
+];
+
+$PPTX_EMBEDS = [];
+foreach ($PPTX_URLS as $id => $url) {
+    $PPTX_EMBEDS[$id] = 'https://view.officeapps.live.com/op/embed.aspx?src=' . rawurlencode($url);
+}
+
+/* Descarga autenticada sin exponer otros archivos de /datos/ (IDs 1|2|3) */
+if ($autenticado && isset($_GET['download'])) {
+    $dlId = (string) $_GET['download'];
+    if (isset($PPTX_LOCAL[$dlId])) {
+        $file = $PPTX_LOCAL[$dlId];
+        if (!is_file($file)) {
+            http_response_code(404);
+            exit('Archivo no encontrado.');
+        }
+        header('Content-Type: application/vnd.openxmlformats-officedocument.presentationml.presentation');
+        header('Content-Disposition: attachment; filename="' . basename($file) . '"');
+        header('Content-Length: ' . filesize($file));
+        header('Cache-Control: private, no-store');
+        readfile($file);
+        exit;
     }
-    header('Content-Type: application/vnd.openxmlformats-officedocument.presentationml.presentation');
-    header('Content-Disposition: attachment; filename="Presentacion-Riego-p1.pptx"');
-    header('Content-Length: ' . filesize($PPTX_LOCAL));
-    header('Cache-Control: private, no-store');
-    readfile($PPTX_LOCAL);
-    exit;
 }
 ?>
 <!DOCTYPE html>
@@ -212,13 +229,13 @@ if ($autenticado && isset($_GET['download']) && $_GET['download'] === 'pptx') {
       <div class="p-5 sm:p-6">
         <div class="ratio-16-9 overflow-hidden rounded-xl bg-slate-100 ring-1 ring-slate-200">
           <iframe
-            src="<?= htmlspecialchars($PPTX_EMBED) ?>"
+            src="<?= htmlspecialchars($PPTX_EMBEDS['1']) ?>"
             title="Presentación del módulo"
             allowfullscreen>
           </iframe>
         </div>
         <div class="mt-5 flex justify-center no-print">
-          <a href="?download=pptx"
+          <a href="?download=1"
              class="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-agua-600 to-agro-600 px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-agua-600/25 transition hover:from-agua-700 hover:to-agro-700 hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-agua-500 focus:ring-offset-2">
             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
               <path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
@@ -511,6 +528,186 @@ if ($autenticado && isset($_GET['download']) && $_GET['download'] === 'pptx') {
           </div>
         </div>
         <div id="resultado-eval" class="mt-4 hidden rounded-xl px-4 py-3 text-sm font-medium" role="status"></div>
+      </div>
+    </section>
+
+    <!-- ============ MÓDULO 2 ============ -->
+    <div class="mt-12 mb-6 border-b-2 border-slate-200 pb-2 no-print">
+      <h2 class="font-display text-2xl font-bold text-slate-900">Módulo 2: Componentes de un sistema de riego presurizado</h2>
+    </div>
+
+    <section class="card overflow-hidden mb-8">
+      <div class="border-b border-slate-100 bg-gradient-to-r from-agua-50 to-agro-50 px-5 py-4 sm:px-6">
+        <h3 class="font-display text-lg font-bold text-slate-900">Presentación del módulo</h3>
+        <p class="mt-0.5 text-sm text-slate-500">Visualiza el material y descárgalo para estudiar offline.</p>
+      </div>
+      <div class="p-5 sm:p-6">
+        <div class="ratio-16-9 overflow-hidden rounded-xl bg-slate-100 ring-1 ring-slate-200">
+          <iframe
+            src="<?= htmlspecialchars($PPTX_EMBEDS['2']) ?>"
+            title="Presentación Módulo 2"
+            allowfullscreen>
+          </iframe>
+        </div>
+        <div class="mt-5 flex justify-center no-print">
+          <a href="?download=2"
+             class="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-agua-600 to-agro-600 px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-agua-600/25 transition hover:from-agua-700 hover:to-agro-700 hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-agua-500 focus:ring-offset-2">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+            </svg>
+            Descargar Presentación
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <section class="card p-5 sm:p-6 space-y-6 mb-12">
+      <h3 class="font-display text-lg font-bold text-slate-900">Preguntas</h3>
+
+      <div>
+        <label for="m2_q1" class="mb-2 block text-sm font-medium text-slate-700">
+          2.1.- Mencione y comente brevemente 3 características de una bomba de inyección de fertilizantes.
+        </label>
+        <textarea id="m2_q1" class="field" rows="3" placeholder="Escriba su respuesta aquí..."></textarea>
+      </div>
+
+      <div>
+        <label for="m2_q2" class="mb-2 block text-sm font-medium text-slate-700">
+          2.2.- Realice un cuadro comparativo entre los siguientes goteros: gotero autocompensado, gotero incorporado, gotero en línea y microjet, en lo que respecta a: mecanismos de compensación, rango de presión, uniformidad de riego y sensibilidad a filtración del agua.
+        </label>
+        <textarea id="m2_q2" class="field" rows="3" placeholder="Escriba su cuadro comparativo aquí..."></textarea>
+      </div>
+
+      <div>
+        <label for="m2_q3" class="mb-2 block text-sm font-medium text-slate-700">
+          2.3.- Señale brevemente cómo funcionan los emisores autocompensados.
+        </label>
+        <textarea id="m2_q3" class="field" rows="3" placeholder="Escriba su respuesta aquí..."></textarea>
+      </div>
+
+      <div>
+        <label for="m2_q4" class="mb-2 block text-sm font-medium text-slate-700">
+          2.4.- Menciones los principales componentes de un cabezal de riego y explique brevemente la función de cada uno de ellos.
+        </label>
+        <textarea id="m2_q4" class="field" rows="3" placeholder="Escriba su respuesta aquí..."></textarea>
+      </div>
+
+      <div>
+        <label for="m2_q5" class="mb-2 block text-sm font-medium text-slate-700">
+          2.5.- En un proyecto de riego se debe instalar una matriz de PVC PN6 de 125 mm. Sin embargo, el distribuidor no tiene en stock tuberías de ese diámetro y le ofrece cambiarlas por Tuberías de 110 mm o de 140 mm PN6. Comente cuales serían las consecuencias técnicas de hacer uno u otro cambio.
+        </label>
+        <textarea id="m2_q5" class="field" rows="3" placeholder="Escriba su análisis técnico aquí..."></textarea>
+      </div>
+    </section>
+
+    <!-- ============ MÓDULO 3 ============ -->
+    <div class="mt-12 mb-6 border-b-2 border-slate-200 pb-2 no-print">
+      <h2 class="font-display text-2xl font-bold text-slate-900">Módulo 3: Mantención de Sistema de Riego</h2>
+    </div>
+
+    <section class="card overflow-hidden mb-8">
+      <div class="border-b border-slate-100 bg-gradient-to-r from-agua-50 to-agro-50 px-5 py-4 sm:px-6">
+        <h3 class="font-display text-lg font-bold text-slate-900">Presentación del módulo</h3>
+        <p class="mt-0.5 text-sm text-slate-500">Visualiza el material y descárgalo para estudiar offline.</p>
+      </div>
+      <div class="p-5 sm:p-6">
+        <div class="ratio-16-9 overflow-hidden rounded-xl bg-slate-100 ring-1 ring-slate-200">
+          <iframe
+            src="<?= htmlspecialchars($PPTX_EMBEDS['3']) ?>"
+            title="Presentación Módulo 3"
+            allowfullscreen>
+          </iframe>
+        </div>
+        <div class="mt-5 flex justify-center no-print">
+          <a href="?download=3"
+             class="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-agua-600 to-agro-600 px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-agua-600/25 transition hover:from-agua-700 hover:to-agro-700 hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-agua-500 focus:ring-offset-2">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+            </svg>
+            Descargar Presentación
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <section class="card p-5 sm:p-6 space-y-6 mb-12">
+      <h3 class="font-display text-lg font-bold text-slate-900">Preguntas</h3>
+
+      <div>
+        <label for="m3_q1" class="mb-2 block text-sm font-medium text-slate-700">
+          3.1.- Cuáles son los principales inconvenientes que los agricultores deben enfrentar en las mantenciones de las fuentes de agua (tranques o estanques acumuladores) y señale cómo solucionarlo.
+        </label>
+        <textarea id="m3_q1" class="field" rows="3" placeholder="Escriba su respuesta aquí..."></textarea>
+      </div>
+
+      <div>
+        <label for="m3_q2" class="mb-2 block text-sm font-medium text-slate-700">
+          3.2.- Describa brevemente las causas que podrían producir alzas de temperatura en una bomba de riego, sus consecuencias y soluciones.
+        </label>
+        <textarea id="m3_q2" class="field" rows="3" placeholder="Escriba su respuesta aquí..."></textarea>
+      </div>
+
+      <div>
+        <label for="m3_q3" class="mb-2 block text-sm font-medium text-slate-700">
+          3.3.- Cuál es la importancia de realizar un “Lavado Mecánico” de las tuberías de riego y cuando recomendaría hacerlo.
+        </label>
+        <textarea id="m3_q3" class="field" rows="3" placeholder="Escriba su respuesta aquí..."></textarea>
+      </div>
+
+      <div>
+        <p class="mb-4 text-sm font-medium text-slate-700">
+          3.4.- Una auditoria a los sistemas de riego de La Agrícola San Jose de la región de Los Ríos señaló que tenían serios problemas de mantención de sus sistemas. Por ello, lo contrata como asesor para hacer un plan de trabajo de mantención. Señale cuáles son los elementos o componentes del sistema de riego que usted consideraría y cuál sería la programación para realizar la mantención. Complete el siguientes cuadro según los equipos que debiera revisar o chequear, complete el inicio (antes de usar el equipo), durante el funcionamiento y al termino cuando ya haya concluido el uso o el riego efectuado.
+        </p>
+        <div class="overflow-x-auto rounded-xl ring-1 ring-slate-200">
+          <table class="w-full min-w-[640px] text-sm">
+            <thead>
+              <tr class="bg-slate-50 text-xs uppercase tracking-wide text-slate-500">
+                <th scope="col" class="px-3 py-3 text-left font-semibold sm:px-4">Equipos</th>
+                <th scope="col" class="px-3 py-3 text-left font-semibold sm:px-4">Inicio</th>
+                <th scope="col" class="px-3 py-3 text-left font-semibold sm:px-4">Durante</th>
+                <th scope="col" class="px-3 py-3 text-left font-semibold sm:px-4">Termino</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-100">
+              <tr>
+                <th scope="row" class="px-3 py-2.5 text-left font-medium text-slate-800 sm:px-4">Filtros de riego</th>
+                <td class="px-2 py-2 sm:px-3"><input type="text" class="field text-xs px-2 py-1.5" placeholder="..." aria-label="Filtros de riego - Inicio"></td>
+                <td class="px-2 py-2 sm:px-3"><input type="text" class="field text-xs px-2 py-1.5" placeholder="..." aria-label="Filtros de riego - Durante"></td>
+                <td class="px-2 py-2 sm:px-3"><input type="text" class="field text-xs px-2 py-1.5" placeholder="..." aria-label="Filtros de riego - Termino"></td>
+              </tr>
+              <tr class="bg-slate-50/50">
+                <th scope="row" class="px-3 py-2.5 text-left font-medium text-slate-800 sm:px-4">Electrobombas</th>
+                <td class="px-2 py-2 sm:px-3"><input type="text" class="field text-xs px-2 py-1.5" placeholder="..." aria-label="Electrobombas - Inicio"></td>
+                <td class="px-2 py-2 sm:px-3"><input type="text" class="field text-xs px-2 py-1.5" placeholder="..." aria-label="Electrobombas - Durante"></td>
+                <td class="px-2 py-2 sm:px-3"><input type="text" class="field text-xs px-2 py-1.5" placeholder="..." aria-label="Electrobombas - Termino"></td>
+              </tr>
+              <tr>
+                <th scope="row" class="px-3 py-2.5 text-left font-medium text-slate-800 sm:px-4">Válvulas</th>
+                <td class="px-2 py-2 sm:px-3"><input type="text" class="field text-xs px-2 py-1.5" placeholder="..." aria-label="Válvulas - Inicio"></td>
+                <td class="px-2 py-2 sm:px-3"><input type="text" class="field text-xs px-2 py-1.5" placeholder="..." aria-label="Válvulas - Durante"></td>
+                <td class="px-2 py-2 sm:px-3"><input type="text" class="field text-xs px-2 py-1.5" placeholder="..." aria-label="Válvulas - Termino"></td>
+              </tr>
+              <tr class="bg-slate-50/50">
+                <th scope="row" class="px-3 py-2.5 text-left font-medium text-slate-800 sm:px-4">Tablero eléctrico y programador</th>
+                <td class="px-2 py-2 sm:px-3"><input type="text" class="field text-xs px-2 py-1.5" placeholder="..." aria-label="Tablero eléctrico y programador - Inicio"></td>
+                <td class="px-2 py-2 sm:px-3"><input type="text" class="field text-xs px-2 py-1.5" placeholder="..." aria-label="Tablero eléctrico y programador - Durante"></td>
+                <td class="px-2 py-2 sm:px-3"><input type="text" class="field text-xs px-2 py-1.5" placeholder="..." aria-label="Tablero eléctrico y programador - Termino"></td>
+              </tr>
+              <tr>
+                <th scope="row" class="px-3 py-2.5 text-left font-medium text-slate-800 sm:px-4">Tuberías (matrices y sub matrices)</th>
+                <td class="px-2 py-2 sm:px-3"><input type="text" class="field text-xs px-2 py-1.5" placeholder="..." aria-label="Tuberías - Inicio"></td>
+                <td class="px-2 py-2 sm:px-3"><input type="text" class="field text-xs px-2 py-1.5" placeholder="..." aria-label="Tuberías - Durante"></td>
+                <td class="px-2 py-2 sm:px-3"><input type="text" class="field text-xs px-2 py-1.5" placeholder="..." aria-label="Tuberías - Termino"></td>
+              </tr>
+              <tr class="bg-slate-50/50">
+                <th scope="row" class="px-3 py-2.5 text-left font-medium text-slate-800 sm:px-4">Emisores (goteros)</th>
+                <td class="px-2 py-2 sm:px-3"><input type="text" class="field text-xs px-2 py-1.5" placeholder="..." aria-label="Emisores - Inicio"></td>
+                <td class="px-2 py-2 sm:px-3"><input type="text" class="field text-xs px-2 py-1.5" placeholder="..." aria-label="Emisores - Durante"></td>
+                <td class="px-2 py-2 sm:px-3"><input type="text" class="field text-xs px-2 py-1.5" placeholder="..." aria-label="Emisores - Termino"></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
       </div>
     </section>
 
