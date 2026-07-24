@@ -30,6 +30,7 @@ $PPTX_URLS = [
     '1' => 'https://ddgdelvalle.cl/datos/Presentacion-Riego-p1.pptx',
     '2' => 'https://ddgdelvalle.cl/datos/riego_2.pptx',
     '3' => 'https://ddgdelvalle.cl/datos/riego_3.pptx',
+    '4' => 'https://ddgdelvalle.cl/datos/riego_4.pptx',
 ];
 
 /* Rutas locales del PPTX (lectura desde filesystem) */
@@ -37,6 +38,7 @@ $PPTX_LOCAL = [
     '1' => __DIR__ . '/datos/Presentacion-Riego-p1.pptx',
     '2' => __DIR__ . '/datos/riego_2.pptx',
     '3' => __DIR__ . '/datos/riego_3.pptx',
+    '4' => __DIR__ . '/datos/riego_4.pptx',
 ];
 
 $PPTX_EMBEDS = [];
@@ -44,7 +46,7 @@ foreach ($PPTX_URLS as $id => $url) {
     $PPTX_EMBEDS[$id] = 'https://view.officeapps.live.com/op/embed.aspx?src=' . rawurlencode($url);
 }
 
-/* Descarga autenticada sin exponer otros archivos de /datos/ (IDs 1|2|3) */
+/* Descarga autenticada sin exponer otros archivos de /datos/ (IDs 1|2|3|4) */
 if ($autenticado && isset($_GET['download'])) {
     $dlId = (string) $_GET['download'];
     if (isset($PPTX_LOCAL[$dlId])) {
@@ -711,6 +713,151 @@ if ($autenticado && isset($_GET['download'])) {
       </div>
     </section>
 
+    <!-- ============ MÓDULO 4 ============ -->
+    <div class="mt-12 mb-6 border-b-2 border-slate-200 pb-2 no-print">
+      <h2 class="font-display text-2xl font-bold text-slate-900">Módulo 4: Implementación y Manejo de Sistemas de Riego Tecnificado Parte IV</h2>
+    </div>
+
+    <section class="card overflow-hidden mb-8">
+      <div class="border-b border-slate-100 bg-gradient-to-r from-agua-50 to-agro-50 px-5 py-4 sm:px-6">
+        <h3 class="font-display text-lg font-bold text-slate-900">Presentación del módulo</h3>
+        <p class="mt-0.5 text-sm text-slate-500">Visualiza el material y descárgalo para estudiar offline.</p>
+      </div>
+      <div class="p-5 sm:p-6">
+        <div class="ratio-16-9 overflow-hidden rounded-xl bg-slate-100 ring-1 ring-slate-200">
+          <iframe
+            src="<?= htmlspecialchars($PPTX_EMBEDS['4']) ?>"
+            title="Presentación Módulo 4"
+            allowfullscreen>
+          </iframe>
+        </div>
+        <div class="mt-5 flex justify-center no-print">
+          <a href="?download=4"
+             class="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-agua-600 to-agro-600 px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-agua-600/25 transition hover:from-agua-700 hover:to-agro-700 hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-agua-500 focus:ring-offset-2">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+            </svg>
+            Descargar Presentación
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <section class="card p-5 sm:p-6 space-y-6 mb-12">
+      <h3 class="font-display text-lg font-bold text-slate-900">Preguntas</h3>
+
+      <div>
+        <label for="m4_q1" class="mb-2 block text-sm font-medium text-slate-700">
+          4.1.- Liste cronológicamente las labores que se deben realizar en una plantación de frambuesas.
+        </label>
+        <textarea id="m4_q1" class="field" rows="4" placeholder="Liste las labores en orden cronológico..."></textarea>
+      </div>
+
+      <div class="space-y-4">
+        <p class="text-sm font-medium text-slate-700">
+          4.2.- Cálculo del Coeficiente de Uniformidad (CU). A partir de los caudales medidos (lt/hr), calcule el caudal promedio, el caudal Q25% y el CU.
+        </p>
+        <div class="overflow-x-auto rounded-xl ring-1 ring-slate-200">
+          <table class="w-full min-w-[320px] text-sm">
+            <caption class="sr-only">Caudales medidos en lt/hr para cálculo de CU</caption>
+            <thead>
+              <tr class="bg-slate-50 text-xs uppercase tracking-wide text-slate-500">
+                <th scope="col" class="px-3 py-2 text-left font-semibold">#</th>
+                <th scope="col" class="px-3 py-2 text-left font-semibold">Caudal (lt/hr)</th>
+                <th scope="col" class="px-3 py-2 text-left font-semibold">#</th>
+                <th scope="col" class="px-3 py-2 text-left font-semibold">Caudal (lt/hr)</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-100">
+              <tr>
+                <th scope="row" class="px-3 py-1.5 text-left font-medium text-slate-500">1</th>
+                <td class="px-3 py-1.5 font-medium">4,5</td>
+                <th scope="row" class="px-3 py-1.5 text-left font-medium text-slate-500">9</th>
+                <td class="px-3 py-1.5 font-medium">1,7</td>
+              </tr>
+              <tr class="bg-slate-50/50">
+                <th scope="row" class="px-3 py-1.5 text-left font-medium text-slate-500">2</th>
+                <td class="px-3 py-1.5 font-medium">2,8</td>
+                <th scope="row" class="px-3 py-1.5 text-left font-medium text-slate-500">10</th>
+                <td class="px-3 py-1.5 font-medium">4,5</td>
+              </tr>
+              <tr>
+                <th scope="row" class="px-3 py-1.5 text-left font-medium text-slate-500">3</th>
+                <td class="px-3 py-1.5 font-medium">4,2</td>
+                <th scope="row" class="px-3 py-1.5 text-left font-medium text-slate-500">11</th>
+                <td class="px-3 py-1.5 font-medium">3,3</td>
+              </tr>
+              <tr class="bg-slate-50/50">
+                <th scope="row" class="px-3 py-1.5 text-left font-medium text-slate-500">4</th>
+                <td class="px-3 py-1.5 font-medium">2,6</td>
+                <th scope="row" class="px-3 py-1.5 text-left font-medium text-slate-500">12</th>
+                <td class="px-3 py-1.5 font-medium">3,7</td>
+              </tr>
+              <tr>
+                <th scope="row" class="px-3 py-1.5 text-left font-medium text-slate-500">5</th>
+                <td class="px-3 py-1.5 font-medium">3,7</td>
+                <th scope="row" class="px-3 py-1.5 text-left font-medium text-slate-500">13</th>
+                <td class="px-3 py-1.5 font-medium">4,0</td>
+              </tr>
+              <tr class="bg-slate-50/50">
+                <th scope="row" class="px-3 py-1.5 text-left font-medium text-slate-500">6</th>
+                <td class="px-3 py-1.5 font-medium">2,5</td>
+                <th scope="row" class="px-3 py-1.5 text-left font-medium text-slate-500">14</th>
+                <td class="px-3 py-1.5 font-medium">3,1</td>
+              </tr>
+              <tr>
+                <th scope="row" class="px-3 py-1.5 text-left font-medium text-slate-500">7</th>
+                <td class="px-3 py-1.5 font-medium">5,1</td>
+                <th scope="row" class="px-3 py-1.5 text-left font-medium text-slate-500">15</th>
+                <td class="px-3 py-1.5 font-medium">1,8</td>
+              </tr>
+              <tr class="bg-slate-50/50">
+                <th scope="row" class="px-3 py-1.5 text-left font-medium text-slate-500">8</th>
+                <td class="px-3 py-1.5 font-medium">5,0</td>
+                <th scope="row" class="px-3 py-1.5 text-left font-medium text-slate-500">16</th>
+                <td class="px-3 py-1.5 font-medium">2,5</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="grid gap-3 sm:grid-cols-3">
+          <div class="flex flex-wrap items-center gap-2 text-sm">
+            <label for="m4_promedio" class="font-medium text-slate-700">Caudal Promedio:</label>
+            <input type="number" id="m4_promedio" class="field field-inline" step="0.01" placeholder="lt/hr">
+          </div>
+          <div class="flex flex-wrap items-center gap-2 text-sm">
+            <label for="m4_q25" class="font-medium text-slate-700">Caudal Q25%:</label>
+            <input type="number" id="m4_q25" class="field field-inline" step="0.01" placeholder="lt/hr">
+          </div>
+          <div class="flex flex-wrap items-center gap-2 text-sm">
+            <label for="m4_cu" class="font-medium text-slate-700">CU:</label>
+            <input type="number" id="m4_cu" class="field field-inline" step="0.01" placeholder="%">
+            <span class="text-slate-500">%</span>
+          </div>
+        </div>
+        <div>
+          <label for="m4_q2_comentario" class="mb-2 block text-sm font-medium text-slate-700">
+            Comentario técnico: compare el caudal promedio obtenido con el emisor insertado de 3,8 lt/hr.
+          </label>
+          <textarea id="m4_q2_comentario" class="field" rows="3" placeholder="Escriba su análisis comparativo aquí..."></textarea>
+        </div>
+      </div>
+
+      <div>
+        <label for="m4_q3" class="mb-2 block text-sm font-medium text-slate-700">
+          4.3.- Identifique las partículas que provocan taponamiento en los emisores y señale posibles soluciones.
+        </label>
+        <textarea id="m4_q3" class="field" rows="3" placeholder="Partículas de taponamiento y soluciones..."></textarea>
+      </div>
+
+      <div>
+        <label for="m4_q4" class="mb-2 block text-sm font-medium text-slate-700">
+          4.4.- Detalle los 4 puntos de Información Básica de terreno que se deben considerar.
+        </label>
+        <textarea id="m4_q4" class="field" rows="3" placeholder="Detalle los 4 puntos de información básica..."></textarea>
+      </div>
+    </section>
+
     <footer class="pb-8 text-center text-xs text-slate-400 no-print">
       Portal de estudio privado · Valle del Mataquito · Riego tecnificado
     </footer>
@@ -738,6 +885,11 @@ if ($autenticado && isset($_GET['download'])) {
     var TRD = DBC / (NG * QG);                 // ≈ 4.347
     var SECT_PEQ = 12 / TRD;                   // ≈ 2.76
     var SECT_GRAN = 18 / TRD;                  // ≈ 4.14
+
+    /* —— Módulo 4 · Ejercicio 4.2 (CU) —— */
+    var M4_PROMEDIO = 3.375;
+    var M4_Q25 = 2.125;                        // promedio de los 4 menores: 1.7, 1.8, 2.5, 2.5
+    var M4_CU = (M4_Q25 / M4_PROMEDIO) * 100;  // ≈ 62.96%
 
     var TOL = 0.05; // tolerancia de redondeo
 
@@ -831,6 +983,15 @@ if ($autenticado && isset($_GET['download'])) {
       mark('sect_peq', okSp);
       mark('sect_gran', okSg);
       checks.push(okSp, okSg);
+
+      /* Módulo 4 · Cálculo de CU */
+      var okM4Prom = approx(num('m4_promedio'), M4_PROMEDIO);
+      var okM4Q25 = approx(num('m4_q25'), M4_Q25);
+      var okM4Cu = approx(num('m4_cu'), M4_CU);
+      mark('m4_promedio', okM4Prom);
+      mark('m4_q25', okM4Q25);
+      mark('m4_cu', okM4Cu);
+      checks.push(okM4Prom, okM4Q25, okM4Cu);
 
       var correctos = checks.filter(Boolean).length;
       var total = checks.length;
