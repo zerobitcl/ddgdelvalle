@@ -50,3 +50,14 @@ CacheKeyModify -qs:_ga
 </IfModule>
 
 DirectoryIndex index.html index.php
+
+# Bloquear lectura HTTP de configs con secretos
+<FilesMatch "^(config-api2pdf\.php|config-api2pdf\.example\.php)$">
+  <IfModule mod_authz_core.c>
+    Require all denied
+  </IfModule>
+  <IfModule !mod_authz_core.c>
+    Order allow,deny
+    Deny from all
+  </IfModule>
+</FilesMatch>

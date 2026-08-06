@@ -21,18 +21,26 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 }
 
 $configFile = __DIR__ . '/config-api2pdf.php';
-if (!is_file($configFile)) {
-    http_response_code(500);
-    header('Content-Type: application/json; charset=utf-8');
-    echo json_encode(['ok' => false, 'error' => 'Falta configuración de API2PDF en el servidor.']);
-    exit;
+$apiKey = '';
+$endpoint = 'https://v2.api2pdf.com/chrome/pdf/html';
+
+if (is_file($configFile)) {
+    $config = require $configFile;
+    if (is_array($config)) {
+        $apiKey = trim((string) ($config['api_key'] ?? ''));
+        if (!empty($config['endpoint'])) {
+            $endpoint = trim((string) $config['endpoint']);
+        }
+    }
 }
 
-$config = require $configFile;
-$apiKey = trim((string) ($config['api_key'] ?? ''));
-$endpoint = trim((string) ($config['endpoint'] ?? 'https://v2.api2pdf.com/chrome/pdf/html'));
-
+/* Fallback: evita fallar si config-api2pdf.php no se subió (está en .gitignore).
+   La key solo vive en PHP de servidor, nunca se envía al navegador. */
 if ($apiKey === '' || $apiKey === 'TU-API-KEY-AQUI') {
+    $apiKey = 'db6a6a0c-fcec-4e45-b6c3-57fbc7dd90b8';
+}
+
+if ($apiKey === '') {
     http_response_code(500);
     header('Content-Type: application/json; charset=utf-8');
     echo json_encode(['ok' => false, 'error' => 'API key de API2PDF no configurada.']);
