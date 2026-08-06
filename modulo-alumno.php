@@ -1084,13 +1084,15 @@ if ($autenticado && isset($_GET['download'])) {
       <p class="mt-1 text-sm text-slate-500">Curso: Implementación y Manejo de Sistemas de Riego Tecnificado · Puntaje: 60 pts</p>
     </div>
 
-    <section class="card overflow-hidden mb-12" id="eval-final-contenedor">
+    <section class="card mb-12">
       <div class="border-b border-slate-100 bg-gradient-to-r from-agua-50 to-agro-50 px-5 py-4 sm:px-6">
         <h3 class="font-display text-lg font-bold text-slate-900">Prueba final del curso</h3>
         <p class="mt-0.5 text-sm text-slate-500">Complete todos los campos y genere el PDF para enviar al profesor.</p>
       </div>
 
       <form id="form-eval-final" class="p-5 sm:p-6 space-y-8" autocomplete="off">
+        <!-- Contenedor capturado por html2pdf (sin overflow-hidden ni botón) -->
+        <div id="eval-final-contenedor" class="space-y-8 bg-white">
         <div class="grid gap-4 sm:grid-cols-2">
           <div>
             <label for="eval_nombre" class="mb-1.5 block text-sm font-medium text-slate-700">Nombre <span class="text-red-500">*</span></label>
@@ -1113,10 +1115,10 @@ if ($autenticado && isset($_GET['download'])) {
             $n = $i + 1;
             $name = 'sm_' . $n;
           ?>
-          <fieldset class="eval-pregunta space-y-2 border-0 p-0 m-0">
-            <legend class="text-sm font-medium text-slate-700 mb-2">
+          <div class="eval-pregunta space-y-2" role="group" aria-labelledby="sm_label_<?= $n ?>">
+            <p id="sm_label_<?= $n ?>" class="text-sm font-medium text-slate-700 mb-2">
               <?= $n ?>. <?= htmlspecialchars($item['q']) ?>
-            </legend>
+            </p>
             <div class="space-y-2">
               <?php foreach ($item['opts'] as $letra => $texto): ?>
               <label class="eval-opcion">
@@ -1128,7 +1130,7 @@ if ($autenticado && isset($_GET['download'])) {
               </label>
               <?php endforeach; ?>
             </div>
-          </fieldset>
+          </div>
           <?php endforeach; ?>
         </div>
 
@@ -1143,10 +1145,10 @@ if ($autenticado && isset($_GET['download'])) {
             $n = $i + 1;
             $name = 'vf_' . $n;
           ?>
-          <fieldset class="eval-pregunta space-y-2 border-0 p-0 m-0">
-            <legend class="text-sm font-medium text-slate-700 mb-2">
+          <div class="eval-pregunta space-y-2" role="group" aria-labelledby="vf_label_<?= $n ?>">
+            <p id="vf_label_<?= $n ?>" class="text-sm font-medium text-slate-700 mb-2">
               <?= $n ?>. <?= htmlspecialchars($enunciado) ?>
-            </legend>
+            </p>
             <div class="grid gap-2 sm:grid-cols-2 max-w-md">
               <label class="eval-opcion">
                 <input type="radio" name="<?= $name ?>" value="V" required>
@@ -1157,11 +1159,12 @@ if ($autenticado && isset($_GET['download'])) {
                 <span class="text-sm font-semibold text-slate-700">Falso</span>
               </label>
             </div>
-          </fieldset>
+          </div>
           <?php endforeach; ?>
         </div>
+        </div><!-- /#eval-final-contenedor -->
 
-        <div class="no-print border-t border-slate-100 pt-6">
+        <div class="border-t border-slate-100 pt-6">
           <button type="submit" id="btn-generar-pdf"
                   class="inline-flex w-full sm:w-auto items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-agro-600 to-agua-600 px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-agro-600/25 transition hover:from-agro-700 hover:to-agua-700 focus:outline-none focus:ring-2 focus:ring-agro-500 focus:ring-offset-2">
             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
@@ -1183,66 +1186,182 @@ if ($autenticado && isset($_GET['download'])) {
   <script>
   (function () {
     var formEval = document.getElementById('form-eval-final');
-    if (formEval) {
-      formEval.addEventListener('submit', function (e) {
-        e.preventDefault();
+    if (!formEval) return;
 
-        var contenedor = document.getElementById('eval-final-contenedor');
-        var nombreRaw = (document.getElementById('eval_nombre').value || '').trim();
-        var nombreArchivo = nombreRaw
-          .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
-          .replace(/[^a-zA-Z0-9]+/g, '_')
-          .replace(/^_|_$/g, '') || 'Alumno';
-
-        contenedor.querySelectorAll('.respuesta-marcada').forEach(function (el) {
-          el.classList.remove('respuesta-marcada');
-        });
-        contenedor.querySelectorAll('input[type="radio"]:checked').forEach(function (radio) {
-          var label = radio.closest('label');
-          if (label) label.classList.add('respuesta-marcada');
-        });
-
-        var btn = document.getElementById('btn-generar-pdf');
-        var ocultos = [];
-        contenedor.querySelectorAll('.no-print').forEach(function (el) {
-          ocultos.push({ el: el, display: el.style.display });
-          el.style.display = 'none';
-        });
-        if (btn) {
-          btn.disabled = true;
-          btn.classList.add('opacity-70', 'cursor-wait');
-        }
-
-        var filename = 'Prueba_Riego_' + nombreArchivo + '.pdf';
-
-        html2pdf()
-          .set({
-            margin: [10, 10, 10, 10],
-            filename: filename,
-            image: { type: 'jpeg', quality: 0.98 },
-            html2canvas: { scale: 2, useCORS: true, logging: false },
-            jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
-            pagebreak: { mode: ['css', 'legacy'] }
-          })
-          .from(contenedor)
-          .save(filename)
-          .then(function () {
-            alert('PDF generado. Por favor, envía este archivo al profesor');
-          })
-          .catch(function () {
-            alert('No se pudo generar el PDF. Intenta nuevamente.');
-          })
-          .finally(function () {
-            ocultos.forEach(function (item) {
-              item.el.style.display = item.display;
-            });
-            if (btn) {
-              btn.disabled = false;
-              btn.classList.remove('opacity-70', 'cursor-wait');
-            }
-          });
-      });
+    function esc(str) {
+      return String(str == null ? '' : str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;');
     }
+
+    function slugNombre(raw) {
+      return (raw || '')
+        .trim()
+        .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+        .replace(/[^a-zA-Z0-9]+/g, '_')
+        .replace(/^_|_$/g, '') || 'Alumno';
+    }
+
+    function restaurarUi(btn) {
+      if (!btn) return;
+      btn.disabled = false;
+      btn.classList.remove('opacity-70', 'cursor-wait');
+      btn.innerHTML =
+        '<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">' +
+        '<path stroke-linecap="round" stroke-linejoin="round" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />' +
+        '</svg> Generar PDF y descargar';
+    }
+
+    /** Construye un DOM plano (sin Tailwind) para que html2canvas no genere páginas en blanco */
+    function construirDocumentoPdf() {
+      var nombre = (document.getElementById('eval_nombre').value || '').trim();
+      var fecha = document.getElementById('eval_fecha').value || '';
+      var wrap = document.createElement('div');
+      wrap.id = 'pdf-export-root';
+      wrap.style.cssText = 'position:fixed;left:-10000px;top:0;width:720px;background:#fff;color:#0f172a;font-family:Arial,Helvetica,sans-serif;font-size:12.5px;line-height:1.45;padding:20px;box-sizing:border-box;';
+
+      var html = '';
+      html += '<div style="border-bottom:2px solid #15803d;padding-bottom:12px;margin-bottom:18px;">';
+      html += '<div style="font-size:18px;font-weight:700;color:#14532d;">Evaluación Final · Riego Tecnificado</div>';
+      html += '<div style="margin-top:8px;"><strong>Nombre:</strong> ' + esc(nombre) + '</div>';
+      html += '<div><strong>Fecha:</strong> ' + esc(fecha) + '</div>';
+      html += '</div>';
+
+      html += '<div style="background:#f1f5f9;border:1px solid #e2e8f0;border-radius:8px;padding:10px 12px;margin-bottom:14px;">';
+      html += '<div style="font-weight:700;font-size:14px;">Sección I · Selección múltiple</div>';
+      html += '<div style="font-size:11px;color:#64748b;">2 pts c/u · 40 pts</div></div>';
+
+      var origen = document.getElementById('eval-final-contenedor');
+      var smGroups = origen.querySelectorAll('[role="group"][aria-labelledby^="sm_label_"]');
+      smGroups.forEach(function (group, idx) {
+        var labelEl = document.getElementById(group.getAttribute('aria-labelledby'));
+        var pregunta = labelEl ? labelEl.textContent.trim() : ('Pregunta ' + (idx + 1));
+        html += '<div style="margin-bottom:14px;page-break-inside:avoid;">';
+        html += '<div style="font-weight:600;margin-bottom:6px;">' + esc(pregunta) + '</div>';
+        group.querySelectorAll('label.eval-opcion').forEach(function (lab) {
+          var radio = lab.querySelector('input[type="radio"]');
+          var texto = (lab.querySelector('span') || lab).textContent.replace(/\s+/g, ' ').trim();
+          var marcada = radio && radio.checked;
+          var boxStyle = marcada
+            ? 'background:#dcfce9;border:2px solid #16a34a;font-weight:700;color:#14532d;'
+            : 'background:#fff;border:1px solid #cbd5e1;color:#334155;';
+          var marca = marcada ? ' ✓' : '';
+          html += '<div style="padding:7px 10px;margin:0 0 5px;border-radius:6px;' + boxStyle + '">' +
+            esc(texto) + marca + '</div>';
+        });
+        html += '</div>';
+      });
+
+      html += '<div style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:8px;padding:10px 12px;margin:20px 0 14px;">';
+      html += '<div style="font-weight:700;font-size:14px;">Sección II · Verdadero / Falso</div>';
+      html += '<div style="font-size:11px;color:#64748b;">2 pts c/u · 20 pts</div></div>';
+
+      var vfGroups = origen.querySelectorAll('[role="group"][aria-labelledby^="vf_label_"]');
+      vfGroups.forEach(function (group, idx) {
+        var labelEl = document.getElementById(group.getAttribute('aria-labelledby'));
+        var pregunta = labelEl ? labelEl.textContent.trim() : ('Pregunta ' + (idx + 1));
+        html += '<div style="margin-bottom:14px;page-break-inside:avoid;">';
+        html += '<div style="font-weight:600;margin-bottom:6px;">' + esc(pregunta) + '</div>';
+        group.querySelectorAll('label.eval-opcion').forEach(function (lab) {
+          var radio = lab.querySelector('input[type="radio"]');
+          var texto = (lab.querySelector('span') || lab).textContent.replace(/\s+/g, ' ').trim();
+          var marcada = radio && radio.checked;
+          var boxStyle = marcada
+            ? 'background:#dcfce9;border:2px solid #16a34a;font-weight:700;color:#14532d;'
+            : 'background:#fff;border:1px solid #cbd5e1;color:#334155;';
+          var marca = marcada ? ' ✓' : '';
+          html += '<div style="display:inline-block;min-width:120px;padding:7px 12px;margin:0 8px 5px 0;border-radius:6px;' + boxStyle + '">' +
+            esc(texto) + marca + '</div>';
+        });
+        html += '</div>';
+      });
+
+      wrap.innerHTML = html;
+      document.body.appendChild(wrap);
+      return wrap;
+    }
+
+    formEval.addEventListener('submit', function (e) {
+      e.preventDefault();
+
+      if (typeof html2pdf !== 'function') {
+        alert('No se pudo cargar la librería PDF. Revisa tu conexión e intenta de nuevo.');
+        return;
+      }
+
+      var btn = document.getElementById('btn-generar-pdf');
+      var filename = 'Prueba_Riego_' + slugNombre(document.getElementById('eval_nombre').value) + '.pdf';
+
+      // Highlight también en pantalla (feedback al alumno)
+      var pantalla = document.getElementById('eval-final-contenedor');
+      pantalla.querySelectorAll('.respuesta-marcada').forEach(function (el) {
+        el.classList.remove('respuesta-marcada');
+      });
+      pantalla.querySelectorAll('input[type="radio"]:checked').forEach(function (radio) {
+        var label = radio.closest('label');
+        if (label) label.classList.add('respuesta-marcada');
+      });
+
+      if (btn) {
+        btn.disabled = true;
+        btn.classList.add('opacity-70', 'cursor-wait');
+        btn.textContent = 'Generando PDF…';
+      }
+
+      var exportRoot = null;
+      try {
+        exportRoot = construirDocumentoPdf();
+      } catch (errBuild) {
+        console.error(errBuild);
+        restaurarUi(btn);
+        alert('Error al preparar el contenido del PDF.');
+        return;
+      }
+
+      var opt = {
+        margin: [10, 10, 10, 10],
+        filename: filename,
+        image: { type: 'jpeg', quality: 0.95 },
+        html2canvas: {
+          scale: 1.5,
+          useCORS: true,
+          logging: false,
+          backgroundColor: '#ffffff',
+          scrollX: 0,
+          scrollY: 0
+        },
+        jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
+        pagebreak: { mode: ['css', 'legacy'] }
+      };
+
+      // Visible para captura, detrás del contenido (opacity baja = PDF en blanco)
+      exportRoot.style.left = '0';
+      exportRoot.style.top = '0';
+      exportRoot.style.opacity = '1';
+      exportRoot.style.zIndex = '-1';
+      exportRoot.style.pointerEvents = 'none';
+
+      html2pdf()
+        .set(opt)
+        .from(exportRoot)
+        .save()
+        .then(
+          function () {
+            if (exportRoot && exportRoot.parentNode) exportRoot.parentNode.removeChild(exportRoot);
+            alert('PDF generado. Por favor, envía este archivo al profesor');
+            restaurarUi(btn);
+          },
+          function (err) {
+            console.error('Error PDF:', err);
+            if (exportRoot && exportRoot.parentNode) exportRoot.parentNode.removeChild(exportRoot);
+            alert('No se pudo generar el PDF automáticamente. Se abrirá el diálogo de impresión: elige "Guardar como PDF".');
+            restaurarUi(btn);
+            window.print();
+          }
+        );
+    });
   })();
   </script>
 
