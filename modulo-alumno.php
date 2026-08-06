@@ -152,6 +152,28 @@ if ($autenticado && isset($_GET['download'])) {
       .card { box-shadow: none; border: 1px solid #e2e8f0; break-inside: avoid; }
       .field { border: 1px solid #94a3b8; }
     }
+    /* Respuestas marcadas: contraste alto para el PDF del profesor */
+    .eval-opcion {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.6rem;
+      padding: 0.65rem 0.85rem;
+      border-radius: 0.65rem;
+      border: 1.5px solid #e2e8f0;
+      background: #fff;
+      cursor: pointer;
+      transition: border-color .15s, background .15s, box-shadow .15s;
+    }
+    .eval-opcion:hover { border-color: #94a3b8; background: #f8fafc; }
+    .eval-opcion input { margin-top: 0.2rem; accent-color: #15803d; flex-shrink: 0; }
+    .eval-opcion.respuesta-marcada {
+      background: #dcfce9 !important;
+      border-color: #16a34a !important;
+      box-shadow: inset 0 0 0 2px #16a34a;
+      font-weight: 600;
+      color: #14532d;
+    }
+    .eval-pregunta { break-inside: avoid; page-break-inside: avoid; }
   </style>
 </head>
 <body class="font-sans text-slate-800 antialiased">
@@ -858,10 +880,371 @@ if ($autenticado && isset($_GET['download'])) {
       </div>
     </section>
 
+    <?php
+    $eval_sm = [
+      [
+        'q' => '¿Qué representa la evapotranspiración de referencia (ETo)?',
+        'opts' => [
+          'a' => 'La cantidad de agua que pierde un cultivo específico bajo condiciones de estrés hídrico',
+          'b' => 'La pérdida de agua por evaporación del suelo y transpiración de un cultivo de referencia (pasto), bajo condiciones estándar',
+          'c' => 'El volumen de agua aplicado por el sistema de riego',
+          'd' => 'La cantidad de agua retenida por el suelo a capacidad de campo',
+        ],
+      ],
+      [
+        'q' => '¿Cuál de los siguientes factores climáticos NO se utiliza en el método de Penman-Monteith para calcular la ETo de un cultivo?',
+        'opts' => [
+          'a' => 'Radiación solar',
+          'b' => 'Temperatura del aire',
+          'c' => 'Velocidad del viento',
+          'd' => 'pH del suelo',
+        ],
+      ],
+      [
+        'q' => 'El coeficiente de cultivo (Kc) varía principalmente según:',
+        'opts' => [
+          'a' => 'El tipo de fuente de agua utilizada',
+          'b' => 'La etapa fenológica del cultivo',
+          'c' => 'El material del gotero',
+          'd' => 'La presión de la red de riego',
+        ],
+      ],
+      [
+        'q' => 'En la etapa inicial de desarrollo de un cultivo, el valor de Kc generalmente es:',
+        'opts' => [
+          'a' => 'Muy alto',
+          'b' => 'Bajo, debido a la escasa cobertura vegetal',
+          'c' => 'El Kc es igual en toda la etapa de crecimiento del cultivo',
+          'd' => 'Siempre igual a cero',
+        ],
+      ],
+      [
+        'q' => 'El cabezal de riego de un sistema tecnificado normalmente incluye:',
+        'opts' => [
+          'a' => 'Solo la fuente de captación de agua',
+          'b' => 'Válvulas de aire, filtros, sistema de fertirriego, medidor de caudal y controlador',
+          'c' => 'Únicamente las tuberías de conducción principal',
+          'd' => 'Los goteros y la submatriz',
+        ],
+      ],
+      [
+        'q' => '¿Cuál es la función principal del cabezal de riego dentro de un sistema tecnificado?',
+        'opts' => [
+          'a' => 'Elevar el terreno para facilitar el drenaje',
+          'b' => 'Controlar, filtrar, medir y dosificar el agua y los fertilizantes antes de su distribución',
+          'c' => 'Almacenar agua de lluvia exclusivamente',
+          'd' => 'Reemplazar la función de la electrobomba',
+        ],
+      ],
+      [
+        'q' => 'Una electrobomba superficial se caracteriza por:',
+        'opts' => [
+          'a' => 'Estar instalada sumergida dentro del pozo o fuente de agua',
+          'b' => 'Ubicarse fuera del agua, succionando el fluido a través de una tubería de aspiración',
+          'c' => 'No requerir cebado antes de su funcionamiento',
+          'd' => 'Utilizarse exclusivamente en pozos profundos',
+        ],
+      ],
+      [
+        'q' => 'Un problema común en electrobombas superficiales relacionado con la altura de succión es:',
+        'opts' => [
+          'a' => 'La sobrepresión en la descarga',
+          'b' => 'La cavitación, cuando se supera la altura máxima de succión permitida',
+          'c' => 'El exceso de filtración de arena',
+          'd' => 'La corrosión del rodete por exceso de cloro',
+        ],
+      ],
+      [
+        'q' => '¿Qué tipo de filtro es más recomendable cuando la fuente de agua contiene alto contenido de algas y materia orgánica?',
+        'opts' => [
+          'a' => 'Filtro de malla',
+          'b' => 'Filtro de arena o grava (media filtrante)',
+          'c' => 'Filtro de disco exclusivamente',
+          'd' => 'Ningún filtro es necesario en ese caso',
+        ],
+      ],
+      [
+        'q' => 'La pérdida de carga en un filtro de riego debe monitorearse principalmente para:',
+        'opts' => [
+          'a' => 'Determinar cuándo se debe realizar el retrolavado o limpieza del filtro',
+          'b' => 'Calcular el coeficiente de cultivo',
+          'c' => 'Definir la dosis de fertilizante',
+          'd' => 'Establecer la profundidad de plantación',
+        ],
+      ],
+      [
+        'q' => 'Un programador de riego (controlador) permite principalmente:',
+        'opts' => [
+          'a' => 'Medir la evapotranspiración del cultivo en tiempo real sin sensores',
+          'b' => 'Automatizar el inicio, duración y frecuencia del riego según la programación establecida',
+          'c' => 'Reemplazar la necesidad de un cabezal de riego',
+          'd' => 'Filtrar el agua antes de su distribución',
+        ],
+      ],
+      [
+        'q' => 'Los programadores de riego más avanzados permiten integrar:',
+        'opts' => [
+          'a' => 'Sensores de humedad de suelo y datos climáticos para riego por demanda',
+          'b' => 'Solo el encendido manual de válvulas',
+          'c' => 'Un sistema de facturación eléctrica',
+          'd' => 'La certificación de derechos de agua',
+        ],
+      ],
+      [
+        'q' => '¿Cuál de las siguientes acciones corresponde a una mantención preventiva típica en un sistema de riego tecnificado?',
+        'opts' => [
+          'a' => 'Esperar a que el sistema falle completamente antes de intervenir',
+          'b' => 'Revisión periódica de presiones, limpieza de filtros y verificación de fugas',
+          'c' => 'Aumentar la presión de la bomba sin diagnóstico previo',
+          'd' => 'Eliminar los filtros para mejorar el caudal',
+        ],
+      ],
+      [
+        'q' => 'La falta de mantención adecuada de un sistema de riego tecnificado puede provocar principalmente:',
+        'opts' => [
+          'a' => 'Mejora en la uniformidad de riego',
+          'b' => 'Obstrucción de emisores, pérdida de uniformidad y menor eficiencia del sistema',
+          'c' => 'Reducción del consumo eléctrico de la electrobomba',
+          'd' => 'Aumento de la vida útil de los goteros',
+        ],
+      ],
+      [
+        'q' => 'La limpieza periódica de la submatriz (líneas laterales) tiene como principal objetivo:',
+        'opts' => [
+          'a' => 'Aumentar la presión de trabajo del sistema',
+          'b' => 'Eliminar sedimentos y partículas que puedan obstruir los goteros',
+          'c' => 'Modificar el coeficiente de cultivo',
+          'd' => 'Sustituir la necesidad de programadores',
+        ],
+      ],
+      [
+        'q' => 'Un método común para la limpieza de goteros y submatriz es:',
+        'opts' => [
+          'a' => 'La aplicación de ácido o cloro en dosis controladas mediante inyección, seguida de purga de las líneas',
+          'b' => 'El uso exclusivo de agua a alta temperatura sin productos químicos',
+          'c' => 'La eliminación de los filtros de la red',
+          'd' => 'El aumento de la frecuencia de riego sin realizar purgas',
+        ],
+      ],
+      [
+        'q' => 'Para la implementación de un sistema de riego tecnificado, es importante evaluar principalmente:',
+        'opts' => [
+          'a' => 'Solo el color del suelo',
+          'b' => 'La topografía, textura y estructura del suelo, y la calidad y disponibilidad de agua',
+          'c' => 'Únicamente la cercanía a la red eléctrica',
+          'd' => 'La presencia de malezas en el predio',
+        ],
+      ],
+      [
+        'q' => 'Un terreno con pendientes pronunciadas e irregulares generalmente requiere:',
+        'opts' => [
+          'a' => 'Un diseño hidráulico que considere sectores de riego adaptados a la topografía, o el uso de válvulas reguladoras de presión',
+          'b' => 'Ningún ajuste especial respecto a un terreno plano',
+          'c' => 'Eliminar el uso de filtros',
+          'd' => 'Un único sector de riego para todo el predio, sin importar la pendiente',
+        ],
+      ],
+      [
+        'q' => 'El Coeficiente de Uniformidad (CU) de un sistema de riego tecnificado mide:',
+        'opts' => [
+          'a' => 'La cantidad total de agua aplicada durante toda la temporada',
+          'b' => 'Qué tan homogénea es la distribución del caudal entregado por los emisores en el sector de riego',
+          'c' => 'El costo de la energía eléctrica utilizada por la electrobomba',
+          'd' => 'La cantidad de fertilizante aplicado por hectárea',
+        ],
+      ],
+      [
+        'q' => 'Un Coeficiente de Uniformidad (CU) considerado aceptable en un sistema de riego tecnificado bien diseñado y mantenido debe ser, en general:',
+        'opts' => [
+          'a' => 'Menor al 50%',
+          'b' => 'Superior al 90%',
+          'c' => 'Igual al 0%',
+          'd' => 'No es un parámetro relevante para el riego tecnificado',
+        ],
+      ],
+    ];
+
+    $eval_vf = [
+      'La evapotranspiración de referencia (ETo) representa la demanda hídrica de un cultivo específico en su etapa de máximo desarrollo.',
+      'El coeficiente de cultivo (Kc) permite ajustar la ETo para obtener la evapotranspiración real de un cultivo específico (ETc).',
+      'El cabezal de riego se ubica normalmente al inicio del sistema, antes de la red de distribución.',
+      'Las electrobombas superficiales pueden funcionar correctamente sin importar la altura de succión desde la fuente de agua.',
+      'Los filtros de malla son generalmente más adecuados para retener partículas orgánicas como algas que los filtros de arena.',
+      'Los programadores de riego solo pueden operar de forma manual, sin posibilidad de automatización.',
+      'La mantención preventiva de un sistema de riego tecnificado ayuda a prolongar la vida útil de los equipos y mantener la eficiencia del riego.',
+      'La obstrucción de goteros puede deberse a la presencia de sedimentos, precipitados químicos o desarrollo biológico (algas/bacterias) en el agua de riego.',
+      'Un suelo con muy baja capacidad de infiltración es igualmente adecuado para cualquier tipo de sistema de riego tecnificado, sin necesidad de ajustes de diseño.',
+      'El coeficiente de uniformidad (CU) se ve afectado por variaciones de presión, obstrucción de emisores y el diseño hidráulico del sistema.',
+    ];
+    ?>
+
+    <!-- ============ EVALUACIÓN FINAL ============ -->
+    <div class="mt-12 mb-6 border-b-2 border-slate-200 pb-2">
+      <h2 class="font-display text-2xl font-bold text-slate-900">Evaluación Final</h2>
+      <p class="mt-1 text-sm text-slate-500">Curso: Implementación y Manejo de Sistemas de Riego Tecnificado · Puntaje: 60 pts</p>
+    </div>
+
+    <section class="card overflow-hidden mb-12" id="eval-final-contenedor">
+      <div class="border-b border-slate-100 bg-gradient-to-r from-agua-50 to-agro-50 px-5 py-4 sm:px-6">
+        <h3 class="font-display text-lg font-bold text-slate-900">Prueba final del curso</h3>
+        <p class="mt-0.5 text-sm text-slate-500">Complete todos los campos y genere el PDF para enviar al profesor.</p>
+      </div>
+
+      <form id="form-eval-final" class="p-5 sm:p-6 space-y-8" autocomplete="off">
+        <div class="grid gap-4 sm:grid-cols-2">
+          <div>
+            <label for="eval_nombre" class="mb-1.5 block text-sm font-medium text-slate-700">Nombre <span class="text-red-500">*</span></label>
+            <input type="text" id="eval_nombre" name="eval_nombre" required class="field" placeholder="Nombre completo del alumno">
+          </div>
+          <div>
+            <label for="eval_fecha" class="mb-1.5 block text-sm font-medium text-slate-700">Fecha <span class="text-red-500">*</span></label>
+            <input type="date" id="eval_fecha" name="eval_fecha" required class="field">
+          </div>
+        </div>
+
+        <!-- SECCIÓN I -->
+        <div class="space-y-5">
+          <div class="rounded-xl bg-slate-50 px-4 py-3 ring-1 ring-slate-200">
+            <h4 class="font-display text-base font-bold text-slate-900">Sección I · Selección múltiple</h4>
+            <p class="text-xs text-slate-500 mt-0.5">2 puntos c/u · 40 pts del ítem · Marque la alternativa correcta</p>
+          </div>
+
+          <?php foreach ($eval_sm as $i => $item):
+            $n = $i + 1;
+            $name = 'sm_' . $n;
+          ?>
+          <fieldset class="eval-pregunta space-y-2 border-0 p-0 m-0">
+            <legend class="text-sm font-medium text-slate-700 mb-2">
+              <?= $n ?>. <?= htmlspecialchars($item['q']) ?>
+            </legend>
+            <div class="space-y-2">
+              <?php foreach ($item['opts'] as $letra => $texto): ?>
+              <label class="eval-opcion">
+                <input type="radio" name="<?= $name ?>" value="<?= $letra ?>" required>
+                <span class="text-sm text-slate-700">
+                  <span class="font-semibold uppercase text-slate-500"><?= $letra ?>)</span>
+                  <?= htmlspecialchars($texto) ?>
+                </span>
+              </label>
+              <?php endforeach; ?>
+            </div>
+          </fieldset>
+          <?php endforeach; ?>
+        </div>
+
+        <!-- SECCIÓN II -->
+        <div class="space-y-5 border-t border-slate-100 pt-8">
+          <div class="rounded-xl bg-agro-50/60 px-4 py-3 ring-1 ring-agro-100">
+            <h4 class="font-display text-base font-bold text-slate-900">Sección II · Verdadero / Falso</h4>
+            <p class="text-xs text-slate-500 mt-0.5">2 puntos c/u · 20 pts del ítem · Marque según corresponda</p>
+          </div>
+
+          <?php foreach ($eval_vf as $i => $enunciado):
+            $n = $i + 1;
+            $name = 'vf_' . $n;
+          ?>
+          <fieldset class="eval-pregunta space-y-2 border-0 p-0 m-0">
+            <legend class="text-sm font-medium text-slate-700 mb-2">
+              <?= $n ?>. <?= htmlspecialchars($enunciado) ?>
+            </legend>
+            <div class="grid gap-2 sm:grid-cols-2 max-w-md">
+              <label class="eval-opcion">
+                <input type="radio" name="<?= $name ?>" value="V" required>
+                <span class="text-sm font-semibold text-slate-700">Verdadero</span>
+              </label>
+              <label class="eval-opcion">
+                <input type="radio" name="<?= $name ?>" value="F">
+                <span class="text-sm font-semibold text-slate-700">Falso</span>
+              </label>
+            </div>
+          </fieldset>
+          <?php endforeach; ?>
+        </div>
+
+        <div class="no-print border-t border-slate-100 pt-6">
+          <button type="submit" id="btn-generar-pdf"
+                  class="inline-flex w-full sm:w-auto items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-agro-600 to-agua-600 px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-agro-600/25 transition hover:from-agro-700 hover:to-agua-700 focus:outline-none focus:ring-2 focus:ring-agro-500 focus:ring-offset-2">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+            </svg>
+            Generar PDF y descargar
+          </button>
+          <p class="mt-2 text-xs text-slate-400">Se descargará el archivo y deberás enviarlo al profesor.</p>
+        </div>
+      </form>
+    </section>
+
     <footer class="pb-8 text-center text-xs text-slate-400 no-print">
       Portal de estudio privado · Valle del Mataquito · Riego tecnificado
     </footer>
   </main>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+  <script>
+  (function () {
+    var formEval = document.getElementById('form-eval-final');
+    if (formEval) {
+      formEval.addEventListener('submit', function (e) {
+        e.preventDefault();
+
+        var contenedor = document.getElementById('eval-final-contenedor');
+        var nombreRaw = (document.getElementById('eval_nombre').value || '').trim();
+        var nombreArchivo = nombreRaw
+          .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+          .replace(/[^a-zA-Z0-9]+/g, '_')
+          .replace(/^_|_$/g, '') || 'Alumno';
+
+        contenedor.querySelectorAll('.respuesta-marcada').forEach(function (el) {
+          el.classList.remove('respuesta-marcada');
+        });
+        contenedor.querySelectorAll('input[type="radio"]:checked').forEach(function (radio) {
+          var label = radio.closest('label');
+          if (label) label.classList.add('respuesta-marcada');
+        });
+
+        var btn = document.getElementById('btn-generar-pdf');
+        var ocultos = [];
+        contenedor.querySelectorAll('.no-print').forEach(function (el) {
+          ocultos.push({ el: el, display: el.style.display });
+          el.style.display = 'none';
+        });
+        if (btn) {
+          btn.disabled = true;
+          btn.classList.add('opacity-70', 'cursor-wait');
+        }
+
+        var filename = 'Prueba_Riego_' + nombreArchivo + '.pdf';
+
+        html2pdf()
+          .set({
+            margin: [10, 10, 10, 10],
+            filename: filename,
+            image: { type: 'jpeg', quality: 0.98 },
+            html2canvas: { scale: 2, useCORS: true, logging: false },
+            jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
+            pagebreak: { mode: ['css', 'legacy'] }
+          })
+          .from(contenedor)
+          .save(filename)
+          .then(function () {
+            alert('PDF generado. Por favor, envía este archivo al profesor');
+          })
+          .catch(function () {
+            alert('No se pudo generar el PDF. Intenta nuevamente.');
+          })
+          .finally(function () {
+            ocultos.forEach(function (item) {
+              item.el.style.display = item.display;
+            });
+            if (btn) {
+              btn.disabled = false;
+              btn.classList.remove('opacity-70', 'cursor-wait');
+            }
+          });
+      });
+    }
+  })();
+  </script>
 
   <script>
   (function () {
