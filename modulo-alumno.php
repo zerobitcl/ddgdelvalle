@@ -1091,7 +1091,7 @@ if ($autenticado && isset($_GET['download'])) {
       </div>
 
       <form id="form-eval-final" class="p-5 sm:p-6 space-y-8" autocomplete="off">
-        <!-- Contenedor capturado por html2pdf (sin overflow-hidden ni botón) -->
+        <!-- Contenido de la prueba (el PDF se genera vía API2PDF en servidor) -->
         <div id="eval-final-contenedor" class="space-y-8 bg-white">
         <div class="grid gap-4 sm:grid-cols-2">
           <div>
@@ -1182,11 +1182,12 @@ if ($autenticado && isset($_GET['download'])) {
     </footer>
   </main>
 
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
   <script>
   (function () {
     var formEval = document.getElementById('form-eval-final');
     if (!formEval) return;
+
+    var PDF_ENDPOINT = 'generar-pdf-evaluacion.php';
 
     function esc(str) {
       return String(str == null ? '' : str)
@@ -1214,88 +1215,84 @@ if ($autenticado && isset($_GET['download'])) {
         '</svg> Generar PDF y descargar';
     }
 
-    /** Construye un DOM plano (sin Tailwind) para que html2canvas no genere páginas en blanco */
-    function construirDocumentoPdf() {
+    /** HTML limpio con respuestas resaltadas (API2PDF/Chrome lo renderiza perfecto) */
+    function construirHtmlPdf() {
       var nombre = (document.getElementById('eval_nombre').value || '').trim();
       var fecha = document.getElementById('eval_fecha').value || '';
-      var wrap = document.createElement('div');
-      wrap.id = 'pdf-export-root';
-      wrap.style.cssText = 'position:fixed;left:-10000px;top:0;width:720px;background:#fff;color:#0f172a;font-family:Arial,Helvetica,sans-serif;font-size:12.5px;line-height:1.45;padding:20px;box-sizing:border-box;';
-
+      var origen = document.getElementById('eval-final-contenedor');
       var html = '';
+
       html += '<div style="border-bottom:2px solid #15803d;padding-bottom:12px;margin-bottom:18px;">';
-      html += '<div style="font-size:18px;font-weight:700;color:#14532d;">Evaluación Final · Riego Tecnificado</div>';
-      html += '<div style="margin-top:8px;"><strong>Nombre:</strong> ' + esc(nombre) + '</div>';
-      html += '<div><strong>Fecha:</strong> ' + esc(fecha) + '</div>';
+      html += '<div style="font-size:20px;font-weight:700;color:#14532d;">Evaluación Final · Riego Tecnificado</div>';
+      html += '<div style="margin-top:10px;font-size:13px;"><strong>Nombre:</strong> ' + esc(nombre) + '</div>';
+      html += '<div style="font-size:13px;"><strong>Fecha:</strong> ' + esc(fecha) + '</div>';
       html += '</div>';
 
       html += '<div style="background:#f1f5f9;border:1px solid #e2e8f0;border-radius:8px;padding:10px 12px;margin-bottom:14px;">';
-      html += '<div style="font-weight:700;font-size:14px;">Sección I · Selección múltiple</div>';
+      html += '<div style="font-weight:700;font-size:14px;color:#0f172a;">Sección I · Selección múltiple</div>';
       html += '<div style="font-size:11px;color:#64748b;">2 pts c/u · 40 pts</div></div>';
 
-      var origen = document.getElementById('eval-final-contenedor');
-      var smGroups = origen.querySelectorAll('[role="group"][aria-labelledby^="sm_label_"]');
-      smGroups.forEach(function (group, idx) {
+      origen.querySelectorAll('[role="group"][aria-labelledby^="sm_label_"]').forEach(function (group, idx) {
         var labelEl = document.getElementById(group.getAttribute('aria-labelledby'));
         var pregunta = labelEl ? labelEl.textContent.trim() : ('Pregunta ' + (idx + 1));
-        html += '<div style="margin-bottom:14px;page-break-inside:avoid;">';
-        html += '<div style="font-weight:600;margin-bottom:6px;">' + esc(pregunta) + '</div>';
+        html += '<div class="pdf-q">';
+        html += '<div style="font-weight:600;margin-bottom:6px;color:#0f172a;">' + esc(pregunta) + '</div>';
         group.querySelectorAll('label.eval-opcion').forEach(function (lab) {
           var radio = lab.querySelector('input[type="radio"]');
           var texto = (lab.querySelector('span') || lab).textContent.replace(/\s+/g, ' ').trim();
-          var marcada = radio && radio.checked;
+          var marcada = !!(radio && radio.checked);
           var boxStyle = marcada
             ? 'background:#dcfce9;border:2px solid #16a34a;font-weight:700;color:#14532d;'
             : 'background:#fff;border:1px solid #cbd5e1;color:#334155;';
-          var marca = marcada ? ' ✓' : '';
-          html += '<div style="padding:7px 10px;margin:0 0 5px;border-radius:6px;' + boxStyle + '">' +
-            esc(texto) + marca + '</div>';
+          html += '<div style="padding:8px 10px;margin:0 0 5px;border-radius:6px;' + boxStyle + '">' +
+            esc(texto) + (marcada ? ' ✓' : '') + '</div>';
         });
         html += '</div>';
       });
 
       html += '<div style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:8px;padding:10px 12px;margin:20px 0 14px;">';
-      html += '<div style="font-weight:700;font-size:14px;">Sección II · Verdadero / Falso</div>';
+      html += '<div style="font-weight:700;font-size:14px;color:#0f172a;">Sección II · Verdadero / Falso</div>';
       html += '<div style="font-size:11px;color:#64748b;">2 pts c/u · 20 pts</div></div>';
 
-      var vfGroups = origen.querySelectorAll('[role="group"][aria-labelledby^="vf_label_"]');
-      vfGroups.forEach(function (group, idx) {
+      origen.querySelectorAll('[role="group"][aria-labelledby^="vf_label_"]').forEach(function (group, idx) {
         var labelEl = document.getElementById(group.getAttribute('aria-labelledby'));
         var pregunta = labelEl ? labelEl.textContent.trim() : ('Pregunta ' + (idx + 1));
-        html += '<div style="margin-bottom:14px;page-break-inside:avoid;">';
-        html += '<div style="font-weight:600;margin-bottom:6px;">' + esc(pregunta) + '</div>';
+        html += '<div class="pdf-q">';
+        html += '<div style="font-weight:600;margin-bottom:6px;color:#0f172a;">' + esc(pregunta) + '</div>';
         group.querySelectorAll('label.eval-opcion').forEach(function (lab) {
           var radio = lab.querySelector('input[type="radio"]');
           var texto = (lab.querySelector('span') || lab).textContent.replace(/\s+/g, ' ').trim();
-          var marcada = radio && radio.checked;
+          var marcada = !!(radio && radio.checked);
           var boxStyle = marcada
             ? 'background:#dcfce9;border:2px solid #16a34a;font-weight:700;color:#14532d;'
             : 'background:#fff;border:1px solid #cbd5e1;color:#334155;';
-          var marca = marcada ? ' ✓' : '';
-          html += '<div style="display:inline-block;min-width:120px;padding:7px 12px;margin:0 8px 5px 0;border-radius:6px;' + boxStyle + '">' +
-            esc(texto) + marca + '</div>';
+          html += '<div style="display:inline-block;min-width:130px;padding:8px 12px;margin:0 8px 5px 0;border-radius:6px;' + boxStyle + '">' +
+            esc(texto) + (marcada ? ' ✓' : '') + '</div>';
         });
         html += '</div>';
       });
 
-      wrap.innerHTML = html;
-      document.body.appendChild(wrap);
-      return wrap;
+      return html;
+    }
+
+    function descargarBlob(blob, filename) {
+      var url = URL.createObjectURL(blob);
+      var a = document.createElement('a');
+      a.href = url;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      setTimeout(function () { URL.revokeObjectURL(url); }, 2500);
     }
 
     formEval.addEventListener('submit', function (e) {
       e.preventDefault();
 
-      if (typeof html2pdf !== 'function') {
-        alert('No se pudo cargar la librería PDF. Revisa tu conexión e intenta de nuevo.');
-        return;
-      }
-
       var btn = document.getElementById('btn-generar-pdf');
       var filename = 'Prueba_Riego_' + slugNombre(document.getElementById('eval_nombre').value) + '.pdf';
-
-      // Highlight también en pantalla (feedback al alumno)
       var pantalla = document.getElementById('eval-final-contenedor');
+
       pantalla.querySelectorAll('.respuesta-marcada').forEach(function (el) {
         el.classList.remove('respuesta-marcada');
       });
@@ -1310,9 +1307,9 @@ if ($autenticado && isset($_GET['download'])) {
         btn.textContent = 'Generando PDF…';
       }
 
-      var exportRoot = null;
+      var html;
       try {
-        exportRoot = construirDocumentoPdf();
+        html = construirHtmlPdf();
       } catch (errBuild) {
         console.error(errBuild);
         restaurarUi(btn);
@@ -1320,47 +1317,36 @@ if ($autenticado && isset($_GET['download'])) {
         return;
       }
 
-      var opt = {
-        margin: [10, 10, 10, 10],
-        filename: filename,
-        image: { type: 'jpeg', quality: 0.95 },
-        html2canvas: {
-          scale: 1.5,
-          useCORS: true,
-          logging: false,
-          backgroundColor: '#ffffff',
-          scrollX: 0,
-          scrollY: 0
-        },
-        jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
-        pagebreak: { mode: ['css', 'legacy'] }
-      };
-
-      // Visible para captura, detrás del contenido (opacity baja = PDF en blanco)
-      exportRoot.style.left = '0';
-      exportRoot.style.top = '0';
-      exportRoot.style.opacity = '1';
-      exportRoot.style.zIndex = '-1';
-      exportRoot.style.pointerEvents = 'none';
-
-      html2pdf()
-        .set(opt)
-        .from(exportRoot)
-        .save()
-        .then(
-          function () {
-            if (exportRoot && exportRoot.parentNode) exportRoot.parentNode.removeChild(exportRoot);
-            alert('PDF generado. Por favor, envía este archivo al profesor');
-            restaurarUi(btn);
-          },
-          function (err) {
-            console.error('Error PDF:', err);
-            if (exportRoot && exportRoot.parentNode) exportRoot.parentNode.removeChild(exportRoot);
-            alert('No se pudo generar el PDF automáticamente. Se abrirá el diálogo de impresión: elige "Guardar como PDF".');
-            restaurarUi(btn);
-            window.print();
+      fetch(PDF_ENDPOINT, {
+        method: 'POST',
+        credentials: 'same-origin',
+        headers: { 'Content-Type': 'application/json', 'Accept': 'application/pdf, application/json' },
+        body: JSON.stringify({ html: html, filename: filename })
+      })
+        .then(function (res) {
+          var ctype = (res.headers.get('Content-Type') || '').toLowerCase();
+          if (!res.ok || ctype.indexOf('application/pdf') === -1) {
+            return res.text().then(function (txt) {
+              var msg = 'No se pudo generar el PDF.';
+              try {
+                var j = JSON.parse(txt);
+                if (j && j.error) msg = j.error;
+              } catch (ignore) {}
+              throw new Error(msg);
+            });
           }
-        );
+          return res.blob();
+        })
+        .then(function (blob) {
+          descargarBlob(blob, filename);
+          alert('PDF generado. Por favor, envía este archivo al profesor');
+          restaurarUi(btn);
+        })
+        .catch(function (err) {
+          console.error(err);
+          alert(err.message || 'Error al generar el PDF.');
+          restaurarUi(btn);
+        });
     });
   })();
   </script>

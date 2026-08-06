@@ -4,6 +4,7 @@
 !.env.example
 wp-config.php
 registro/config.php
+config-api2pdf.php
 .private/
 
 # PDFs generados en runtime
