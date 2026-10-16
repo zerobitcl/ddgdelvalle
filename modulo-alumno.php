@@ -54,8 +54,9 @@ function ddg_json(int $code, array $data): void {
 }
 
 function ddg_chk_modulo(int $n): string {
-    return '<label class="no-print inline-flex cursor-pointer items-center gap-2 rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-xs font-semibold text-slate-700 transition hover:border-agro-500">'
-         . '<input type="checkbox" data-modulo="' . $n . '" class="h-4 w-4 accent-green-700"> Marcar módulo como completado</label>';
+    return '<div class="flex flex-wrap items-center gap-2"><span data-modulo-badge="' . $n . '" class="rounded-full bg-amber-100 px-2.5 py-1 text-[11px] font-bold uppercase tracking-wide text-amber-800">● Pendiente</span>'
+         . '<label class="no-print inline-flex cursor-pointer items-center gap-2 rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-xs font-semibold text-slate-700 transition hover:border-agro-500">'
+         . '<input type="checkbox" data-modulo="' . $n . '" class="h-4 w-4 accent-green-700"> Marcar módulo como completado</label></div>';
 }
 
 /* ---------- Perfiles de acceso ---------- */
@@ -63,7 +64,7 @@ function ddg_chk_modulo(int $n): string {
 $PERFILES = [
     ['ids' => ['alumno'],                                 'clave' => 'riego2026',   'rol' => 'alumno',  'nombre' => 'Alumno Riego',        'rut' => '—'],
     ['ids' => ['154328765'],                              'clave' => 'Alumno2026*', 'rol' => 'alumno',  'nombre' => 'Participante Demo',   'rut' => '15.432.876-5'],
-    ['ids' => ['111111111', 'auditor', 'auditor@sence.cl'], 'clave' => 'Sence2026*',  'rol' => 'auditor', 'nombre' => 'Fiscalizador SENCE',  'rut' => '11.111.111-1'],
+    ['ids' => ['111111111', 'auditor', 'auditor@sence.cl'], 'clave' => 'Sence2026*',  'rol' => 'auditor', 'nombre' => 'Alumno Prueba',  'rut' => '11.111.111-1'],
 ];
 
 function ddg_autenticar(array $perfiles, string $user, string $pass): ?array {
@@ -135,11 +136,11 @@ if ($autenticado && (time() - (int) ($_SESSION['last_activity'] ?? time())) > DD
     $_SESSION = [];
     session_destroy();
     $autenticado = false;
-    $aviso_login = 'Tu sesión se cerró por inactividad (60 min, normativa SENCE). Ingresa nuevamente.';
+    $aviso_login = 'Tu sesión se cerró por inactividad (60 min, normativa). Ingresa nuevamente.';
 } elseif ($autenticado) {
     $_SESSION['last_activity'] = time();
 } elseif (($_COOKIE['ddg_aviso'] ?? '') === 'inactividad') {
-    $aviso_login = 'Tu sesión se cerró por inactividad (60 min, normativa SENCE). Ingresa nuevamente.';
+    $aviso_login = 'Tu sesión se cerró por inactividad (60 min, normativa). Ingresa nuevamente.';
     setcookie('ddg_aviso', '', time() - 3600, '/');
 }
 
@@ -455,7 +456,7 @@ if ($autenticado && isset($_GET['download'])) {
           </svg>
         </div>
         <h1 class="font-display text-2xl font-bold text-slate-900">Portal de Estudio</h1>
-        <p class="mt-1 text-sm text-slate-500">Módulo de riego · Acceso privado de participantes y fiscalización</p>
+        <p class="mt-1 text-sm text-slate-500">Módulo de riego · Acceso privado de participantes</p>
       </div>
 
       <?php if ($error_login): ?>
@@ -537,7 +538,7 @@ if ($autenticado && isset($_GET['download'])) {
           <div class="flex items-center gap-2 pr-1">
             <span class="max-w-[12rem] truncate text-sm font-semibold text-slate-800" title="<?= htmlspecialchars($nombreUsuario . ' · ' . $rutUsuario) ?>"><?= htmlspecialchars($nombreUsuario) ?></span>
             <?php if ($esAuditor): ?>
-              <span class="rounded-full bg-amber-100 px-2.5 py-0.5 text-[11px] font-bold uppercase tracking-wide text-amber-800 ring-1 ring-amber-200">Fiscalizador SENCE</span>
+              <span class="rounded-full bg-amber-100 px-2.5 py-0.5 text-[11px] font-bold uppercase tracking-wide text-amber-800 ring-1 ring-amber-200">Participante Activo</span>
             <?php else: ?>
               <span class="rounded-full bg-agro-100 px-2.5 py-0.5 text-[11px] font-bold uppercase tracking-wide text-agro-800 ring-1 ring-agro-500/30">Participante Activo</span>
             <?php endif; ?>
@@ -553,7 +554,7 @@ if ($autenticado && isset($_GET['download'])) {
             <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
               <path stroke-linecap="round" stroke-linejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
             </svg>
-            Registrar Salida SENCE / Cerrar Sesión
+            Registrar Salida / Cerrar Sesión
           </a>
         </div>
       </div>
@@ -568,14 +569,16 @@ if ($autenticado && isset($_GET['download'])) {
 
         <div class="flex items-center gap-1.5">
           <span id="inact-dot" class="inline-block h-2 w-2 rounded-full bg-agro-500"></span>
-          <span>Control de inactividad activo: cierre automático a los 60 min (Normativa SENCE)</span>
+          <span>Control de inactividad activo: cierre automático a los 60 min</span>
           <span class="font-mono font-semibold text-slate-800" id="inact-restante" title="Tiempo restante hasta el cierre por inactividad">60:00</span>
         </div>
 
         <div class="flex items-center gap-2 sm:ml-auto">
-          <label for="curso-activo" class="font-semibold text-slate-500">Curso activo</label>
-          <select id="curso-activo" class="field !w-auto max-w-[19rem] !py-1 !text-xs">
-            <option selected>Riego y Evapotranspiración (Riego Tecnificado - SENCE)</option>
+          <label for="curso-activo" class="inline-flex items-center gap-1.5 rounded-full bg-agro-600 px-2.5 py-1 text-[11px] font-bold uppercase tracking-wide text-white">
+            <span class="inline-block h-1.5 w-1.5 animate-pulse rounded-full bg-white"></span>Curso activo
+          </label>
+          <select id="curso-activo" class="field !w-auto max-w-[19rem] !border-agro-500 !bg-agro-50 !py-1 !text-xs !font-semibold !text-agro-800">
+            <option selected>Riego y Evapotranspiración (Riego Tecnificado)</option>
             <option disabled>Aplicador de Plaguicidas (En proceso de habilitación de cohorte)</option>
             <option disabled>Estrategias de Inserción Laboral (En proceso de habilitación de cohorte)</option>
           </select>
@@ -588,7 +591,7 @@ if ($autenticado && isset($_GET['download'])) {
         <button type="button" role="tab" class="tab-btn" data-tab="foro" aria-selected="false">Foro de Consultas al Relator</button>
         <button type="button" role="tab" class="tab-btn" data-tab="soporte" aria-selected="false">Soporte Técnico y Reglamento</button>
         <?php if ($esAuditor): ?>
-          <button type="button" role="tab" class="tab-btn !text-amber-700" data-tab="auditoria" aria-selected="false">Panel Auditoría y Trazabilidad SENCE</button>
+          <button type="button" role="tab" class="tab-btn !text-amber-700" data-tab="auditoria" aria-selected="false">Panel de Auditoría y Trazabilidad</button>
         <?php endif; ?>
       </nav>
     </div>
@@ -597,7 +600,7 @@ if ($autenticado && isset($_GET['download'])) {
   <!-- Aviso previo al cierre por inactividad -->
   <div id="aviso-inactividad" class="no-print fixed inset-x-0 bottom-4 z-50 mx-auto hidden w-[92%] max-w-lg rounded-xl border border-amber-300 bg-amber-50 px-4 py-3 text-sm text-amber-900 shadow-xl" role="alertdialog" aria-live="assertive">
     <p class="font-semibold">Tu sesión se cerrará por inactividad en <span id="aviso-restante" class="font-mono">05:00</span></p>
-    <p class="mt-0.5 text-xs">Mueve el mouse o presiona una tecla para continuar. Normativa SENCE: cierre a los 60 min sin actividad.</p>
+    <p class="mt-0.5 text-xs">Mueve el mouse o presiona una tecla para continuar. Cierre automático a los 60 min sin actividad.</p>
   </div>
 
   <main class="mx-auto max-w-5xl px-4 py-8 sm:px-6 sm:py-10 space-y-8">
@@ -618,11 +621,11 @@ if ($autenticado && isset($_GET['download'])) {
         <div class="h-3 overflow-hidden rounded-full bg-slate-100" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" id="prog-barra-wrap" aria-labelledby="prog-titulo">
           <div id="prog-barra" class="h-full rounded-full bg-gradient-to-r from-agua-500 to-agro-600 transition-all duration-500" style="width:0%"></div>
         </div>
-        <span class="absolute -top-1 h-5 w-0.5 bg-amber-500" style="left:75%" title="Mínimo SENCE 75%"></span>
+        <span class="absolute -top-1 h-5 w-0.5 bg-amber-500" style="left:75%" title="Mínimo 75%"></span>
       </div>
       <div class="mt-3 grid grid-cols-2 gap-2 sm:grid-cols-4">
         <?php for ($m = 1; $m <= 4; $m++): ?>
-          <a href="#modulo-<?= $m ?>" data-chip="<?= $m ?>" class="flex items-center justify-between rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-xs font-semibold text-slate-600 transition hover:border-agro-500">
+          <a href="#modulo-<?= $m ?>" data-chip="<?= $m ?>" class="flex items-center justify-between rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-xs font-semibold text-slate-600 transition hover:border-agro-500">
             Módulo <?= $m ?> <span data-chip-estado class="text-slate-400">Pendiente</span>
           </a>
         <?php endfor; ?>
@@ -633,7 +636,7 @@ if ($autenticado && isset($_GET['download'])) {
       <p id="prog-estado" class="mt-2 text-sm font-medium text-slate-700" role="status"></p>
     </section>
 
-    <div id="modulo-1" class="mt-4 mb-2 flex flex-wrap items-center justify-between gap-3 border-b-2 border-slate-200 pb-2 no-print scroll-mt-48">
+    <div id="modulo-1" class="mt-4 mb-2 flex flex-wrap items-center justify-between gap-3 modulo-barra rounded-xl border-2 border-amber-200 bg-amber-50/70 px-4 py-3 no-print scroll-mt-48">
       <h2 class="font-display text-2xl font-bold text-slate-900">Módulo 1: Evapotranspiración y demanda de riego</h2>
       <?= ddg_chk_modulo(1) ?>
     </div>
@@ -951,7 +954,7 @@ if ($autenticado && isset($_GET['download'])) {
     </section>
 
     <!-- ============ MÓDULO 2 ============ -->
-    <div id="modulo-2" class="mt-12 mb-6 flex flex-wrap items-center justify-between gap-3 border-b-2 border-slate-200 pb-2 no-print scroll-mt-48">
+    <div id="modulo-2" class="mt-12 mb-6 flex flex-wrap items-center justify-between gap-3 modulo-barra rounded-xl border-2 border-amber-200 bg-amber-50/70 px-4 py-3 no-print scroll-mt-48">
       <h2 class="font-display text-2xl font-bold text-slate-900">Módulo 2: Componentes de un sistema de riego presurizado</h2>
       <?= ddg_chk_modulo(2) ?>
     </div>
@@ -1022,7 +1025,7 @@ if ($autenticado && isset($_GET['download'])) {
     </section>
 
     <!-- ============ MÓDULO 3 ============ -->
-    <div id="modulo-3" class="mt-12 mb-6 flex flex-wrap items-center justify-between gap-3 border-b-2 border-slate-200 pb-2 no-print scroll-mt-48">
+    <div id="modulo-3" class="mt-12 mb-6 flex flex-wrap items-center justify-between gap-3 modulo-barra rounded-xl border-2 border-amber-200 bg-amber-50/70 px-4 py-3 no-print scroll-mt-48">
       <h2 class="font-display text-2xl font-bold text-slate-900">Módulo 3: Mantención de Sistema de Riego</h2>
       <?= ddg_chk_modulo(3) ?>
     </div>
@@ -1135,7 +1138,7 @@ if ($autenticado && isset($_GET['download'])) {
     </section>
 
     <!-- ============ MÓDULO 4 ============ -->
-    <div id="modulo-4" class="mt-12 mb-6 flex flex-wrap items-center justify-between gap-3 border-b-2 border-slate-200 pb-2 no-print scroll-mt-48">
+    <div id="modulo-4" class="mt-12 mb-6 flex flex-wrap items-center justify-between gap-3 modulo-barra rounded-xl border-2 border-amber-200 bg-amber-50/70 px-4 py-3 no-print scroll-mt-48">
       <h2 class="font-display text-2xl font-bold text-slate-900">Módulo 4: Implementación y Manejo de Sistemas de Riego Tecnificado Parte IV</h2>
       <?= ddg_chk_modulo(4) ?>
     </div>
@@ -1685,8 +1688,8 @@ if ($autenticado && isset($_GET['download'])) {
     <div id="tab-auditoria" data-tab-panel role="tabpanel" hidden class="space-y-6">
 
       <div class="print-only border-b-2 border-slate-800 pb-3">
-        <p class="text-lg font-bold">Informe de Auditoría y Trazabilidad SENCE</p>
-        <p class="text-xs">Curso: Riego y Evapotranspiración (Riego Tecnificado - SENCE) · Fiscalizador: <?= htmlspecialchars($nombreUsuario . ' · ' . $rutUsuario) ?> · Generado: <span id="print-fecha"></span></p>
+        <p class="text-lg font-bold">Informe de Auditoría y Trazabilidad</p>
+        <p class="text-xs">Curso: Riego y Evapotranspiración (Riego Tecnificado) · Usuario: <?= htmlspecialchars($nombreUsuario . ' · ' . $rutUsuario) ?> · Generado: <span id="print-fecha"></span></p>
       </div>
 
       <section class="grid grid-cols-2 gap-3 lg:grid-cols-4" aria-label="Resumen de auditoría">
@@ -1703,7 +1706,7 @@ if ($autenticado && isset($_GET['download'])) {
             <p class="mt-0.5 text-xs text-slate-500">Fila 1: sesión en vivo del usuario conectado (IP y hora reales). Filas 2–9: registros precargados de demostración.</p>
           </div>
           <div class="no-print flex flex-wrap gap-2">
-            <button type="button" id="btn-csv" class="inline-flex items-center gap-2 rounded-xl bg-agro-600 px-4 py-2 text-xs font-bold text-white shadow-sm transition hover:bg-agro-700 focus:outline-none focus:ring-2 focus:ring-agro-500 focus:ring-offset-2">Descargar Bitácora SENCE (CSV / Excel)</button>
+            <button type="button" id="btn-csv" class="inline-flex items-center gap-2 rounded-xl bg-agro-600 px-4 py-2 text-xs font-bold text-white shadow-sm transition hover:bg-agro-700 focus:outline-none focus:ring-2 focus:ring-agro-500 focus:ring-offset-2">Descargar Bitácora (CSV / Excel)</button>
             <button type="button" id="btn-print-audit" class="inline-flex items-center gap-2 rounded-xl border border-slate-300 bg-white px-4 py-2 text-xs font-bold text-slate-700 transition hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-slate-400 focus:ring-offset-2">Imprimir / Exportar Informe de Auditoría (PDF)</button>
           </div>
         </div>
@@ -2221,18 +2224,30 @@ if ($autenticado && isset($_GET['download'])) {
       [].forEach.call(document.querySelectorAll('[data-chip]'), function (chip) {
         var ok = !!st.mods[Number(chip.dataset.chip) - 1];
         var s = chip.querySelector('[data-chip-estado]');
-        s.textContent = ok ? 'Completado' : 'Pendiente';
-        s.className = ok ? 'text-agro-700' : 'text-slate-400';
+        s.textContent = ok ? '✓ Completado' : '● Pendiente';
+        s.className = ok ? 'text-agro-700' : 'text-amber-700';
         chip.classList.toggle('border-agro-500', ok);
-        chip.classList.toggle('bg-agro-50', ok);
+        chip.classList.toggle('bg-agro-100', ok);
+        chip.classList.toggle('border-amber-200', !ok);
+        chip.classList.toggle('bg-amber-50', !ok);
       });
+
+      /* Barra de cada módulo: el estado se lee de un vistazo al hacer scroll */
+      for (var n = 1; n <= 4; n++) {
+        var okM = !!st.mods[n - 1], barra = $('modulo-' + n), badge = document.querySelector('[data-modulo-badge="' + n + '"]');
+        if (!barra || !badge) continue;
+        ['border-agro-500', 'bg-agro-50'].forEach(function (c) { barra.classList.toggle(c, okM); });
+        ['border-amber-200', 'bg-amber-50/70'].forEach(function (c) { barra.classList.toggle(c, !okM); });
+        badge.textContent = okM ? '✓ Completado' : '● Pendiente';
+        badge.className = 'rounded-full px-2.5 py-1 text-[11px] font-bold uppercase tracking-wide ' + (okM ? 'bg-agro-600 text-white' : 'bg-amber-100 text-amber-800');
+      }
 
       var nota = st.final ? st.final.nota : null;
       var okAv = pct >= C.avanceMin, okNota = nota !== null && nota >= C.notaMin;
       var el = $('prog-estado');
       if (okAv && okNota) {
         el.className = 'mt-2 text-sm font-semibold text-agro-700';
-        el.textContent = 'CUMPLE requisitos de aprobación SENCE · Avance ' + pct + '% · Nota final ' + nota.toFixed(1);
+        el.textContent = 'CUMPLE requisitos de aprobación · Avance ' + pct + '% · Nota final ' + nota.toFixed(1);
       } else {
         el.className = 'mt-2 text-sm font-medium text-slate-700';
         var falta = [];
@@ -2361,7 +2376,7 @@ if ($autenticado && isset($_GET['download'])) {
         });
         var d = new Date();
         var sello = d.getFullYear() + pad(d.getMonth() + 1) + pad(d.getDate()) + '_' + pad(d.getHours()) + pad(d.getMinutes());
-        descargar(new Blob(['\uFEFF' + lineas.join('\r\n')], { type: 'text/csv;charset=utf-8' }), 'Bitacora_SENCE_Riego_' + sello + '.csv');
+        descargar(new Blob(['\uFEFF' + lineas.join('\r\n')], { type: 'text/csv;charset=utf-8' }), 'Bitacora_Riego_' + sello + '.csv');
       });
     }
 
@@ -2433,7 +2448,7 @@ if ($autenticado && isset($_GET['download'])) {
         <section><h3 class="font-bold text-slate-900">1. Acceso y credenciales</h3>
           <p>El acceso es personal e intransferible (usuario o RUT y contraseña). El participante es responsable del uso de sus credenciales. La asistencia se valida con ClaveÚnica a través del Gestor Intermedio de SENCE.</p></section>
         <section><h3 class="font-bold text-slate-900">2. Control de sesión y trazabilidad</h3>
-          <p>La plataforma registra fecha y hora de ingreso y salida, minutos conectados y dirección IP de cada sesión. La sesión se cierra automáticamente tras 60 minutos sin actividad. Al terminar, utiliza «Registrar Salida SENCE / Cerrar Sesión».</p></section>
+          <p>La plataforma registra fecha y hora de ingreso y salida, minutos conectados y dirección IP de cada sesión. La sesión se cierra automáticamente tras 60 minutos sin actividad. Al terminar, utiliza «Registrar Salida / Cerrar Sesión».</p></section>
         <section><h3 class="font-bold text-slate-900">3. Requisitos de aprobación</h3>
           <ul class="list-disc space-y-1 pl-5"><li>Avance curricular mínimo: 75% (módulos completados).</li><li>Nota mínima de aprobación: 4.0 en escala 1.0 a 7.0, con 60% de exigencia.</li><li>Evaluación final: 20 preguntas de selección múltiple y 10 de verdadero/falso (60 puntos).</li></ul></section>
         <section><h3 class="font-bold text-slate-900">4. Evaluaciones y probidad académica</h3>
