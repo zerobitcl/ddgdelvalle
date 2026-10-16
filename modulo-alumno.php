@@ -1,11 +1,97 @@
 <?php
 session_start();
 
-$USUARIO_VALIDO = 'alumno';
-$CLAVE_VALIDA   = 'riego2026';
-$error_login    = '';
+date_default_timezone_set('America/Santiago');
+header('Cache-Control: no-store');
+
+/* ---------- Parámetros normativos SENCE: única fuente de verdad (PHP y JS) ---------- */
+const DDG_INACTIVIDAD_SEG = 3600; // cierre automático por inactividad
+const DDG_EXIGENCIA_PCT   = 60;   // 60% de logro = nota 4.0
+const DDG_AVANCE_MIN_PCT  = 75;   // avance curricular mínimo de aprobación
+const DDG_NOTA_MIN        = 4.0;
+
+function ddg_rut_limpio(string $v): string {
+    return strtoupper(preg_replace('/[^0-9kK]/', '', $v));
+}
+
+/* Módulo 11 estándar chileno. Se calcula (no se tipea) para garantizar RUT válidos en datos de muestra. */
+function ddg_rut_dv(int $n): string {
+    $suma = 0; $mult = 2;
+    foreach (array_reverse(str_split((string) $n)) as $d) {
+        $suma += (int) $d * $mult;
+        $mult = $mult === 7 ? 2 : $mult + 1;
+    }
+    $r = 11 - ($suma % 11);
+    return $r === 11 ? '0' : ($r === 10 ? 'K' : (string) $r);
+}
+
+function ddg_rut_fmt(int $n): string {
+    return number_format($n, 0, '', '.') . '-' . ddg_rut_dv($n);
+}
+
+/* Escala chilena 1.0–7.0 con exigencia al 60%: tramo lineal 1→4 (0–60%) y 4→7 (60–100%). */
+function ddg_nota(float $pct): float {
+    $pct = max(0.0, min(100.0, $pct));
+    $e = (float) DDG_EXIGENCIA_PCT;
+    $n = $pct >= $e ? 4 + 3 * ($pct - $e) / (100 - $e) : 1 + 3 * $pct / $e;
+    return round($n, 1);
+}
+
+/* UTF-8 seguro sin depender de la extensión mbstring (no siempre está en hosting compartido) */
+function ddg_cortar(string $s, int $max): string {
+    return preg_match('/^.{0,' . $max . '}/su', $s, $m) ? $m[0] : '';
+}
+
+function ddg_largo(string $s): int {
+    return (int) preg_match_all('/./su', $s);
+}
+
+function ddg_json(int $code, array $data): void {
+    http_response_code($code);
+    header('Content-Type: application/json; charset=utf-8');
+    echo json_encode($data, JSON_UNESCAPED_UNICODE);
+    exit;
+}
+
+function ddg_chk_modulo(int $n): string {
+    return '<label class="no-print inline-flex cursor-pointer items-center gap-2 rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-xs font-semibold text-slate-700 transition hover:border-agro-500">'
+         . '<input type="checkbox" data-modulo="' . $n . '" class="h-4 w-4 accent-green-700"> Marcar módulo como completado</label>';
+}
+
+/* ---------- Perfiles de acceso ---------- */
+/* 'ids' admite usuario o RUT (con o sin puntos/guion). La clave se compara con hash_equals. */
+$PERFILES = [
+    ['ids' => ['alumno'],                                 'clave' => 'riego2026',   'rol' => 'alumno',  'nombre' => 'Alumno Riego',        'rut' => '—'],
+    ['ids' => ['154328765'],                              'clave' => 'Alumno2026*', 'rol' => 'alumno',  'nombre' => 'Participante Demo',   'rut' => '15.432.876-5'],
+    ['ids' => ['111111111', 'auditor', 'auditor@sence.cl'], 'clave' => 'Sence2026*',  'rol' => 'auditor', 'nombre' => 'Fiscalizador SENCE',  'rut' => '11.111.111-1'],
+];
+
+function ddg_autenticar(array $perfiles, string $user, string $pass): ?array {
+    $u  = trim($user);
+    $k  = strtolower($u);
+    $kr = preg_match('/^[0-9.\-]+[0-9kK]$/', $u) ? strtolower(ddg_rut_limpio($u)) : null;
+    foreach ($perfiles as $p) {
+        foreach ($p['ids'] as $id) {
+            $id = strtolower($id);
+            if (($k === $id || ($kr !== null && $kr === $id)) && hash_equals($p['clave'], $pass)) {
+                return $p;
+            }
+        }
+    }
+    return null;
+}
+
+/* ---------- Clave de la evaluación final (se califica en servidor: no viaja al navegador) ---------- */
+$DDG_CLAVE_SM = ['b','d','b','b','b','b','b','b','b','a','b','a','b','b','b','a','b','a','b','b'];
+$DDG_CLAVE_VF = ['F','V','V','F','F','F','V','V','F','V'];
+
+$error_login = '';
+$aviso_login = '';
 
 if (isset($_GET['logout'])) {
+    if (($_GET['motivo'] ?? '') === 'inactividad') {
+        setcookie('ddg_aviso', 'inactividad', time() + 60, '/');
+    }
     session_destroy();
     header('Location: ' . strtok($_SERVER['REQUEST_URI'], '?'));
     exit;
@@ -14,16 +100,166 @@ if (isset($_GET['logout'])) {
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['login'])) {
     $user = trim($_POST['usuario'] ?? '');
     $pass = trim($_POST['clave'] ?? '');
-    if ($user === $USUARIO_VALIDO && $pass === $CLAVE_VALIDA) {
-        $_SESSION['alumno_auth'] = true;
-        $_SESSION['alumno_user'] = $user;
+    $perfil = (($_SESSION['login_bloqueo'] ?? 0) > time()) ? null : ddg_autenticar($PERFILES, $user, $pass);
+    if ($perfil) {
+        session_regenerate_id(true); // evita fijación de sesión
+        $_SESSION['intentos_fallidos'] = 0;
+        $_SESSION['alumno_auth']   = true;
+        $_SESSION['alumno_user']   = $user;
+        $_SESSION['alumno_rol']    = $perfil['rol'];
+        $_SESSION['alumno_nombre'] = $perfil['nombre'];
+        $_SESSION['alumno_rut']    = $perfil['rut'];
+        $_SESSION['login_ts']      = time();
+        $_SESSION['login_ip']      = $_SERVER['REMOTE_ADDR'] ?? '0.0.0.0';
+        $_SESSION['last_activity'] = time();
+        $_SESSION['csrf']          = bin2hex(random_bytes(16));
         header('Location: ' . strtok($_SERVER['REQUEST_URI'], '?'));
         exit;
     }
-    $error_login = 'Usuario o contraseña incorrectos.';
+    if (($_SESSION['login_bloqueo'] ?? 0) > time()) {
+        $error_login = 'Demasiados intentos fallidos. Espera 2 minutos e inténtalo nuevamente.';
+    } else {
+        $_SESSION['intentos_fallidos'] = ($_SESSION['intentos_fallidos'] ?? 0) + 1;
+        if ($_SESSION['intentos_fallidos'] >= 8) {
+            $_SESSION['login_bloqueo'] = time() + 120;
+            $_SESSION['intentos_fallidos'] = 0;
+        }
+        $error_login = 'Usuario/RUT o contraseña incorrectos.';
+    }
 }
 
 $autenticado = !empty($_SESSION['alumno_auth']);
+
+/* Expiración server-side: el JS es solo UX; la normativa se hace cumplir aquí. */
+if ($autenticado && (time() - (int) ($_SESSION['last_activity'] ?? time())) > DDG_INACTIVIDAD_SEG) {
+    $_SESSION = [];
+    session_destroy();
+    $autenticado = false;
+    $aviso_login = 'Tu sesión se cerró por inactividad (60 min, normativa SENCE). Ingresa nuevamente.';
+} elseif ($autenticado) {
+    $_SESSION['last_activity'] = time();
+} elseif (($_COOKIE['ddg_aviso'] ?? '') === 'inactividad') {
+    $aviso_login = 'Tu sesión se cerró por inactividad (60 min, normativa SENCE). Ingresa nuevamente.';
+    setcookie('ddg_aviso', '', time() - 3600, '/');
+}
+
+/* Keep-alive: el cliente lo llama al detectar actividad real (lectura, clics, teclado). */
+if ($autenticado && isset($_GET['ping'])) {
+    http_response_code(204);
+    exit;
+}
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && (isset($_GET['calificar']) || isset($_GET['foro']))) {
+    if (!$autenticado) {
+        ddg_json(401, ['error' => 'Sesión expirada. Ingresa nuevamente.']);
+    }
+    if (!hash_equals((string) ($_SESSION['csrf'] ?? ''), (string) ($_SERVER['HTTP_X_CSRF_TOKEN'] ?? ''))) {
+        ddg_json(403, ['error' => 'Token de seguridad inválido. Recarga la página.']);
+    }
+
+    if (isset($_GET['calificar'])) {
+        $okSm = 0; $okVf = 0; $malSm = []; $malVf = [];
+        foreach ($DDG_CLAVE_SM as $i => $c) {
+            if (strtolower((string) ($_POST['sm_' . ($i + 1)] ?? '')) === $c) { $okSm++; } else { $malSm[] = $i + 1; }
+        }
+        foreach ($DDG_CLAVE_VF as $i => $c) {
+            if (strtoupper((string) ($_POST['vf_' . ($i + 1)] ?? '')) === $c) { $okVf++; } else { $malVf[] = $i + 1; }
+        }
+        $total = (count($DDG_CLAVE_SM) + count($DDG_CLAVE_VF)) * 2; // 2 pts por ítem = 60 pts
+        $pts   = ($okSm + $okVf) * 2;
+        $pctRaw = $pts / $total * 100;
+        $nota  = ddg_nota($pctRaw);
+        $res = [
+            'pts' => $pts, 'total' => $total, 'pct' => round($pctRaw, 1), 'nota' => $nota,
+            'estado' => $nota >= DDG_NOTA_MIN ? 'APROBADO' : 'REPROBADO',
+            'okSm' => $okSm, 'totSm' => count($DDG_CLAVE_SM), 'okVf' => $okVf, 'totVf' => count($DDG_CLAVE_VF),
+            'malSm' => $malSm, 'malVf' => $malVf,
+        ];
+        $_SESSION['eval_final'] = $res + ['ts' => time()];
+        ddg_json(200, $res);
+    }
+
+    /* Foro */
+    $asunto = trim(ddg_cortar((string) ($_POST['asunto'] ?? ''), 120));
+    $texto  = trim(ddg_cortar((string) ($_POST['consulta'] ?? ''), 1200));
+    if ($asunto === '' || ddg_largo($texto) < 10) {
+        ddg_json(422, ['error' => 'Indica un asunto y redacta una consulta de al menos 10 caracteres.']);
+    }
+    $item = [
+        'autor'  => $_SESSION['alumno_nombre'] ?? 'Participante',
+        'asunto' => $asunto,
+        'texto'  => $texto,
+        'fecha'  => date('d-m-Y H:i'),
+    ];
+    $_SESSION['foro'][] = $item;
+    ddg_json(200, ['ok' => true, 'item' => $item]);
+}
+
+/* ---------- Datos de vista (solo si hay sesión) ---------- */
+$rol           = $_SESSION['alumno_rol'] ?? 'alumno';
+$esAuditor     = $autenticado && $rol === 'auditor';
+$nombreUsuario = $_SESSION['alumno_nombre'] ?? 'Participante';
+$rutUsuario    = $_SESSION['alumno_rut'] ?? '—';
+$loginTs       = (int) ($_SESSION['login_ts'] ?? time());
+$loginIp       = $_SESSION['login_ip'] ?? ($_SERVER['REMOTE_ADDR'] ?? '0.0.0.0');
+$csrf          = $_SESSION['csrf'] ?? '';
+$userKey       = preg_replace('/[^a-z0-9]/', '', strtolower($_SESSION['alumno_user'] ?? 'anon'));
+
+/* Datos de muestra del Gestor Intermedio (ficticios): se calculan para que el DV sea válido */
+$SENCE_PARAMS = [
+    'RutOtec'        => [ddg_rut_fmt(76123456), 'RUT del OTEC ejecutor (dato de demostración)'],
+    'Token'          => [strtoupper(bin2hex(random_bytes(16))), 'Token de autenticación del OTEC (demostración)'],
+    'CodSence'       => ['1237654321', 'Código SENCE del curso (demostración)'],
+    'CodigoCurso'    => ['RIEGO-TEC-2026-01', 'Código interno del curso / cohorte'],
+    'RutAlumno'      => [$rutUsuario !== '—' ? $rutUsuario : '15.432.876-5', 'RUN del participante que inicia sesión'],
+    'IdSesionAlumno' => ['SES-' . date('YmdHis') . '-' . strtoupper(bin2hex(random_bytes(2))), 'Identificador único de la sesión de aprendizaje'],
+    'UrlRetorno'     => [(isset($_SERVER['HTTP_HOST']) ? 'https://' . $_SERVER['HTTP_HOST'] : 'https://ddgdelvalle.cl') . strtok($_SERVER['REQUEST_URI'] ?? '/modulo-alumno.php', '?') . '?sence=ok', 'URL a la que SENCE retorna tras validar'],
+    'UrlError'       => [(isset($_SERVER['HTTP_HOST']) ? 'https://' . $_SERVER['HTTP_HOST'] : 'https://ddgdelvalle.cl') . strtok($_SERVER['REQUEST_URI'] ?? '/modulo-alumno.php', '?') . '?sence=error', 'URL de retorno ante rechazo o error'],
+];
+
+$FORO_SEMILLA = [
+    [
+        'autor' => 'Participante M.F.', 'asunto' => 'Kc del cerezo en distintas etapas',
+        'texto' => 'Si la ETo del mes es la misma para todos los cultivos, ¿por qué el Kc del cerezo cambia entre brotación y cosecha? ¿Qué valor debo usar para diciembre?',
+        'fecha' => '13-10-2026 10:18',
+        'resp_autor' => 'Relator del curso', 'resp_fecha' => '13-10-2026 16:40',
+        'resp' => 'La ETo es la demanda atmosférica sobre un pasto de referencia; el Kc traduce esa demanda al cultivo según su cobertura y fenología. En brotación (poca superficie foliar) el Kc ronda 0,4–0,55; con plena cobertura y fructificación llega a ~0,9, valor usado en el ejercicio. Para diciembre en Mataquito: ETo diaria = 116,45 / 31 ≈ 3,76 mm/día, luego ETc = 3,76 × 0,9 ≈ 3,38 mm/día. Para pasar a litros/planta/día recuerda aplicar el marco de plantación y el porcentaje de cubrimiento (D.N.C).',
+    ],
+    [
+        'autor' => 'Participante J.R.', 'asunto' => 'Por qué se divide por la eficiencia al calcular la D.B.C',
+        'texto' => 'En el caso práctico dividimos la D.N.C por 0,90 para obtener la D.B.C. ¿Qué pasa si el coeficiente de uniformidad (CU) medido en mi huerto es 85%?',
+        'fecha' => '14-10-2026 09:05',
+        'resp_autor' => 'Relator del curso', 'resp_fecha' => '14-10-2026 15:12',
+        'resp' => 'La D.B.C compensa las pérdidas del método: D.B.C = D.N.C / Ea. Con goteo (Ea = 90%) tu caso queda 31,30 / 0,90 ≈ 34,78 L/planta/día. Si en terreno mides un CU de 85%, el sistema aplica el agua de forma menos homogénea: usa 0,85 como eficiencia efectiva (31,30 / 0,85 ≈ 36,8 L/planta/día, T.R.D ≈ 4,6 h) y prioriza la mantención (limpieza de filtros y submatriz) para volver a CU > 90%, que es el objetivo de un sistema bien diseñado.',
+    ],
+];
+$foro_todas = array_merge(array_reverse($_SESSION['foro'] ?? []), $FORO_SEMILLA);
+
+/* Bitácora de auditoría. Filas precargadas = datos de demostración (RUT con DV calculado). */
+$aud_filas = [];
+if ($esAuditor) {
+    $hoy = new DateTimeImmutable('today');
+    $semilla = [
+        // nombre, RUT base, días atrás, hora ingreso, minutos, IP, % avance, nota final
+        ['María José Fuentes Araya',      16482317, 1, '08:42', 187, '190.45.112.38',  100, 6.2],
+        ['Juan Pablo Rojas Tapia',        12905644, 1, '09:15', 142, '200.83.24.171',  100, 5.4],
+        ['Carla Andrea Muñoz Díaz',       17236059, 2, '10:03', 231, '181.43.207.19',   75, 4.6],
+        ['Luis Alberto Cortés Pizarro',    9874213, 2, '14:20', 118, '186.67.91.204',  100, 6.8],
+        ['Camila Fernanda Soto Vera',     19351782, 3, '08:55', 264, '152.231.68.52',  100, 5.8],
+        ['Pedro Antonio Herrera Castillo',13667490, 4, '15:10',  96, '190.160.33.117',  75, 4.2],
+        ['Rosa Elena Campos Olivares',    10512936, 5, '09:40', 205, '201.215.140.9',  100, 5.0],
+        ['Diego Ignacio Araya Pastén',    18049375, 6, '11:25',  73, '181.226.5.143',   50, 3.4],
+    ];
+    foreach ($semilla as $s) {
+        $ing = $hoy->modify('-' . $s[2] . ' days')->setTime((int) substr($s[3], 0, 2), (int) substr($s[3], 3, 2), (int) (($s[4] * 7) % 60));
+        $sal = $ing->modify('+' . $s[4] . ' minutes');
+        $aud_filas[] = [
+            'rut' => ddg_rut_fmt($s[1]), 'nombre' => $s[0],
+            'ingreso' => $ing->format('d-m-Y H:i:s'), 'salida' => $sal->format('d-m-Y H:i:s'),
+            'min' => $s[4], 'ip' => $s[5], 'avance' => $s[6], 'nota' => $s[7],
+        ];
+    }
+}
 
 /* URLs públicas absolutas: Office Online las descarga desde sus servidores */
 $PPTX_URLS = [
@@ -70,6 +306,7 @@ if ($autenticado && isset($_GET['download'])) {
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Módulo Alumno · Riego y Evapotranspiración</title>
+  <meta name="robots" content="noindex,nofollow">
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
     tailwind.config = {
@@ -174,6 +411,34 @@ if ($autenticado && isset($_GET['download'])) {
       color: #14532d;
     }
     .eval-pregunta { break-inside: avoid; page-break-inside: avoid; }
+
+    /* ---------- Extensión E-learning SENCE ---------- */
+    .tab-btn {
+      display: inline-flex; align-items: center; gap: .4rem; white-space: nowrap;
+      padding: .6rem .9rem; font-size: .8rem; font-weight: 600; color: #64748b;
+      border-bottom: 2px solid transparent; transition: color .15s, border-color .15s, background .15s;
+    }
+    .tab-btn:hover { color: #0f172a; background: #f8fafc; }
+    .tab-btn[aria-selected="true"] { color: #14532d; border-bottom-color: #15803d; background: #f0fdf6; }
+    .tab-btn:focus-visible { outline: 2px solid #0ea5e9; outline-offset: -2px; }
+    .modal-overlay { position: fixed; inset: 0; z-index: 60; display: none; align-items: flex-start; justify-content: center;
+      overflow-y: auto; padding: 1.5rem 1rem; background: rgba(15, 23, 42, .6); backdrop-filter: blur(2px); }
+    .modal-overlay.is-open { display: flex; }
+    .tabla-bitacora th, .tabla-bitacora td { white-space: nowrap; }
+    .print-only { display: none; }
+    @media print {
+      .print-only { display: block; }
+      /* Informe de auditoría limpio: solo el panel, sin chrome de navegación */
+      body.print-audit [data-tab-panel]:not(#tab-auditoria) { display: none !important; }
+      body.print-audit #tab-auditoria { display: block !important; }
+      body.print-audit footer { display: none !important; }
+      body.print-audit .card { border: 0; }
+      .tabla-bitacora { font-size: 8.5px; width: 100%; }
+      .tabla-bitacora th, .tabla-bitacora td { padding: 3px 4px !important; white-space: normal; }
+      .tabla-bitacora tr { break-inside: avoid; }
+      .overflow-x-auto { overflow: visible !important; }
+      @page { margin: 12mm; }
+    }
   </style>
 </head>
 <body class="font-sans text-slate-800 antialiased">
@@ -181,7 +446,8 @@ if ($autenticado && isset($_GET['download'])) {
 <?php if (!$autenticado): ?>
   <!-- ============ LOGIN ============ -->
   <div class="min-h-screen flex items-center justify-center px-4 py-10">
-    <div class="card w-full max-w-md p-8 sm:p-10">
+    <div class="w-full max-w-md space-y-4">
+    <div class="card w-full p-8 sm:p-10">
       <div class="text-center mb-8">
         <div class="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-agua-500 to-agro-600 text-white shadow-lg shadow-agua-500/25">
           <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
@@ -189,7 +455,7 @@ if ($autenticado && isset($_GET['download'])) {
           </svg>
         </div>
         <h1 class="font-display text-2xl font-bold text-slate-900">Portal de Estudio</h1>
-        <p class="mt-1 text-sm text-slate-500">Módulo de riego · Acceso privado del alumno</p>
+        <p class="mt-1 text-sm text-slate-500">Módulo de riego · Acceso privado de participantes y fiscalización</p>
       </div>
 
       <?php if ($error_login): ?>
@@ -197,16 +463,21 @@ if ($autenticado && isset($_GET['download'])) {
           <?= htmlspecialchars($error_login) ?>
         </div>
       <?php endif; ?>
+      <?php if ($aviso_login): ?>
+        <div class="mb-5 rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800" role="status">
+          <?= htmlspecialchars($aviso_login) ?>
+        </div>
+      <?php endif; ?>
 
-      <form method="POST" action="" class="space-y-5" autocomplete="off">
+      <form method="POST" action="" class="space-y-5" autocomplete="on">
         <div>
-          <label for="usuario" class="mb-1.5 block text-sm font-medium text-slate-700">Usuario</label>
-          <input type="text" id="usuario" name="usuario" required autofocus
-                 class="field" placeholder="Ingresa tu usuario">
+          <label for="usuario" class="mb-1.5 block text-sm font-medium text-slate-700">Usuario o RUT</label>
+          <input type="text" id="usuario" name="usuario" required autofocus autocomplete="username"
+                 class="field" placeholder="Usuario o RUT (ej: 12.345.678-5)">
         </div>
         <div>
           <label for="clave" class="mb-1.5 block text-sm font-medium text-slate-700">Contraseña</label>
-          <input type="password" id="clave" name="clave" required
+          <input type="password" id="clave" name="clave" required autocomplete="current-password"
                  class="field" placeholder="Ingresa tu contraseña">
         </div>
         <button type="submit" name="login" value="1"
@@ -214,35 +485,158 @@ if ($autenticado && isset($_GET['download'])) {
           Ingresar al módulo
         </button>
       </form>
+
+      <div class="my-6 flex items-center gap-3 text-xs uppercase tracking-wide text-slate-400">
+        <span class="h-px flex-1 bg-slate-200"></span> Asistencia normativa <span class="h-px flex-1 bg-slate-200"></span>
+      </div>
+
+      <button type="button" data-open="sence"
+              class="flex w-full items-center justify-center gap-2.5 rounded-xl bg-[#0b3d91] px-4 py-3.5 text-sm font-bold text-white shadow-lg shadow-blue-900/25 ring-1 ring-blue-950/20 transition hover:bg-[#093178] focus:outline-none focus:ring-2 focus:ring-blue-600 focus:ring-offset-2">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m5.6-4.1A12 12 0 0112 2.9 12 12 0 013.4 6 12 12 0 003 9c0 5.6 3.8 10.3 9 11.6 5.2-1.3 9-6 9-11.6 0-1-.1-2-.4-3z" />
+        </svg>
+        Validar Asistencia con ClaveÚnica / SENCE
+      </button>
+    </div>
+
+    <div class="card px-5 py-4 text-sm">
+      <p class="font-semibold text-slate-900">Mesa de Ayuda y Soporte Técnico</p>
+      <p class="mt-1 text-slate-600">
+        <a class="font-medium text-agua-700 hover:underline" href="mailto:contacto@ddgdelvalle.cl">contacto@ddgdelvalle.cl</a>
+        <span class="text-slate-300">|</span>
+        WhatsApp/Tel: <a class="font-medium text-agua-700 hover:underline" href="https://wa.me/56963163859" rel="noopener">+56 9 6316 3859</a>
+      </p>
+      <p class="text-xs text-slate-500">Lun a Vie 09:00 a 18:00 hrs</p>
+      <button type="button" data-open="reglamento" class="mt-3 text-xs font-semibold text-agro-700 underline decoration-dotted underline-offset-2 hover:text-agro-800">
+        Reglamento Académico y Guía de Uso de Plataforma
+      </button>
+    </div>
     </div>
   </div>
 
 <?php else: ?>
   <!-- ============ PORTAL ============ -->
-  <header class="no-print sticky top-0 z-40 border-b border-slate-200/80 bg-white/85 backdrop-blur-md">
-    <div class="mx-auto flex max-w-5xl items-center justify-between gap-4 px-4 py-3 sm:px-6">
-      <div class="flex items-center gap-3">
-        <div class="flex h-9 w-9 items-center justify-center rounded-lg bg-gradient-to-br from-agua-500 to-agro-600 text-white">
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M12 3c.5 2.5-1 5-3.5 6.5C6 11 4.5 13 4.5 15.5A7.5 7.5 0 0012 23a7.5 7.5 0 007.5-7.5C19.5 11 15 6 12 3z" />
-          </svg>
+  <header class="no-print relative z-40 border-b sm:sticky sm:top-0 border-slate-200/80 bg-white/90 backdrop-blur-md">
+    <div class="mx-auto max-w-5xl px-4 sm:px-6">
+
+      <!-- Fila 1: identidad, rol y salida -->
+      <div class="flex flex-wrap items-center justify-between gap-3 py-2.5">
+        <div class="flex items-center gap-3">
+          <div class="flex h-9 w-9 items-center justify-center rounded-lg bg-gradient-to-br from-agua-500 to-agro-600 text-white">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M12 3c.5 2.5-1 5-3.5 6.5C6 11 4.5 13 4.5 15.5A7.5 7.5 0 0012 23a7.5 7.5 0 007.5-7.5C19.5 11 15 6 12 3z" />
+            </svg>
+          </div>
+          <div>
+            <p class="font-display text-sm font-bold text-slate-900 leading-tight">Módulo Alumno</p>
+            <p class="text-xs text-slate-500">Evapotranspiración y demanda de riego</p>
+          </div>
         </div>
-        <div>
-          <p class="font-display text-sm font-bold text-slate-900 leading-tight">Módulo Alumno</p>
-          <p class="text-xs text-slate-500">Evapotranspiración y demanda de riego</p>
+
+        <div class="flex flex-wrap items-center gap-2">
+          <div class="flex items-center gap-2 pr-1">
+            <span class="max-w-[12rem] truncate text-sm font-semibold text-slate-800" title="<?= htmlspecialchars($nombreUsuario . ' · ' . $rutUsuario) ?>"><?= htmlspecialchars($nombreUsuario) ?></span>
+            <?php if ($esAuditor): ?>
+              <span class="rounded-full bg-amber-100 px-2.5 py-0.5 text-[11px] font-bold uppercase tracking-wide text-amber-800 ring-1 ring-amber-200">Fiscalizador SENCE</span>
+            <?php else: ?>
+              <span class="rounded-full bg-agro-100 px-2.5 py-0.5 text-[11px] font-bold uppercase tracking-wide text-agro-800 ring-1 ring-agro-500/30">Participante Activo</span>
+            <?php endif; ?>
+          </div>
+          <?php if ($esAuditor): ?>
+            <button type="button" data-tab-go="auditoria"
+                    class="inline-flex items-center gap-1.5 rounded-lg bg-amber-500 px-3 py-1.5 text-xs font-bold text-white shadow-sm transition hover:bg-amber-600 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:ring-offset-2">
+              Panel de Auditoría
+            </button>
+          <?php endif; ?>
+          <a href="?logout=1" id="btn-salida"
+             class="inline-flex items-center gap-1.5 rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-xs font-medium text-slate-600 transition hover:border-red-200 hover:bg-red-50 hover:text-red-700">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+            </svg>
+            Registrar Salida SENCE / Cerrar Sesión
+          </a>
         </div>
       </div>
-      <a href="?logout=1"
-         class="inline-flex items-center gap-1.5 rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-xs font-medium text-slate-600 transition hover:border-red-200 hover:bg-red-50 hover:text-red-700">
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-          <path stroke-linecap="round" stroke-linejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
-        </svg>
-        Cerrar sesión
-      </a>
+
+      <!-- Fila 2: control de sesión normativo -->
+      <div class="flex flex-wrap items-center gap-x-5 gap-y-2 border-t border-slate-100 py-2 text-xs text-slate-600">
+        <div class="flex items-center gap-1.5" title="Tiempo desde el inicio de sesión">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-agua-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 2m6-2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+          <span>Sesión activa</span>
+          <span id="cronometro" class="rounded-md bg-slate-900 px-2 py-0.5 font-mono text-[13px] font-semibold tracking-wider text-white" aria-live="off">00:00:00</span>
+        </div>
+
+        <div class="flex items-center gap-1.5">
+          <span id="inact-dot" class="inline-block h-2 w-2 rounded-full bg-agro-500"></span>
+          <span>Control de inactividad activo: cierre automático a los 60 min (Normativa SENCE)</span>
+          <span class="font-mono font-semibold text-slate-800" id="inact-restante" title="Tiempo restante hasta el cierre por inactividad">60:00</span>
+        </div>
+
+        <div class="flex items-center gap-2 sm:ml-auto">
+          <label for="curso-activo" class="font-semibold text-slate-500">Curso activo</label>
+          <select id="curso-activo" class="field !w-auto max-w-[19rem] !py-1 !text-xs">
+            <option selected>Riego y Evapotranspiración (Riego Tecnificado - SENCE)</option>
+            <option disabled>Aplicador de Plaguicidas (En proceso de habilitación de cohorte)</option>
+            <option disabled>Estrategias de Inserción Laboral (En proceso de habilitación de cohorte)</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Pestañas -->
+      <nav class="-mb-px flex gap-1 overflow-x-auto border-t border-slate-100" role="tablist" aria-label="Secciones del aula">
+        <button type="button" role="tab" class="tab-btn" data-tab="modulos" aria-selected="true">Módulos, Clases (PPTX) y Evaluaciones</button>
+        <button type="button" role="tab" class="tab-btn" data-tab="foro" aria-selected="false">Foro de Consultas al Relator</button>
+        <button type="button" role="tab" class="tab-btn" data-tab="soporte" aria-selected="false">Soporte Técnico y Reglamento</button>
+        <?php if ($esAuditor): ?>
+          <button type="button" role="tab" class="tab-btn !text-amber-700" data-tab="auditoria" aria-selected="false">Panel Auditoría y Trazabilidad SENCE</button>
+        <?php endif; ?>
+      </nav>
     </div>
   </header>
 
+  <!-- Aviso previo al cierre por inactividad -->
+  <div id="aviso-inactividad" class="no-print fixed inset-x-0 bottom-4 z-50 mx-auto hidden w-[92%] max-w-lg rounded-xl border border-amber-300 bg-amber-50 px-4 py-3 text-sm text-amber-900 shadow-xl" role="alertdialog" aria-live="assertive">
+    <p class="font-semibold">Tu sesión se cerrará por inactividad en <span id="aviso-restante" class="font-mono">05:00</span></p>
+    <p class="mt-0.5 text-xs">Mueve el mouse o presiona una tecla para continuar. Normativa SENCE: cierre a los 60 min sin actividad.</p>
+  </div>
+
   <main class="mx-auto max-w-5xl px-4 py-8 sm:px-6 sm:py-10 space-y-8">
+
+    <!-- ============ PESTAÑA 1 · MÓDULOS, CLASES Y EVALUACIONES ============ -->
+    <div id="tab-modulos" data-tab-panel role="tabpanel" class="space-y-8">
+
+    <!-- Progreso curricular -->
+    <section class="card no-print p-5 sm:p-6" aria-labelledby="prog-titulo">
+      <div class="flex flex-wrap items-end justify-between gap-3">
+        <div>
+          <h2 id="prog-titulo" class="font-display text-lg font-bold text-slate-900">Progreso curricular</h2>
+          <p class="text-xs text-slate-500">Se actualiza al marcar cada módulo como completado.</p>
+        </div>
+        <p class="font-display text-3xl font-bold text-agro-700"><span id="prog-pct">0</span>%</p>
+      </div>
+      <div class="relative mt-4">
+        <div class="h-3 overflow-hidden rounded-full bg-slate-100" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" id="prog-barra-wrap" aria-labelledby="prog-titulo">
+          <div id="prog-barra" class="h-full rounded-full bg-gradient-to-r from-agua-500 to-agro-600 transition-all duration-500" style="width:0%"></div>
+        </div>
+        <span class="absolute -top-1 h-5 w-0.5 bg-amber-500" style="left:75%" title="Mínimo SENCE 75%"></span>
+      </div>
+      <div class="mt-3 grid grid-cols-2 gap-2 sm:grid-cols-4">
+        <?php for ($m = 1; $m <= 4; $m++): ?>
+          <a href="#modulo-<?= $m ?>" data-chip="<?= $m ?>" class="flex items-center justify-between rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-xs font-semibold text-slate-600 transition hover:border-agro-500">
+            Módulo <?= $m ?> <span data-chip-estado class="text-slate-400">Pendiente</span>
+          </a>
+        <?php endfor; ?>
+      </div>
+      <p class="mt-4 rounded-lg bg-amber-50 px-3 py-2 text-xs font-semibold text-amber-900 ring-1 ring-amber-200">
+        Requisito mínimo de aprobación SENCE: 75% de avance curricular y nota mínima 4.0
+      </p>
+      <p id="prog-estado" class="mt-2 text-sm font-medium text-slate-700" role="status"></p>
+    </section>
+
+    <div id="modulo-1" class="mt-4 mb-2 flex flex-wrap items-center justify-between gap-3 border-b-2 border-slate-200 pb-2 no-print scroll-mt-48">
+      <h2 class="font-display text-2xl font-bold text-slate-900">Módulo 1: Evapotranspiración y demanda de riego</h2>
+      <?= ddg_chk_modulo(1) ?>
+    </div>
 
     <!-- Presentación -->
     <section class="card overflow-hidden">
@@ -253,6 +647,7 @@ if ($autenticado && isset($_GET['download'])) {
       <div class="p-5 sm:p-6">
         <div class="ratio-16-9 overflow-hidden rounded-xl bg-slate-100 ring-1 ring-slate-200">
           <iframe
+            loading="lazy"
             src="<?= htmlspecialchars($PPTX_EMBEDS['1']) ?>"
             title="Presentación del módulo"
             allowfullscreen>
@@ -556,8 +951,9 @@ if ($autenticado && isset($_GET['download'])) {
     </section>
 
     <!-- ============ MÓDULO 2 ============ -->
-    <div class="mt-12 mb-6 border-b-2 border-slate-200 pb-2 no-print">
+    <div id="modulo-2" class="mt-12 mb-6 flex flex-wrap items-center justify-between gap-3 border-b-2 border-slate-200 pb-2 no-print scroll-mt-48">
       <h2 class="font-display text-2xl font-bold text-slate-900">Módulo 2: Componentes de un sistema de riego presurizado</h2>
+      <?= ddg_chk_modulo(2) ?>
     </div>
 
     <section class="card overflow-hidden mb-8">
@@ -568,6 +964,7 @@ if ($autenticado && isset($_GET['download'])) {
       <div class="p-5 sm:p-6">
         <div class="ratio-16-9 overflow-hidden rounded-xl bg-slate-100 ring-1 ring-slate-200">
           <iframe
+            loading="lazy"
             src="<?= htmlspecialchars($PPTX_EMBEDS['2']) ?>"
             title="Presentación Módulo 2"
             allowfullscreen>
@@ -625,8 +1022,9 @@ if ($autenticado && isset($_GET['download'])) {
     </section>
 
     <!-- ============ MÓDULO 3 ============ -->
-    <div class="mt-12 mb-6 border-b-2 border-slate-200 pb-2 no-print">
+    <div id="modulo-3" class="mt-12 mb-6 flex flex-wrap items-center justify-between gap-3 border-b-2 border-slate-200 pb-2 no-print scroll-mt-48">
       <h2 class="font-display text-2xl font-bold text-slate-900">Módulo 3: Mantención de Sistema de Riego</h2>
+      <?= ddg_chk_modulo(3) ?>
     </div>
 
     <section class="card overflow-hidden mb-8">
@@ -637,6 +1035,7 @@ if ($autenticado && isset($_GET['download'])) {
       <div class="p-5 sm:p-6">
         <div class="ratio-16-9 overflow-hidden rounded-xl bg-slate-100 ring-1 ring-slate-200">
           <iframe
+            loading="lazy"
             src="<?= htmlspecialchars($PPTX_EMBEDS['3']) ?>"
             title="Presentación Módulo 3"
             allowfullscreen>
@@ -736,8 +1135,9 @@ if ($autenticado && isset($_GET['download'])) {
     </section>
 
     <!-- ============ MÓDULO 4 ============ -->
-    <div class="mt-12 mb-6 border-b-2 border-slate-200 pb-2 no-print">
+    <div id="modulo-4" class="mt-12 mb-6 flex flex-wrap items-center justify-between gap-3 border-b-2 border-slate-200 pb-2 no-print scroll-mt-48">
       <h2 class="font-display text-2xl font-bold text-slate-900">Módulo 4: Implementación y Manejo de Sistemas de Riego Tecnificado Parte IV</h2>
+      <?= ddg_chk_modulo(4) ?>
     </div>
 
     <section class="card overflow-hidden mb-8">
@@ -748,6 +1148,7 @@ if ($autenticado && isset($_GET['download'])) {
       <div class="p-5 sm:p-6">
         <div class="ratio-16-9 overflow-hidden rounded-xl bg-slate-100 ring-1 ring-slate-200">
           <iframe
+            loading="lazy"
             src="<?= htmlspecialchars($PPTX_EMBEDS['4']) ?>"
             title="Presentación Módulo 4"
             allowfullscreen>
@@ -1172,10 +1573,186 @@ if ($autenticado && isset($_GET['download'])) {
             </svg>
             Generar PDF y descargar
           </button>
+          <button type="button" id="btn-calcular-nota"
+                  class="mt-2 inline-flex w-full sm:mt-0 sm:ml-3 sm:w-auto items-center justify-center gap-2 rounded-xl border border-agua-200 bg-agua-50 px-6 py-3 text-sm font-semibold text-agua-700 transition hover:bg-agua-100 focus:outline-none focus:ring-2 focus:ring-agua-500 focus:ring-offset-2">
+            Calcular mi nota (sin generar PDF)
+          </button>
           <p class="mt-2 text-xs text-slate-400">Se descargará el archivo y deberás enviarlo al profesor.</p>
+          <div id="resultado-final" class="hidden" role="status"></div>
         </div>
       </form>
     </section>
+
+    </div><!-- /#tab-modulos -->
+
+    <!-- ============ PESTAÑA 2 · FORO DE CONSULTAS ============ -->
+    <div id="tab-foro" data-tab-panel role="tabpanel" hidden class="space-y-6 no-print">
+      <section class="card overflow-hidden">
+        <div class="border-b border-slate-100 bg-gradient-to-r from-agua-50 to-agro-50 px-5 py-4 sm:px-6">
+          <h2 class="font-display text-lg font-bold text-slate-900">Foro de Consultas al Relator</h2>
+          <p class="mt-0.5 text-sm text-slate-500">Consultas técnicas del curso. Tiempo de respuesta del relator: menos de 24 hrs hábiles.</p>
+        </div>
+        <div id="foro-lista" class="divide-y divide-slate-100">
+          <?php foreach ($foro_todas as $c): ?>
+            <article class="space-y-3 p-5 sm:p-6">
+              <header class="flex flex-wrap items-center justify-between gap-2">
+                <h3 class="font-semibold text-slate-900"><?= htmlspecialchars($c['asunto']) ?></h3>
+                <?php if (!empty($c['resp'])): ?>
+                  <span class="rounded-full bg-agro-100 px-2.5 py-0.5 text-[11px] font-bold uppercase text-agro-800">Respondida</span>
+                <?php else: ?>
+                  <span class="rounded-full bg-amber-100 px-2.5 py-0.5 text-[11px] font-bold uppercase text-amber-800">Pendiente de respuesta</span>
+                <?php endif; ?>
+              </header>
+              <div class="rounded-xl bg-slate-50 p-4 ring-1 ring-slate-100">
+                <p class="text-xs text-slate-500"><strong class="text-slate-700"><?= htmlspecialchars($c['autor']) ?></strong> · <?= htmlspecialchars($c['fecha']) ?> hrs</p>
+                <p class="mt-1.5 text-sm leading-relaxed text-slate-700"><?= nl2br(htmlspecialchars($c['texto'])) ?></p>
+              </div>
+              <?php if (!empty($c['resp'])): ?>
+                <div class="rounded-xl bg-agro-50/70 p-4 ring-1 ring-agro-100 sm:ml-6">
+                  <p class="text-xs text-agro-800"><strong><?= htmlspecialchars($c['resp_autor']) ?></strong> · <?= htmlspecialchars($c['resp_fecha']) ?> hrs</p>
+                  <p class="mt-1.5 text-sm leading-relaxed text-slate-700"><?= nl2br(htmlspecialchars($c['resp'])) ?></p>
+                </div>
+              <?php endif; ?>
+            </article>
+          <?php endforeach; ?>
+        </div>
+      </section>
+
+      <section class="card p-5 sm:p-6">
+        <h3 class="font-display text-lg font-bold text-slate-900">Nueva consulta al relator</h3>
+        <form id="form-foro" class="mt-4 space-y-4" autocomplete="off">
+          <div>
+            <label for="foro_asunto" class="mb-1.5 block text-sm font-medium text-slate-700">Asunto</label>
+            <input type="text" id="foro_asunto" name="asunto" maxlength="120" required class="field" placeholder="Ej: Duda sobre el cálculo del T.R.D">
+          </div>
+          <div>
+            <label for="foro_consulta" class="mb-1.5 block text-sm font-medium text-slate-700">Consulta</label>
+            <textarea id="foro_consulta" name="consulta" rows="4" maxlength="1200" required minlength="10" class="field" placeholder="Describe tu duda técnica con el mayor detalle posible..."></textarea>
+          </div>
+          <div class="flex flex-wrap items-center gap-3">
+            <button type="submit" id="foro-enviar" class="rounded-xl bg-gradient-to-r from-agro-600 to-agua-600 px-5 py-2.5 text-sm font-semibold text-white shadow-md transition hover:from-agro-700 hover:to-agua-700 focus:outline-none focus:ring-2 focus:ring-agro-500 focus:ring-offset-2">Enviar consulta</button>
+            <p id="foro-msg" class="text-sm" role="status"></p>
+          </div>
+        </form>
+      </section>
+    </div>
+
+    <!-- ============ PESTAÑA 3 · SOPORTE Y REGLAMENTO ============ -->
+    <div id="tab-soporte" data-tab-panel role="tabpanel" hidden class="space-y-6 no-print">
+      <section class="card overflow-hidden">
+        <div class="border-b border-slate-100 bg-gradient-to-r from-agua-50 to-agro-50 px-5 py-4 sm:px-6">
+          <h2 class="font-display text-lg font-bold text-slate-900">Soporte Técnico y Reglamento</h2>
+        </div>
+        <div class="grid gap-5 p-5 sm:grid-cols-2 sm:p-6">
+          <div class="rounded-xl bg-slate-50 p-4 ring-1 ring-slate-100">
+            <h3 class="text-sm font-bold text-slate-900">Coordinación E-learning</h3>
+            <dl class="mt-2 space-y-1.5 text-sm text-slate-700">
+              <div><dt class="inline text-slate-500">Correo: </dt><dd class="inline"><a class="font-medium text-agua-700 hover:underline" href="mailto:contacto@ddgdelvalle.cl">contacto@ddgdelvalle.cl</a></dd></div>
+              <div><dt class="inline text-slate-500">WhatsApp/Tel: </dt><dd class="inline"><a class="font-medium text-agua-700 hover:underline" href="https://wa.me/56963163859" rel="noopener">+56 9 6316 3859</a></dd></div>
+              <div><dt class="inline text-slate-500">Horario: </dt><dd class="inline">Lun a Vie 09:00 a 18:00 hrs</dd></div>
+            </dl>
+          </div>
+          <div class="rounded-xl bg-agro-50/60 p-4 ring-1 ring-agro-100">
+            <h3 class="text-sm font-bold text-slate-900">Tiempos de respuesta</h3>
+            <ul class="mt-2 space-y-1.5 text-sm text-slate-700">
+              <li><strong>Soporte técnico y acceso:</strong> menos de 24 hrs hábiles.</li>
+              <li><strong>Consultas académicas al relator:</strong> menos de 24 hrs hábiles.</li>
+              <li><strong>Incidencias con asistencia SENCE:</strong> prioridad el mismo día hábil.</li>
+            </ul>
+          </div>
+          <div class="rounded-xl bg-agua-50/60 p-4 ring-1 ring-agua-100 sm:col-span-2">
+            <h3 class="text-sm font-bold text-slate-900">Requisitos técnicos de conexión</h3>
+            <ul class="mt-2 grid gap-1.5 text-sm text-slate-700 sm:grid-cols-2">
+              <li>Navegador actualizado: Chrome, Edge, Firefox o Safari.</li>
+              <li>Conexión estable de al menos 5 Mbps (mínimo 3 Mbps).</li>
+              <li>JavaScript y cookies habilitados (necesarios para el control de sesión).</li>
+              <li>Acceso a <span class="font-mono text-xs">view.officeapps.live.com</span> para visualizar las presentaciones.</li>
+              <li>Permitir descargas para guardar la evaluación en PDF.</li>
+              <li>Pantalla de 360 px o más; recomendado computador para los ejercicios de cálculo.</li>
+            </ul>
+          </div>
+        </div>
+        <div class="border-t border-slate-100 px-5 py-4 sm:px-6">
+          <button type="button" data-open="reglamento" class="inline-flex items-center gap-2 rounded-xl border border-agro-200 bg-agro-50 px-4 py-2 text-sm font-semibold text-agro-800 transition hover:bg-agro-100">
+            Ver Reglamento Académico y Guía de Uso de Plataforma
+          </button>
+        </div>
+      </section>
+    </div>
+
+<?php if ($esAuditor): ?>
+    <!-- ============ PESTAÑA 4 · PANEL AUDITORÍA Y TRAZABILIDAD SENCE ============ -->
+    <div id="tab-auditoria" data-tab-panel role="tabpanel" hidden class="space-y-6">
+
+      <div class="print-only border-b-2 border-slate-800 pb-3">
+        <p class="text-lg font-bold">Informe de Auditoría y Trazabilidad SENCE</p>
+        <p class="text-xs">Curso: Riego y Evapotranspiración (Riego Tecnificado - SENCE) · Fiscalizador: <?= htmlspecialchars($nombreUsuario . ' · ' . $rutUsuario) ?> · Generado: <span id="print-fecha"></span></p>
+      </div>
+
+      <section class="grid grid-cols-2 gap-3 lg:grid-cols-4" aria-label="Resumen de auditoría">
+        <div class="card p-4"><p class="text-[11px] font-semibold uppercase tracking-wide text-slate-500">Curso auditado</p><p class="mt-1 text-sm font-bold text-slate-900">Riego y Evapotranspiración</p></div>
+        <div class="card p-4"><p class="text-[11px] font-semibold uppercase tracking-wide text-slate-500">Estado API SENCE</p><p class="mt-1 flex items-center gap-1.5 text-sm font-bold text-agro-700"><span class="inline-block h-2 w-2 rounded-full bg-agro-500"></span>Conectado - Gestor Intermedio SIC</p></div>
+        <div class="card p-4"><p class="text-[11px] font-semibold uppercase tracking-wide text-slate-500">Escala Evaluación</p><p class="mt-1 text-sm font-bold text-slate-900">1.0 a 7.0 / 60% exigencia</p></div>
+        <div class="card p-4"><p class="text-[11px] font-semibold uppercase tracking-wide text-slate-500">Asistencia Mínima</p><p class="mt-1 text-sm font-bold text-slate-900">75%</p></div>
+      </section>
+
+      <section class="card overflow-hidden">
+        <div class="flex flex-wrap items-center justify-between gap-3 border-b border-slate-100 bg-gradient-to-r from-amber-50 to-white px-5 py-4 sm:px-6">
+          <div>
+            <h2 class="font-display text-lg font-bold text-slate-900">Bitácora de Conectividad, Trazabilidad IP y Avance Académico</h2>
+            <p class="mt-0.5 text-xs text-slate-500">Fila 1: sesión en vivo del usuario conectado (IP y hora reales). Filas 2–9: registros precargados de demostración.</p>
+          </div>
+          <div class="no-print flex flex-wrap gap-2">
+            <button type="button" id="btn-csv" class="inline-flex items-center gap-2 rounded-xl bg-agro-600 px-4 py-2 text-xs font-bold text-white shadow-sm transition hover:bg-agro-700 focus:outline-none focus:ring-2 focus:ring-agro-500 focus:ring-offset-2">Descargar Bitácora SENCE (CSV / Excel)</button>
+            <button type="button" id="btn-print-audit" class="inline-flex items-center gap-2 rounded-xl border border-slate-300 bg-white px-4 py-2 text-xs font-bold text-slate-700 transition hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-slate-400 focus:ring-offset-2">Imprimir / Exportar Informe de Auditoría (PDF)</button>
+          </div>
+        </div>
+        <div class="overflow-x-auto">
+          <table id="tabla-bitacora" class="tabla-bitacora w-full text-left text-xs">
+            <thead>
+              <tr class="bg-slate-50 uppercase tracking-wide text-slate-500">
+                <th class="px-3 py-2.5 font-semibold">RUT</th>
+                <th class="px-3 py-2.5 font-semibold">Nombre completo</th>
+                <th class="px-3 py-2.5 font-semibold">Ingreso</th>
+                <th class="px-3 py-2.5 font-semibold">Salida</th>
+                <th class="px-3 py-2.5 font-semibold">Min. conectado</th>
+                <th class="px-3 py-2.5 font-semibold">Dirección IP</th>
+                <th class="px-3 py-2.5 font-semibold">% Avance (4 módulos)</th>
+                <th class="px-3 py-2.5 font-semibold">Nota final (1.0–7.0)</th>
+                <th class="px-3 py-2.5 font-semibold">Estado</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-100">
+              <tr id="fila-live" class="bg-amber-50/70 font-medium">
+                <td class="px-3 py-2"><?= htmlspecialchars($rutUsuario) ?></td>
+                <td class="px-3 py-2"><?= htmlspecialchars($nombreUsuario) ?> (sesión actual)</td>
+                <td class="px-3 py-2"><?= date('d-m-Y H:i:s', $loginTs) ?></td>
+                <td class="px-3 py-2">En sesión</td>
+                <td class="px-3 py-2" id="live-min">0</td>
+                <td class="px-3 py-2"><?= htmlspecialchars($loginIp) ?></td>
+                <td class="px-3 py-2" id="live-avance">0%</td>
+                <td class="px-3 py-2" id="live-nota">—</td>
+                <td class="px-3 py-2"><span class="rounded-full bg-agro-100 px-2 py-0.5 font-bold text-agro-800">Sesión en vivo</span></td>
+              </tr>
+              <?php foreach ($aud_filas as $f): ?>
+              <tr>
+                <td class="px-3 py-2"><?= htmlspecialchars($f['rut']) ?></td>
+                <td class="px-3 py-2"><?= htmlspecialchars($f['nombre']) ?></td>
+                <td class="px-3 py-2"><?= $f['ingreso'] ?></td>
+                <td class="px-3 py-2"><?= $f['salida'] ?></td>
+                <td class="px-3 py-2"><?= (int) $f['min'] ?></td>
+                <td class="px-3 py-2"><?= htmlspecialchars($f['ip']) ?></td>
+                <td class="px-3 py-2"><?= (int) $f['avance'] ?>%</td>
+                <td class="px-3 py-2 font-semibold <?= $f['nota'] >= DDG_NOTA_MIN ? 'text-agro-700' : 'text-red-600' ?>"><?= number_format($f['nota'], 1, '.', '') ?></td>
+                <td class="px-3 py-2"><span class="rounded-full bg-agua-100 px-2 py-0.5 font-bold text-agua-700">Validado ClaveÚnica</span></td>
+              </tr>
+              <?php endforeach; ?>
+            </tbody>
+          </table>
+        </div>
+      </section>
+    </div>
+<?php endif; ?>
 
     <footer class="pb-8 text-center text-xs text-slate-400 no-print">
       Portal de estudio privado · Valle del Mataquito · Riego tecnificado
@@ -1226,6 +1803,11 @@ if ($autenticado && isset($_GET['download'])) {
       html += '<div style="font-size:20px;font-weight:700;color:#14532d;">Evaluación Final · Riego Tecnificado</div>';
       html += '<div style="margin-top:10px;font-size:13px;"><strong>Nombre:</strong> ' + esc(nombre) + '</div>';
       html += '<div style="font-size:13px;"><strong>Fecha:</strong> ' + esc(fecha) + '</div>';
+      var cal = window.DDG_ULTIMA;
+      if (cal) {
+        html += '<div style="margin-top:6px;font-size:13px;"><strong>Resultado:</strong> ' + cal.pts + '/' + cal.total + ' pts · ' + cal.pct.toFixed(1) +
+          '% de logro · <strong>Nota ' + cal.nota.toFixed(1) + '</strong> (escala 1.0–7.0, exigencia 60%) · ' + esc(cal.estado) + '</div>';
+      }
       html += '</div>';
 
       html += '<div style="background:#f1f5f9;border:1px solid #e2e8f0;border-radius:8px;padding:10px 12px;margin-bottom:14px;">';
@@ -1288,6 +1870,13 @@ if ($autenticado && isset($_GET['download'])) {
 
     formEval.addEventListener('submit', function (e) {
       e.preventDefault();
+
+      /* Califica en servidor antes de armar el PDF para que la nota quede impresa en el documento */
+      if (!window.__ddgNotaLista) {
+        var pasar = function () { window.__ddgNotaLista = true; formEval.requestSubmit(); window.__ddgNotaLista = false; };
+        window.DDGCalificar().then(pasar, pasar);
+        return;
+      }
 
       var btn = document.getElementById('btn-generar-pdf');
       var filename = 'Prueba_Riego_' + slugNombre(document.getElementById('eval_nombre').value) + '.pdf';
@@ -1486,13 +2075,13 @@ if ($autenticado && isset($_GET['download'])) {
       var box = document.getElementById('resultado-eval');
       box.classList.remove('hidden', 'bg-green-50', 'text-green-800', 'border-green-200', 'bg-red-50', 'text-red-800', 'border-red-200', 'border');
 
-      if (correctos === total) {
-        box.classList.add('bg-green-50', 'text-green-800', 'border', 'border-green-200');
-        box.textContent = '¡Excelente! Todos los cálculos numéricos son correctos (' + correctos + '/' + total + ').';
-      } else {
-        box.classList.add('bg-red-50', 'text-red-800', 'border', 'border-red-200');
-        box.textContent = 'Revisa tus cálculos: ' + correctos + ' de ' + total + ' respuestas numéricas correctas. Los campos en rojo necesitan corrección (tolerancia ±0,05).';
-      }
+      var logro = Math.round(correctos / total * 1000) / 10;
+      var nota = window.DDGNota(logro);
+      var aprobado = nota >= 4.0;
+      box.classList.add('border', aprobado ? 'bg-green-50' : 'bg-red-50', aprobado ? 'text-green-800' : 'text-red-800', aprobado ? 'border-green-200' : 'border-red-200');
+      box.textContent = (correctos === total ? '¡Excelente! Todos los cálculos son correctos. ' : 'Revisa los campos en rojo (tolerancia ±0,05). ') +
+        'Ejercicios: ' + correctos + '/' + total + ' · Logro ' + logro.toFixed(1) + '% · Nota ' + nota.toFixed(1) + ' (escala 1.0–7.0, exigencia 60%) · ' + (aprobado ? 'APROBADO' : 'REPROBADO');
+      if (window.DDGGuardarEjercicios) window.DDGGuardarEjercicios(logro, nota);
       box.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
     }
 
@@ -1511,6 +2100,404 @@ if ($autenticado && isset($_GET['download'])) {
     });
   })();
   </script>
+
+  <script>
+  window.DDG = <?= json_encode([
+      'csrf'       => $csrf,
+      'rol'        => $rol,
+      'userKey'    => $userKey,
+      'loginTs'    => $loginTs * 1000,
+      'serverNow'  => time() * 1000,
+      'inactSeg'   => DDG_INACTIVIDAD_SEG,
+      'avanceMin'  => DDG_AVANCE_MIN_PCT,
+      'notaMin'    => DDG_NOTA_MIN,
+      'exigencia'  => DDG_EXIGENCIA_PCT,
+  ], JSON_UNESCAPED_UNICODE) ?>;
+  </script>
+
+  <script>
+  (function () {
+    var C = window.DDG;
+    var $ = function (id) { return document.getElementById(id); };
+    var pad = function (n) { return (n < 10 ? '0' : '') + n; };
+    /* El reloj del servidor manda: evita que un reloj de PC desfasado distorsione la bitácora */
+    var offset = C.serverNow - Date.now();
+    var ahora = function () { return Date.now() + offset; };
+
+    /* ============ Nota chilena (misma fórmula que el servidor) ============ */
+    window.DDGNota = function (pct) {
+      pct = Math.max(0, Math.min(100, pct));
+      var e = C.exigencia;
+      var n = pct >= e ? 4 + 3 * (pct - e) / (100 - e) : 1 + 3 * pct / e;
+      return Math.round(n * 10) / 10;
+    };
+
+    /* ============ Estado persistente (localStorage, por usuario) ============ */
+    var KEY = 'ddg_riego_v1_' + C.userKey;
+    var st = { mods: [false, false, false, false], ejercicios: null, final: null };
+    try {
+      var raw = JSON.parse(localStorage.getItem(KEY) || 'null');
+      if (raw && Array.isArray(raw.mods) && raw.mods.length === 4) st = raw;
+    } catch (e) {}
+    function guardar() { try { localStorage.setItem(KEY, JSON.stringify(st)); } catch (e) {} }
+
+    window.DDGGuardarEjercicios = function (pct, nota) {
+      st.ejercicios = { pct: pct, nota: nota }; guardar(); render();
+    };
+
+    /* ============ Pestañas ============ */
+    var paneles = [].slice.call(document.querySelectorAll('[data-tab-panel]'));
+    var tabs = [].slice.call(document.querySelectorAll('.tab-btn[data-tab]'));
+    function setTab(id, noScroll) {
+      if (!$('tab-' + id)) id = 'modulos';
+      paneles.forEach(function (p) { p.hidden = p.id !== 'tab-' + id; });
+      tabs.forEach(function (b) { b.setAttribute('aria-selected', String(b.dataset.tab === id)); });
+      try { history.replaceState(null, '', '#' + id); } catch (e) {}
+      if (!noScroll) window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+    tabs.forEach(function (b) { b.addEventListener('click', function () { setTab(b.dataset.tab); }); });
+    [].forEach.call(document.querySelectorAll('[data-tab-go]'), function (b) {
+      b.addEventListener('click', function () { setTab(b.dataset.tabGo); });
+    });
+    var inicial = (location.hash || '').replace('#', '');
+    if (!$('tab-' + inicial)) inicial = C.rol === 'auditor' ? 'auditoria' : 'modulos';
+    setTab(inicial, true);
+
+    /* ============ Cronómetro de sesión ============ */
+    function hms(ms) {
+      var s = Math.max(0, Math.floor(ms / 1000));
+      return pad(Math.floor(s / 3600)) + ':' + pad(Math.floor(s % 3600 / 60)) + ':' + pad(s % 60);
+    }
+    function mmss(s) { s = Math.max(0, s); return pad(Math.floor(s / 60)) + ':' + pad(s % 60); }
+
+    /* ============ Control de inactividad (60 min) ============ */
+    var ultima = Date.now(), ultimoPing = Date.now();
+    var AVISO_SEG = 300;
+    function actividad() {
+      ultima = Date.now();
+      if (ultima - ultimoPing > 240000) { // mantiene viva la sesión del servidor sin saturarlo
+        ultimoPing = ultima;
+        fetch('?ping=1', { credentials: 'same-origin' }).catch(function () {});
+      }
+    }
+    ['mousemove', 'keydown', 'click', 'scroll', 'touchstart'].forEach(function (ev) {
+      window.addEventListener(ev, actividad, { passive: true });
+    });
+
+    function tick() {
+      $('cronometro').textContent = hms(ahora() - C.loginTs);
+
+      /* Los iframes de Office Online absorben los eventos: si el foco está en uno, el alumno está leyendo */
+      var ae = document.activeElement;
+      if (ae && ae.tagName === 'IFRAME') ultima = Date.now();
+
+      var restante = C.inactSeg - Math.floor((Date.now() - ultima) / 1000);
+      $('inact-restante').textContent = mmss(restante);
+      var critico = restante <= AVISO_SEG;
+      $('inact-dot').className = 'inline-block h-2 w-2 rounded-full ' + (critico ? 'bg-amber-500 animate-pulse' : 'bg-agro-500');
+      $('aviso-inactividad').classList.toggle('hidden', !critico);
+      if (critico) $('aviso-restante').textContent = mmss(restante);
+      if (restante <= 0) { location.href = '?logout=1&motivo=inactividad'; }
+      renderLive();
+    }
+    setInterval(tick, 1000);
+
+    /* ============ Progreso curricular ============ */
+    var CHECKS = [].slice.call(document.querySelectorAll('input[data-modulo]'));
+    CHECKS.forEach(function (cb) {
+      cb.addEventListener('change', function () {
+        st.mods[Number(cb.dataset.modulo) - 1] = cb.checked; guardar(); render();
+      });
+    });
+
+    function avance() { return st.mods.filter(Boolean).length * 25; }
+
+    function render() {
+      var pct = avance();
+      $('prog-pct').textContent = pct;
+      $('prog-barra').style.width = pct + '%';
+      $('prog-barra-wrap').setAttribute('aria-valuenow', pct);
+      CHECKS.forEach(function (cb) { cb.checked = !!st.mods[Number(cb.dataset.modulo) - 1]; });
+      [].forEach.call(document.querySelectorAll('[data-chip]'), function (chip) {
+        var ok = !!st.mods[Number(chip.dataset.chip) - 1];
+        var s = chip.querySelector('[data-chip-estado]');
+        s.textContent = ok ? 'Completado' : 'Pendiente';
+        s.className = ok ? 'text-agro-700' : 'text-slate-400';
+        chip.classList.toggle('border-agro-500', ok);
+        chip.classList.toggle('bg-agro-50', ok);
+      });
+
+      var nota = st.final ? st.final.nota : null;
+      var okAv = pct >= C.avanceMin, okNota = nota !== null && nota >= C.notaMin;
+      var el = $('prog-estado');
+      if (okAv && okNota) {
+        el.className = 'mt-2 text-sm font-semibold text-agro-700';
+        el.textContent = 'CUMPLE requisitos de aprobación SENCE · Avance ' + pct + '% · Nota final ' + nota.toFixed(1);
+      } else {
+        el.className = 'mt-2 text-sm font-medium text-slate-700';
+        var falta = [];
+        if (!okAv) falta.push('avance ≥ ' + C.avanceMin + '% (actual ' + pct + '%)');
+        if (!okNota) falta.push('nota final ≥ ' + C.notaMin.toFixed(1) + ' (actual ' + (nota === null ? 'sin rendir' : nota.toFixed(1)) + ')');
+        el.textContent = 'En curso · Pendiente: ' + falta.join(' y ') + '.';
+      }
+      renderLive();
+    }
+
+    /* ============ Evaluación final: calificación en servidor ============ */
+    function mostrarFinal(r) {
+      var ok = r.estado === 'APROBADO';
+      var box = $('resultado-final');
+      box.className = 'mt-4 rounded-xl border px-4 py-4 text-sm ' + (ok ? 'border-green-200 bg-green-50 text-green-900' : 'border-red-200 bg-red-50 text-red-900');
+      box.innerHTML = '';
+      var fila = document.createElement('div');
+      fila.className = 'flex flex-wrap items-center gap-x-6 gap-y-2';
+      [
+        ['Puntaje', r.pts + ' / ' + r.total + ' pts'],
+        ['% de logro', r.pct.toFixed(1) + '%'],
+        ['Nota (1.0–7.0)', r.nota.toFixed(1)],
+        ['Estado', r.estado]
+      ].forEach(function (p) {
+        var d = document.createElement('div');
+        var a = document.createElement('p'); a.className = 'text-[11px] font-semibold uppercase tracking-wide opacity-70'; a.textContent = p[0];
+        var b = document.createElement('p'); b.className = 'text-lg font-bold'; b.textContent = p[1];
+        d.appendChild(a); d.appendChild(b); fila.appendChild(d);
+      });
+      box.appendChild(fila);
+      var det = document.createElement('p');
+      det.className = 'mt-3 text-xs';
+      var mal = [];
+      if (r.malSm.length) mal.push('Selección múltiple: ' + r.malSm.join(', '));
+      if (r.malVf.length) mal.push('V/F: ' + r.malVf.join(', '));
+      det.textContent = 'Exigencia ' + C.exigencia + '% para nota 4.0 · Selección múltiple ' + r.okSm + '/' + r.totSm + ' · V/F ' + r.okVf + '/' + r.totVf +
+        (mal.length ? ' · Reforzar preguntas → ' + mal.join(' | ') : '');
+      box.appendChild(det);
+    }
+
+    window.DDGCalificar = function () {
+      var f = $('form-eval-final');
+      return fetch('?calificar=1', {
+        method: 'POST', credentials: 'same-origin',
+        headers: { 'X-CSRF-Token': C.csrf, 'Accept': 'application/json' },
+        body: new FormData(f)
+      }).then(function (res) {
+        return res.json().then(function (j) {
+          if (!res.ok) throw new Error(j.error || 'No se pudo calificar la evaluación.');
+          return j;
+        });
+      }).then(function (r) {
+        window.DDG_ULTIMA = r;
+        st.final = { pct: r.pct, nota: r.nota, estado: r.estado };
+        guardar(); mostrarFinal(r); render();
+        return r;
+      });
+    };
+
+    $('btn-calcular-nota').addEventListener('click', function () {
+      var btn = this; btn.disabled = true;
+      window.DDGCalificar().catch(function (e) { alert(e.message); }).then(function () { btn.disabled = false; });
+    });
+
+    /* ============ Foro ============ */
+    var formForo = $('form-foro');
+    formForo.addEventListener('submit', function (e) {
+      e.preventDefault();
+      var msg = $('foro-msg'), btn = $('foro-enviar');
+      btn.disabled = true; msg.className = 'text-sm text-slate-500'; msg.textContent = 'Enviando…';
+      fetch('?foro=1', {
+        method: 'POST', credentials: 'same-origin',
+        headers: { 'X-CSRF-Token': C.csrf, 'Accept': 'application/json' },
+        body: new FormData(formForo)
+      }).then(function (res) {
+        return res.json().then(function (j) { if (!res.ok) throw new Error(j.error || 'No se pudo enviar.'); return j; });
+      }).then(function (j) {
+        var it = j.item;
+        var art = document.createElement('article'); art.className = 'space-y-3 p-5 sm:p-6';
+        var h = document.createElement('div'); h.className = 'flex flex-wrap items-center justify-between gap-2';
+        var t = document.createElement('h3'); t.className = 'font-semibold text-slate-900'; t.textContent = it.asunto;
+        var s = document.createElement('span'); s.className = 'rounded-full bg-amber-100 px-2.5 py-0.5 text-[11px] font-bold uppercase text-amber-800'; s.textContent = 'Pendiente de respuesta';
+        h.appendChild(t); h.appendChild(s);
+        var q = document.createElement('div'); q.className = 'rounded-xl bg-slate-50 p-4 ring-1 ring-slate-100';
+        var m = document.createElement('p'); m.className = 'text-xs text-slate-500';
+        var au = document.createElement('strong'); au.className = 'text-slate-700'; au.textContent = it.autor;
+        m.appendChild(au); m.appendChild(document.createTextNode(' · ' + it.fecha + ' hrs'));
+        var tx = document.createElement('p'); tx.className = 'mt-1.5 whitespace-pre-line text-sm leading-relaxed text-slate-700'; tx.textContent = it.texto;
+        q.appendChild(m); q.appendChild(tx);
+        art.appendChild(h); art.appendChild(q);
+        $('foro-lista').insertBefore(art, $('foro-lista').firstChild);
+        formForo.reset();
+        msg.className = 'text-sm font-medium text-agro-700'; msg.textContent = 'Consulta enviada. El relator responderá en menos de 24 hrs hábiles.';
+      }).catch(function (err) {
+        msg.className = 'text-sm font-medium text-red-600'; msg.textContent = err.message;
+      }).then(function () { btn.disabled = false; });
+    });
+
+    /* ============ Auditoría ============ */
+    function renderLive() {
+      var fila = $('fila-live');
+      if (!fila) return;
+      $('live-min').textContent = Math.floor((ahora() - C.loginTs) / 60000);
+      $('live-avance').textContent = avance() + '%';
+      $('live-nota').textContent = st.final ? st.final.nota.toFixed(1) : '—';
+    }
+
+    function descargar(blob, nombre) {
+      var url = URL.createObjectURL(blob), a = document.createElement('a');
+      a.href = url; a.download = nombre; document.body.appendChild(a); a.click(); a.remove();
+      setTimeout(function () { URL.revokeObjectURL(url); }, 2500);
+    }
+
+    var btnCsv = $('btn-csv');
+    if (btnCsv) {
+      btnCsv.addEventListener('click', function () {
+        renderLive();
+        var celda = function (td) {
+          var v = td.textContent.replace(/\s+/g, ' ').trim();
+          if (/^\d+\.\d$/.test(v)) v = v.replace('.', ',');   // Excel en configuración regional es-CL
+          if (/^[=+@]/.test(v)) v = "'" + v;                  // evita inyección de fórmulas al abrir en Excel
+          return '"' + v.replace(/"/g, '""') + '"';
+        };
+        var lineas = [].map.call(document.querySelectorAll('#tabla-bitacora tr'), function (tr) {
+          return [].map.call(tr.children, celda).join(';');   // ';' = separador por defecto de Excel es-CL
+        });
+        var d = new Date();
+        var sello = d.getFullYear() + pad(d.getMonth() + 1) + pad(d.getDate()) + '_' + pad(d.getHours()) + pad(d.getMinutes());
+        descargar(new Blob(['\uFEFF' + lineas.join('\r\n')], { type: 'text/csv;charset=utf-8' }), 'Bitacora_SENCE_Riego_' + sello + '.csv');
+      });
+    }
+
+    var btnPrint = $('btn-print-audit');
+    if (btnPrint) {
+      btnPrint.addEventListener('click', function () {
+        renderLive();
+        setTab('auditoria', true);
+        $('print-fecha').textContent = new Date().toLocaleString('es-CL');
+        document.body.classList.add('print-audit');
+        window.print();
+      });
+      window.addEventListener('afterprint', function () { document.body.classList.remove('print-audit'); });
+    }
+
+    render();
+    tick();
+  })();
+  </script>
 <?php endif; ?>
+
+  <!-- ============ MODAL · GESTOR INTERMEDIO SENCE (simulación) ============ -->
+  <div id="modal-sence" class="modal-overlay no-print" role="dialog" aria-modal="true" aria-labelledby="sence-titulo">
+    <div class="card relative my-auto w-full max-w-2xl overflow-hidden">
+      <div class="flex items-start justify-between gap-4 bg-[#0b3d91] px-5 py-4 text-white sm:px-6">
+        <div>
+          <h2 id="sence-titulo" class="font-display text-lg font-bold">Validar Asistencia con ClaveÚnica / SENCE</h2>
+          <p class="mt-0.5 text-xs text-blue-100">Envío POST al Gestor Intermedio de SENCE · entorno de simulación</p>
+        </div>
+        <button type="button" data-close class="rounded-lg p-1 text-blue-100 hover:bg-white/10 hover:text-white focus:outline-none focus:ring-2 focus:ring-white" aria-label="Cerrar">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>
+        </button>
+      </div>
+      <div class="space-y-4 p-5 sm:p-6">
+        <p class="text-sm text-slate-600">Al iniciar la sesión de aprendizaje, la plataforma envía los siguientes parámetros al Gestor Intermedio, que autentica al participante con ClaveÚnica y registra la asistencia.</p>
+        <div class="overflow-x-auto rounded-xl ring-1 ring-slate-200">
+          <table class="w-full text-left text-xs">
+            <thead><tr class="bg-slate-50 uppercase tracking-wide text-slate-500"><th class="px-3 py-2 font-semibold">Parámetro</th><th class="px-3 py-2 font-semibold">Valor</th><th class="hidden px-3 py-2 font-semibold sm:table-cell">Descripción</th></tr></thead>
+            <tbody class="divide-y divide-slate-100" id="sence-params">
+              <?php foreach ($SENCE_PARAMS as $k => $p): ?>
+                <tr>
+                  <th scope="row" class="px-3 py-2 font-mono font-semibold text-slate-800"><?= htmlspecialchars($k) ?></th>
+                  <td class="break-all px-3 py-2 font-mono text-slate-700" data-param="<?= htmlspecialchars($k) ?>"><?= htmlspecialchars($p[0]) ?></td>
+                  <td class="hidden px-3 py-2 text-slate-500 sm:table-cell"><?= htmlspecialchars($p[1]) ?></td>
+                </tr>
+              <?php endforeach; ?>
+            </tbody>
+          </table>
+        </div>
+        <div class="flex flex-wrap items-center gap-3">
+          <button type="button" id="sence-simular" class="rounded-xl bg-[#0b3d91] px-5 py-2.5 text-sm font-bold text-white shadow-md transition hover:bg-[#093178] focus:outline-none focus:ring-2 focus:ring-blue-600 focus:ring-offset-2">Simular envío POST</button>
+          <p class="text-xs text-slate-500">No se transmite ningún dato a SENCE. Valores de demostración hasta configurar las credenciales reales del OTEC.</p>
+        </div>
+        <pre id="sence-salida" class="hidden max-h-64 overflow-auto rounded-xl bg-slate-900 p-4 text-[11px] leading-relaxed text-green-300" aria-live="polite"></pre>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ MODAL · REGLAMENTO ============ -->
+  <div id="modal-reglamento" class="modal-overlay no-print" role="dialog" aria-modal="true" aria-labelledby="reg-titulo">
+    <div class="card relative my-auto w-full max-w-2xl overflow-hidden">
+      <div class="flex items-start justify-between gap-4 border-b border-slate-100 bg-gradient-to-r from-agua-50 to-agro-50 px-5 py-4 sm:px-6">
+        <h2 id="reg-titulo" class="font-display text-lg font-bold text-slate-900">Reglamento Académico y Guía de Uso de Plataforma</h2>
+        <button type="button" data-close class="rounded-lg p-1 text-slate-500 hover:bg-white hover:text-slate-900 focus:outline-none focus:ring-2 focus:ring-agua-500" aria-label="Cerrar">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>
+        </button>
+      </div>
+      <div class="max-h-[70vh] space-y-4 overflow-y-auto p-5 text-sm leading-relaxed text-slate-700 sm:p-6">
+        <section><h3 class="font-bold text-slate-900">1. Acceso y credenciales</h3>
+          <p>El acceso es personal e intransferible (usuario o RUT y contraseña). El participante es responsable del uso de sus credenciales. La asistencia se valida con ClaveÚnica a través del Gestor Intermedio de SENCE.</p></section>
+        <section><h3 class="font-bold text-slate-900">2. Control de sesión y trazabilidad</h3>
+          <p>La plataforma registra fecha y hora de ingreso y salida, minutos conectados y dirección IP de cada sesión. La sesión se cierra automáticamente tras 60 minutos sin actividad. Al terminar, utiliza «Registrar Salida SENCE / Cerrar Sesión».</p></section>
+        <section><h3 class="font-bold text-slate-900">3. Requisitos de aprobación</h3>
+          <ul class="list-disc space-y-1 pl-5"><li>Avance curricular mínimo: 75% (módulos completados).</li><li>Nota mínima de aprobación: 4.0 en escala 1.0 a 7.0, con 60% de exigencia.</li><li>Evaluación final: 20 preguntas de selección múltiple y 10 de verdadero/falso (60 puntos).</li></ul></section>
+        <section><h3 class="font-bold text-slate-900">4. Evaluaciones y probidad académica</h3>
+          <p>Las evaluaciones son individuales. Está prohibido compartir respuestas, suplantar a otro participante o intentar vulnerar el sistema. El incumplimiento puede implicar la invalidación de la evaluación.</p></section>
+        <section><h3 class="font-bold text-slate-900">5. Guía rápida de uso</h3>
+          <ol class="list-decimal space-y-1 pl-5"><li>Revisa la presentación de cada módulo y descárgala si lo necesitas.</li><li>Resuelve los ejercicios y marca el módulo como completado.</li><li>Rinde la evaluación final y genera tu PDF para el relator.</li><li>Plantea dudas en el Foro de Consultas (respuesta en menos de 24 hrs hábiles).</li></ol></section>
+        <section><h3 class="font-bold text-slate-900">6. Protección de datos</h3>
+          <p>Los datos personales se usan exclusivamente para la ejecución y fiscalización del curso, conforme a la normativa chilena de protección de datos personales.</p></section>
+        <section><h3 class="font-bold text-slate-900">7. Soporte</h3>
+          <p>contacto@ddgdelvalle.cl · WhatsApp/Tel: +56 9 6316 3859 · Lun a Vie 09:00 a 18:00 hrs.</p></section>
+      </div>
+    </div>
+  </div>
+
+  <script>
+  (function () {
+    var abierto = null;
+    function abrir(id) {
+      var m = document.getElementById('modal-' + id);
+      if (!m) return;
+      abierto = m; m.classList.add('is-open'); document.body.style.overflow = 'hidden';
+      if (id === 'sence') prepararSence();
+      var c = m.querySelector('[data-close]'); if (c) c.focus();
+    }
+    function cerrar() {
+      if (!abierto) return;
+      abierto.classList.remove('is-open'); abierto = null; document.body.style.overflow = '';
+    }
+    document.addEventListener('click', function (e) {
+      var o = e.target.closest('[data-open]');
+      if (o) { abrir(o.dataset.open); return; }
+      if (e.target.closest('[data-close]') || e.target.classList.contains('modal-overlay')) cerrar();
+    });
+    document.addEventListener('keydown', function (e) { if (e.key === 'Escape') cerrar(); });
+
+    /* RUT → formato 12.345.678-5 (no valida DV: solo presenta el dato tecleado) */
+    function fmtRut(v) {
+      v = v.replace(/[^0-9kK]/g, '').toUpperCase();
+      if (v.length < 2) return v;
+      return v.slice(0, -1).replace(/\B(?=(\d{3})+(?!\d))/g, '.') + '-' + v.slice(-1);
+    }
+
+    function prepararSence() {
+      var u = document.getElementById('usuario');
+      var celda = document.querySelector('[data-param="RutAlumno"]');
+      if (u && celda && /^[0-9.\-]+[0-9kK]$/.test(u.value.trim())) celda.textContent = fmtRut(u.value.trim());
+      document.getElementById('sence-salida').classList.add('hidden');
+    }
+
+    document.getElementById('sence-simular').addEventListener('click', function () {
+      var p = {};
+      [].forEach.call(document.querySelectorAll('#sence-params [data-param]'), function (td) { p[td.dataset.param] = td.textContent.trim(); });
+      var body = Object.keys(p).map(function (k) { return k + '=' + encodeURIComponent(p[k]); }).join('&');
+      var ts = new Date();
+      var out =
+        '→ POST https://sistemas.sence.cl/…/IniciarSesion   [SIMULADO]\n' +
+        '  Content-Type: application/x-www-form-urlencoded\n\n  ' + body.replace(/&/g, '\n  &') + '\n\n' +
+        '← 200 OK   [SIMULADO · ' + ts.toLocaleString('es-CL') + ']\n' +
+        '  RunAlumno=' + p.RutAlumno + '\n  CodSence=' + p.CodSence + '\n  CodigoCurso=' + p.CodigoCurso +
+        '\n  IdSesionAlumno=' + p.IdSesionAlumno + '\n  GlosaError=0   (autenticación ClaveÚnica simulada: OK)\n  → retorno a ' + p.UrlRetorno;
+      var pre = document.getElementById('sence-salida');
+      pre.textContent = out; pre.classList.remove('hidden');
+    });
+  })();
+  </script>
 </body>
 </html>
