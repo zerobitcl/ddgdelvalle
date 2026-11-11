@@ -1,0 +1,520 @@
+<!doctype html>
+<html lang="es-CL">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="robots" content="noindex,nofollow">
+  <meta name="theme-color" content="#2C4753">
+  <title>Manual y Accesos | DDG Del Valle</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Montserrat:wght@500;600;700&display=swap" rel="stylesheet">
+  <link rel="icon" href="https://ddgdelvalle.cl/wp-content/uploads/2026/03/icono-ddg.png">
+  <style>
+    .manual-page{
+      --primary:#2C4753;
+      --secondary:#81A896;
+      --bg:#F4F7F6;
+      --bg2:#F2EEDB;
+      --accent:#D5CC3C;
+      --text:#0f172a;
+      --muted:rgba(15,23,42,.72);
+      --shadow:0 18px 45px rgba(15,23,42,.10);
+      --card:#fff;
+      --border:rgba(15,23,42,.10);
+
+      margin:0;
+      min-height:100vh;
+      font-family:Inter, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+      color:var(--text);
+      background:linear-gradient(180deg, var(--bg) 0%, var(--bg2) 100%);
+      line-height:1.55;
+      -webkit-font-smoothing:antialiased;
+    }
+    .manual-page *{ box-sizing:border-box; }
+    .manual-page a{ color:var(--primary); font-weight:600; text-underline-offset:2px; }
+    .wrap{ width:min(860px, calc(100% - 32px)); margin:0 auto; position:relative; z-index:2; }
+
+    .header{
+      position:sticky; top:0; z-index:10;
+      background:rgba(255,255,255,.92);
+      backdrop-filter:saturate(1.2) blur(10px);
+      border-bottom:1px solid var(--border);
+    }
+    .header-inner{
+      display:flex; align-items:center; justify-content:space-between;
+      gap:12px; padding:14px 0; flex-wrap:wrap;
+    }
+    .brand img{ height:52px; width:auto; display:block; }
+    .nav-links{ display:flex; gap:10px; flex-wrap:wrap; }
+    .nav-links a{
+      text-decoration:none;
+      font-size:13px;
+      padding:8px 12px;
+      border-radius:10px;
+      border:1px solid var(--border);
+      background:#fff;
+      color:var(--primary);
+    }
+
+    .main{ padding:24px 0 48px; }
+    .panel{
+      background:var(--card);
+      border:1px solid var(--border);
+      border-radius:18px;
+      box-shadow:var(--shadow);
+      padding:26px;
+      margin-bottom:16px;
+    }
+    h1{
+      margin:0 0 8px;
+      font-family:Montserrat, Inter, system-ui;
+      color:var(--primary);
+      font-size:26px;
+      line-height:1.2;
+    }
+    h2{
+      margin:0 0 10px;
+      font-family:Montserrat, Inter, system-ui;
+      color:var(--primary);
+      font-size:17px;
+    }
+    h3{
+      margin:18px 0 6px;
+      font-family:Montserrat, Inter, system-ui;
+      color:var(--primary);
+      font-size:14px;
+    }
+    .intro{ margin:0 0 14px; color:var(--muted); font-size:14px; }
+    .eyebrow{
+      margin:0 0 6px;
+      font-size:11px;
+      font-weight:700;
+      letter-spacing:.12em;
+      text-transform:uppercase;
+      color:var(--secondary);
+    }
+    p, li{ font-size:14px; }
+    ul{ margin:8px 0 0; padding-left:18px; }
+    li{ margin:4px 0; }
+    .muted{ color:var(--muted); }
+
+    .gate{
+      display:flex; gap:10px; flex-wrap:wrap; margin-bottom:8px;
+    }
+    input[type="password"]{
+      flex:1 1 260px; min-width:220px;
+      border:1px solid rgba(15,23,42,.18);
+      border-radius:12px; padding:12px 14px; font:inherit;
+    }
+    input[type="password"]:focus{
+      outline:none; border-color:var(--secondary);
+      box-shadow:0 0 0 3px rgba(129,168,150,.22);
+    }
+    button{
+      border:0; border-radius:12px; padding:12px 18px;
+      font-family:Montserrat, Inter, system-ui; font-weight:700; font-size:13px;
+      background:var(--primary); color:#fff; cursor:pointer;
+      box-shadow:0 10px 22px rgba(44,71,83,.18);
+    }
+    .error{ color:#b42318; font-size:13px; min-height:20px; }
+
+    .content[hidden]{ display:none !important; }
+
+    .cheat{
+      display:grid;
+      grid-template-columns:repeat(auto-fit, minmax(180px, 1fr));
+      gap:10px;
+      margin-top:12px;
+    }
+    .cheat a, .cheat div{
+      display:block;
+      text-decoration:none;
+      border:1px solid var(--border);
+      border-radius:12px;
+      padding:12px;
+      background:#fff;
+      color:inherit;
+      transition:border-color .15s ease, transform .15s ease;
+    }
+    .cheat a:hover{ border-color:rgba(129,168,150,.55); transform:translateY(-1px); }
+    .cheat strong{
+      display:block;
+      font-family:Montserrat, Inter, system-ui;
+      color:var(--primary);
+      font-size:13px;
+      margin-bottom:4px;
+    }
+    .cheat span{ display:block; font-size:12px; color:var(--muted); word-break:break-word; }
+    .pill{
+      display:inline-block;
+      margin-top:8px;
+      padding:3px 8px;
+      border-radius:999px;
+      background:rgba(44,71,83,.08);
+      color:var(--primary);
+      font-size:11px;
+      font-weight:700;
+      font-family:ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    }
+
+    table{
+      width:100%;
+      border-collapse:collapse;
+      font-size:13px;
+      margin-top:10px;
+      border:1px solid var(--border);
+      border-radius:12px;
+      overflow:hidden;
+    }
+    th, td{
+      padding:10px 12px;
+      text-align:left;
+      border-bottom:1px solid var(--border);
+      vertical-align:top;
+    }
+    th{
+      background:#f8faf9;
+      font-size:11px;
+      text-transform:uppercase;
+      letter-spacing:.05em;
+      color:var(--muted);
+    }
+    tr:last-child td{ border-bottom:0; }
+    code, .mono{
+      font-family:ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      font-size:12px;
+      background:rgba(44,71,83,.07);
+      padding:2px 6px;
+      border-radius:6px;
+    }
+    .steps{ counter-reset:step; list-style:none; padding:0; margin:10px 0 0; }
+    .steps li{
+      counter-increment:step;
+      position:relative;
+      padding:10px 12px 10px 44px;
+      border:1px solid var(--border);
+      border-radius:12px;
+      margin:8px 0;
+      background:#fff;
+    }
+    .steps li::before{
+      content:counter(step);
+      position:absolute; left:12px; top:10px;
+      width:24px; height:24px; border-radius:50%;
+      display:grid; place-items:center;
+      background:var(--primary); color:#fff;
+      font-size:12px; font-weight:700;
+    }
+    .note{
+      margin-top:14px;
+      padding:12px 14px;
+      border-radius:12px;
+      background:rgba(213,204,60,.16);
+      border:1px solid rgba(213,204,60,.35);
+      font-size:13px;
+    }
+    .toc{
+      display:flex; flex-wrap:wrap; gap:8px; margin-top:12px;
+    }
+    .toc a{
+      text-decoration:none;
+      font-size:12px;
+      padding:7px 10px;
+      border-radius:999px;
+      background:rgba(129,168,150,.16);
+      color:var(--primary);
+    }
+  </style>
+</head>
+<body>
+  <div class="manual-page">
+    <header class="header">
+      <div class="wrap header-inner">
+        <a class="brand" href="/" aria-label="DDG Del Valle">
+          <img src="https://ddgdelvalle.cl/wp-content/uploads/2026/03/cropped-LOGO-DDG_color.png" alt="DDG Del Valle" width="220" height="52">
+        </a>
+        <div class="nav-links">
+          <a href="portal-administrativo">Portal admin</a>
+          <a href="/">Sitio público</a>
+        </div>
+      </div>
+    </header>
+
+    <main class="main">
+      <div class="wrap">
+        <section class="panel">
+          <p class="eyebrow">Documento interno</p>
+          <h1>Manual y accesos</h1>
+          <p class="intro">Guía simple del sitio DDG Del Valle: qué hace cada parte, links y claves. Úsala cuando haya dudas.</p>
+
+          <div id="gate-box">
+            <div class="gate">
+              <input id="manual-password" type="password" placeholder="Contraseña del portal" autocomplete="off">
+              <button id="unlock-btn" type="button">Ver manual</button>
+            </div>
+            <div id="error-msg" class="error" aria-live="polite"></div>
+          </div>
+
+          <div id="manual-content" class="content" hidden>
+            <div class="toc">
+              <a href="#atajo">Atajo</a>
+              <a href="#publico">Público</a>
+              <a href="#interno">Interno</a>
+              <a href="#aula">Aula alumno</a>
+              <a href="#orden">Orden de uso</a>
+              <a href="#claves">Cheatsheet</a>
+            </div>
+          </div>
+        </section>
+
+        <div id="manual-body" class="content" hidden>
+
+          <section class="panel" id="atajo">
+            <h2>Atajo mental</h2>
+            <div class="cheat">
+              <a href="https://ddgdelvalle.cl/">
+                <strong>Ver cursos / captar alumnos</strong>
+                <span>Sitio público</span>
+              </a>
+              <a href="portal-administrativo">
+                <strong>Operar la OTEC</strong>
+                <span>Portal administrativo</span>
+              </a>
+              <a href="asistencia/">
+                <strong>Pasar lista</strong>
+                <span>Asistencia</span>
+              </a>
+              <a href="modulo-alumno.php">
+                <strong>Estudiar / evaluar (demo)</strong>
+                <span>Aula alumno</span>
+              </a>
+            </div>
+          </section>
+
+          <section class="panel" id="publico">
+            <h2>1. Sitio público</h2>
+
+            <h3>Portada</h3>
+            <ul>
+              <li><strong>Link:</strong> <a href="https://ddgdelvalle.cl/" target="_blank" rel="noopener">https://ddgdelvalle.cl/</a></li>
+              <li><strong>Acceso:</strong> libre</li>
+              <li><strong>Sirve para:</strong> catálogo, filtros, contacto WhatsApp</li>
+            </ul>
+
+            <h3>Landings especiales</h3>
+            <ul>
+              <li>Plaguicidas: <a href="https://ddgdelvalle.cl/aplicador-plaguicidas" target="_blank" rel="noopener">/aplicador-plaguicidas</a></li>
+              <li>Eficiencia hídrica: <a href="https://ddgdelvalle.cl/eficiencia-hidrica" target="_blank" rel="noopener">/eficiencia-hidrica</a></li>
+              <li>Inserción laboral: <a href="https://ddgdelvalle.cl/insercion-laboral" target="_blank" rel="noopener">/insercion-laboral</a></li>
+            </ul>
+
+            <h3>Encuesta (para alumnos)</h3>
+            <ul>
+              <li><strong>Link:</strong> <a href="https://ddgdelvalle.cl/encuesta/" target="_blank" rel="noopener">https://ddgdelvalle.cl/encuesta/</a></li>
+              <li><strong>Acceso:</strong> libre (se envía el link al alumno al terminar el curso)</li>
+            </ul>
+
+            <h3>Contacto</h3>
+            <ul>
+              <li>WhatsApp: <strong>+56 9 6316 3859</strong></li>
+            </ul>
+          </section>
+
+          <section class="panel" id="interno">
+            <h2>2. Herramientas internas</h2>
+            <p class="muted">Entrada recomendada: <a href="portal-administrativo">Portal administrativo</a> · clave <span class="mono">admin123</span></p>
+
+            <h3>Asistencia (pasar lista)</h3>
+            <ul>
+              <li><strong>Link:</strong> <a href="asistencia/" target="_blank" rel="noopener">/asistencia/</a></li>
+              <li><strong>Usuario / clave:</strong> <span class="mono">admin</span> / <span class="mono">admin</span></li>
+              <li><strong>Uso:</strong> curso → nómina → sesión (fecha + Meet/Zoom) → marcar asistencia → exportar CSV</li>
+            </ul>
+
+            <h3>Inventario y agenda</h3>
+            <ul>
+              <li><strong>Link:</strong> <a href="inventario" target="_blank" rel="noopener">/inventario</a></li>
+              <li><strong>Usuario / clave:</strong> <span class="mono">admin</span> / <span class="mono">admin</span></li>
+              <li><strong>Uso:</strong> equipos, clases y qué se presta a cada clase</li>
+            </ul>
+
+            <h3>Relatores</h3>
+            <ul>
+              <li><strong>Link:</strong> <a href="relatores" target="_blank" rel="noopener">/relatores</a></li>
+              <li><strong>Usuario / clave:</strong> <span class="mono">admin</span> / <span class="mono">admin</span></li>
+              <li><strong>Uso:</strong> ficha de docentes + datos de pago</li>
+            </ul>
+
+            <h3>Informes de taller (Registro)</h3>
+            <ul>
+              <li><strong>Entrada:</strong> desde el Portal (botón “Registro · Panel”) o <a href="registro/login.php" target="_blank" rel="noopener">/registro/login.php</a></li>
+              <li><strong>Usuario:</strong> <span class="mono">admin</span></li>
+              <li><strong>Clave:</strong> la configurada en el servidor (<span class="mono">registro/config.php</span>)</li>
+              <li><strong>Uso:</strong> informe PDF del taller con fotos</li>
+            </ul>
+
+            <h3>Presupuestos</h3>
+            <ul>
+              <li><strong>Link:</strong> <a href="registro/presupuestos" target="_blank" rel="noopener">/registro/presupuestos</a></li>
+              <li><strong>Acceso:</strong> hoy sin login (cualquiera con el link)</li>
+              <li><strong>Uso:</strong> cotizaciones en PDF</li>
+            </ul>
+
+            <h3>Resultados de encuesta</h3>
+            <ul>
+              <li><strong>Link:</strong> <a href="encuesta/admin.php" target="_blank" rel="noopener">/encuesta/admin.php</a></li>
+              <li><strong>Clave:</strong> <span class="mono">admin123</span></li>
+              <li>Panel equivalente antiguo: <a href="admin.php" target="_blank" rel="noopener">/admin.php</a> · clave <span class="mono">ddg-2026-admin</span></li>
+            </ul>
+          </section>
+
+          <section class="panel" id="aula">
+            <h2>3. Aula del alumno (demo riego)</h2>
+            <ul>
+              <li><strong>Link:</strong> <a href="modulo-alumno.php" target="_blank" rel="noopener">/modulo-alumno.php</a></li>
+              <li><strong>Qué es:</strong> aula con material, avance, evaluación y PDF</li>
+              <li><strong>SENCE / ClaveÚnica:</strong> aún es <strong>simulación</strong> (no envía datos reales a SENCE)</li>
+              <li>La asistencia real del día a día se toma en <a href="asistencia/">Asistencia</a></li>
+            </ul>
+
+            <table>
+              <thead>
+                <tr><th>Quién</th><th>Usuario</th><th>Clave</th></tr>
+              </thead>
+              <tbody>
+                <tr><td>Alumno</td><td><span class="mono">alumno</span></td><td><span class="mono">riego2026</span></td></tr>
+                <tr><td>Alumno (RUT)</td><td><span class="mono">15.432.876-5</span></td><td><span class="mono">Alumno2026*</span></td></tr>
+                <tr><td>Auditor</td><td><span class="mono">auditor</span></td><td><span class="mono">Sence2026*</span></td></tr>
+              </tbody>
+            </table>
+          </section>
+
+          <section class="panel" id="orden">
+            <h2>4. Orden de uso típico</h2>
+            <ol class="steps">
+              <li>Publicar/revisar el curso en el <a href="https://ddgdelvalle.cl/" target="_blank" rel="noopener">sitio público</a>.</li>
+              <li>Recibir interesados por WhatsApp (+56 9 6316 3859).</li>
+              <li>Entrar al <a href="portal-administrativo">portal administrativo</a> con <span class="mono">admin123</span>.</li>
+              <li>Cargar relator / inventario si hace falta.</li>
+              <li>En <a href="asistencia/">Asistencia</a>: crear curso → nómina → sesión → pasar lista.</li>
+              <li>Al terminar: enviar <a href="encuesta/" target="_blank" rel="noopener">encuesta</a> y revisar <a href="encuesta/admin.php">resultados</a>.</li>
+              <li>Si hace falta: informe de taller o presupuesto.</li>
+            </ol>
+          </section>
+
+          <section class="panel" id="claves">
+            <h2>5. Cheatsheet de claves</h2>
+            <table>
+              <thead>
+                <tr><th>Herramienta</th><th>Link</th><th>Acceso</th></tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Portal admin</td>
+                  <td><a href="portal-administrativo">/portal-administrativo</a></td>
+                  <td><span class="mono">admin123</span></td>
+                </tr>
+                <tr>
+                  <td>Manual (esta página)</td>
+                  <td><a href="manual">/manual</a></td>
+                  <td><span class="mono">admin123</span></td>
+                </tr>
+                <tr>
+                  <td>Asistencia</td>
+                  <td><a href="asistencia/">/asistencia/</a></td>
+                  <td><span class="mono">admin</span> / <span class="mono">admin</span></td>
+                </tr>
+                <tr>
+                  <td>Inventario</td>
+                  <td><a href="inventario">/inventario</a></td>
+                  <td><span class="mono">admin</span> / <span class="mono">admin</span></td>
+                </tr>
+                <tr>
+                  <td>Relatores</td>
+                  <td><a href="relatores">/relatores</a></td>
+                  <td><span class="mono">admin</span> / <span class="mono">admin</span></td>
+                </tr>
+                <tr>
+                  <td>Encuesta resultados</td>
+                  <td><a href="encuesta/admin.php">/encuesta/admin.php</a></td>
+                  <td><span class="mono">admin123</span></td>
+                </tr>
+                <tr>
+                  <td>Registro informes</td>
+                  <td><a href="registro/login.php">/registro/login.php</a></td>
+                  <td><span class="mono">admin</span> + clave del servidor</td>
+                </tr>
+                <tr>
+                  <td>Presupuestos</td>
+                  <td><a href="registro/presupuestos">/registro/presupuestos</a></td>
+                  <td>sin clave</td>
+                </tr>
+                <tr>
+                  <td>Aula alumno</td>
+                  <td><a href="modulo-alumno.php">/modulo-alumno.php</a></td>
+                  <td>ver tabla del punto 3</td>
+                </tr>
+                <tr>
+                  <td>Sitio / encuesta pública</td>
+                  <td><a href="/">/</a> · <a href="encuesta/">/encuesta/</a></td>
+                  <td>libre</td>
+                </tr>
+              </tbody>
+            </table>
+
+            <div class="note">
+              <strong>Importante:</strong> varias claves son iniciales/demo. Conviene cambiarlas en producción y no compartir este manual fuera del equipo.
+            </div>
+          </section>
+
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script>
+  (function () {
+    var ACCESS_PASSWORD = 'admin123';
+    var input = document.getElementById('manual-password');
+    var btn = document.getElementById('unlock-btn');
+    var err = document.getElementById('error-msg');
+    var body = document.getElementById('manual-body');
+    var gate = document.getElementById('gate-box');
+    var toc = document.getElementById('manual-content');
+
+    function unlock() {
+      var v = (input.value || '').trim();
+      if (!v) {
+        err.textContent = 'Debes ingresar una contraseña.';
+        return;
+      }
+      if (v === ACCESS_PASSWORD) {
+        err.textContent = '';
+        body.hidden = false;
+        toc.hidden = false;
+        gate.hidden = true;
+        try { sessionStorage.setItem('ddg_manual_ok', '1'); } catch (e) {}
+      } else {
+        err.textContent = 'Contraseña incorrecta.';
+      }
+    }
+
+    try {
+      if (sessionStorage.getItem('ddg_manual_ok') === '1') {
+        body.hidden = false;
+        toc.hidden = false;
+        gate.hidden = true;
+      }
+    } catch (e) {}
+
+    if (btn) btn.addEventListener('click', unlock);
+    if (input) {
+      input.addEventListener('keydown', function (e) {
+        if (e.key === 'Enter') unlock();
+      });
+    }
+  })();
+  </script>
+</body>
+</html>
