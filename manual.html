@@ -261,7 +261,7 @@
               <a href="#atajo">Atajo</a>
               <a href="#publico">Público</a>
               <a href="#interno">Interno</a>
-              <a href="#aula">Aula alumno</a>
+              <a href="#aula">Aula virtual</a>
               <a href="#orden">Orden de uso</a>
               <a href="#claves">Cheatsheet</a>
             </div>
@@ -285,9 +285,9 @@
                 <strong>Pasar lista</strong>
                 <span>Asistencia</span>
               </a>
-              <a href="modulo-alumno.php">
-                <strong>Estudiar / evaluar (demo)</strong>
-                <span>Aula alumno</span>
+              <a href="aula/">
+                <strong>Aula virtual</strong>
+                <span>Alumnos, profesores, inscripciones</span>
               </a>
             </div>
           </section>
@@ -370,12 +370,15 @@
           </section>
 
           <section class="panel" id="aula">
-            <h2>3. Aula del alumno (demo riego)</h2>
+            <h2>3. Aula virtual</h2>
             <ul>
-              <li><strong>Link:</strong> <a href="modulo-alumno.php" target="_blank" rel="noopener">/modulo-alumno.php</a></li>
-              <li><strong>Qué es:</strong> aula con material, avance, evaluación y PDF</li>
-              <li><strong>SENCE / ClaveÚnica:</strong> aún es <strong>simulación</strong> (no envía datos reales a SENCE)</li>
-              <li>La asistencia real del día a día se toma en <a href="asistencia/">Asistencia</a></li>
+              <li><strong>Link:</strong> <a href="aula/" target="_blank" rel="noopener">/aula/</a> (también el botón “Acceso aula virtual” del home)</li>
+              <li><strong>Qué es:</strong> login único para alumnos, profesores y admin. Todos ven el catálogo; solo entran a los cursos donde están inscritos.</li>
+              <li><strong>Admin:</strong> carga usuarios, crea cursos, asigna profesores, ve el log de inscripciones.</li>
+              <li><strong>Profesor:</strong> ve sus cursos, inscribe alumnos ya cargados, publica link Meet/Zoom.</li>
+              <li><strong>Alumno:</strong> entra a sus cursos, une a la clase en vivo y abre material (ej. riego → <a href="modulo-alumno.php">modulo-alumno.php</a>).</li>
+              <li><strong>Log:</strong> cada alta/baja queda registrada (quién, curso, cuándo, quién lo hizo).</li>
+              <li>La asistencia diaria sigue en <a href="asistencia/">Asistencia</a>.</li>
             </ul>
 
             <table>
@@ -383,9 +386,10 @@
                 <tr><th>Quién</th><th>Usuario</th><th>Clave</th></tr>
               </thead>
               <tbody>
-                <tr><td>Alumno</td><td><span class="mono">alumno</span></td><td><span class="mono">riego2026</span></td></tr>
-                <tr><td>Alumno (RUT)</td><td><span class="mono">15.432.876-5</span></td><td><span class="mono">Alumno2026*</span></td></tr>
-                <tr><td>Auditor</td><td><span class="mono">auditor</span></td><td><span class="mono">Sence2026*</span></td></tr>
+                <tr><td>Admin</td><td><span class="mono">admin</span></td><td><span class="mono">Admin2026*</span></td></tr>
+                <tr><td>Profesor</td><td><span class="mono">profesor</span></td><td><span class="mono">Profe2026*</span></td></tr>
+                <tr><td>Alumno</td><td><span class="mono">alumno</span></td><td><span class="mono">Alumno2026*</span></td></tr>
+                <tr><td>Alumna precargada (sin curso)</td><td><span class="mono">16.543.987-6</span></td><td><span class="mono">Alumno2026*</span></td></tr>
               </tbody>
             </table>
           </section>
@@ -397,6 +401,7 @@
               <li>Recibir interesados por WhatsApp (+56 9 6316 3859).</li>
               <li>Entrar al <a href="portal-administrativo">portal administrativo</a> con <span class="mono">admin123</span>.</li>
               <li>Cargar relator / inventario si hace falta.</li>
+              <li>En <a href="aula/">Aula virtual</a>: cargar usuarios → crear/asignar curso → profesor inscribe alumnos → publicar Meet/Zoom.</li>
               <li>En <a href="asistencia/">Asistencia</a>: crear curso → nómina → sesión → pasar lista.</li>
               <li>Al terminar: enviar <a href="encuesta/" target="_blank" rel="noopener">encuesta</a> y revisar <a href="encuesta/admin.php">resultados</a>.</li>
               <li>Si hace falta: informe de taller o presupuesto.</li>
@@ -451,9 +456,14 @@
                   <td>sin clave</td>
                 </tr>
                 <tr>
-                  <td>Aula alumno</td>
-                  <td><a href="modulo-alumno.php">/modulo-alumno.php</a></td>
+                  <td>Aula virtual</td>
+                  <td><a href="aula/">/aula/</a></td>
                   <td>ver tabla del punto 3</td>
+                </tr>
+                <tr>
+                  <td>Material riego (demo)</td>
+                  <td><a href="modulo-alumno.php">/modulo-alumno.php</a></td>
+                  <td>acceso desde el aula si estás inscrito</td>
                 </tr>
                 <tr>
                   <td>Sitio / encuesta pública</td>
