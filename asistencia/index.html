@@ -42,6 +42,8 @@
         <span>Asistencia por curso</span>
       </div>
       <div class="topbar-actions">
+        <button type="button" id="btn-nav-cursos" class="btn btn-ghost btn-mini" hidden>Cursos</button>
+        <button type="button" id="btn-nav-profes" class="btn btn-ghost btn-mini" hidden>Profesores</button>
         <span id="who" class="who"></span>
         <button type="button" id="btn-logout" class="btn btn-ghost">Salir</button>
       </div>
@@ -53,9 +55,9 @@
         <div class="panel-head">
           <div>
             <h2>Cursos</h2>
-            <p class="muted">Elige un curso para gestionar nómina y pasar lista.</p>
+            <p class="muted" id="cursos-help">Elige un curso para pasar lista o gestionar la nómina.</p>
           </div>
-          <button type="button" id="btn-nuevo-curso" class="btn btn-primary">+ Nuevo curso</button>
+          <button type="button" id="btn-nuevo-curso" class="btn btn-primary" hidden>+ Nuevo curso</button>
         </div>
         <div id="cursos-grid" class="cards"></div>
         <form id="form-curso" class="inline-form" hidden>
@@ -70,6 +72,31 @@
         </form>
       </section>
 
+      <!-- ADMIN: PROFESORES -->
+      <section id="panel-profes" class="panel" hidden>
+        <div class="panel-head">
+          <div>
+            <h2>Profesores</h2>
+            <p class="muted">Solo administración puede crear cuentas y asignarlas a cursos.</p>
+          </div>
+        </div>
+        <form id="form-profesor" class="inline-form">
+          <input id="profe-usuario" type="text" placeholder="Usuario (ej. jperez)" required autocomplete="off">
+          <input id="profe-nombre" type="text" placeholder="Nombre completo" required>
+          <input id="profe-clave" type="text" placeholder="Clave temporal" required autocomplete="off">
+          <input id="profe-email" type="email" placeholder="Email (opcional)">
+          <button type="submit" class="btn btn-primary">Crear profesor</button>
+        </form>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr><th>Usuario</th><th>Nombre</th><th>Email</th><th>Cursos</th><th>Estado</th><th></th></tr>
+            </thead>
+            <tbody id="tbody-profes"></tbody>
+          </table>
+        </div>
+      </section>
+
       <!-- CURSO DETALLE -->
       <section id="panel-curso" class="panel" hidden>
         <button type="button" class="back" data-back="cursos">← Volver a cursos</button>
@@ -81,14 +108,44 @@
         </div>
 
         <nav class="tabs" role="tablist">
-          <button type="button" class="tab is-active" data-tab="nomina">1. Nómina</button>
-          <button type="button" class="tab" data-tab="sesiones">2. Sesiones</button>
+          <button type="button" class="tab is-active" data-tab="sesiones">Sesiones</button>
+          <button type="button" class="tab" data-tab="nomina">Nómina del curso</button>
+          <button type="button" class="tab" data-tab="equipo" id="tab-btn-equipo" hidden>Profesores asignados</button>
         </nav>
 
-        <div id="tab-nomina" class="tab-panel">
+        <div id="tab-sesiones" class="tab-panel">
+          <div class="panel-head compact">
+            <p class="muted">Cada sesión = una clase (con o sin enlace Meet/Zoom). Para cargar alumnos usa “Nómina del curso”.</p>
+            <button type="button" id="btn-nueva-sesion" class="btn btn-primary">+ Nueva sesión</button>
+          </div>
+          <form id="form-sesion" class="stack form-box" hidden>
+            <input type="hidden" id="sesion-id" value="">
+            <div class="row-2">
+              <label><span>Fecha</span><input id="sesion-fecha" type="date" required></label>
+              <label><span>Hora</span><input id="sesion-hora" type="time" value="09:00" required></label>
+            </div>
+            <label><span>Título</span><input id="sesion-titulo" type="text" placeholder="Ej. Clase 1 · Técnicas básicas" value="Clase"></label>
+            <label><span>Enlace online (Meet / Zoom / Teams)</span><input id="sesion-enlace" type="url" placeholder="https://meet.google.com/..."></label>
+            <label><span>Notas</span><input id="sesion-notas" type="text" placeholder="Opcional"></label>
+            <div class="row-actions">
+              <button type="submit" id="btn-guardar-sesion" class="btn btn-primary">Abrir sesión y pasar lista</button>
+              <button type="button" id="btn-cancel-sesion" class="btn btn-ghost">Cancelar</button>
+            </div>
+          </form>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr><th>Fecha</th><th>Hora</th><th>Título</th><th>Online</th><th>Marcados</th><th></th></tr>
+              </thead>
+              <tbody id="tbody-sesiones"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <div id="tab-nomina" class="tab-panel" hidden>
           <div class="panel-head compact">
             <div>
-              <p class="muted">Alumnos del curso. Sin nómina no se puede tomar asistencia.</p>
+              <p class="muted">Listado de alumnos del curso (aparte de las sesiones). Sin nómina no se puede tomar asistencia.</p>
               <p id="nomina-conteo" class="nomina-conteo">0 inscritos</p>
             </div>
           </div>
@@ -123,31 +180,16 @@
           </div>
         </div>
 
-        <div id="tab-sesiones" class="tab-panel" hidden>
+        <div id="tab-equipo" class="tab-panel" hidden>
           <div class="panel-head compact">
-            <p class="muted">Cada sesión = una clase (con o sin enlace Meet/Zoom).</p>
-            <button type="button" id="btn-nueva-sesion" class="btn btn-primary">+ Nueva sesión</button>
+            <p class="muted">Asigna qué profesores pueden entrar a este curso.</p>
           </div>
-          <form id="form-sesion" class="stack form-box" hidden>
-            <input type="hidden" id="sesion-id" value="">
-            <div class="row-2">
-              <label><span>Fecha</span><input id="sesion-fecha" type="date" required></label>
-              <label><span>Hora</span><input id="sesion-hora" type="time" value="09:00" required></label>
-            </div>
-            <label><span>Título</span><input id="sesion-titulo" type="text" placeholder="Ej. Clase 1 · Técnicas básicas" value="Clase"></label>
-            <label><span>Enlace online (Meet / Zoom / Teams)</span><input id="sesion-enlace" type="url" placeholder="https://meet.google.com/..."></label>
-            <label><span>Notas</span><input id="sesion-notas" type="text" placeholder="Opcional"></label>
-            <div class="row-actions">
-              <button type="submit" id="btn-guardar-sesion" class="btn btn-primary">Abrir sesión y pasar lista</button>
-              <button type="button" id="btn-cancel-sesion" class="btn btn-ghost">Cancelar</button>
-            </div>
-          </form>
           <div class="table-wrap">
             <table>
               <thead>
-                <tr><th>Fecha</th><th>Hora</th><th>Título</th><th>Online</th><th>Marcados</th><th></th></tr>
+                <tr><th>Profesor</th><th>Usuario</th><th>Estado</th><th></th></tr>
               </thead>
-              <tbody id="tbody-sesiones"></tbody>
+              <tbody id="tbody-equipo"></tbody>
             </table>
           </div>
         </div>

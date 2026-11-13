@@ -2,7 +2,7 @@
   const API = 'api.php';
   const $ = (id) => document.getElementById(id);
   const state = {
-    user: null,
+    user: null, // { id, usuario, nombre, rol }
     cursos: [],
     curso: null,
     alumnos: [],
@@ -10,7 +10,33 @@
     sesion: null,
     lista: [],
     resumen: null,
+    profesores: [],
+    equipo: [],
   };
+
+  function isAdmin() {
+    return state.user && state.user.rol === 'admin';
+  }
+
+  function setWho() {
+    if (!state.user) {
+      $('who').textContent = '';
+      return;
+    }
+    const rol = isAdmin() ? 'Admin' : 'Profesor';
+    $('who').textContent = `${state.user.nombre || state.user.usuario} · ${rol}`;
+  }
+
+  function applyRoleUi() {
+    const admin = isAdmin();
+    $('btn-nuevo-curso').hidden = !admin;
+    $('btn-nav-profes').hidden = !admin;
+    $('btn-nav-cursos').hidden = !admin;
+    $('tab-btn-equipo').hidden = !admin;
+    $('cursos-help').textContent = admin
+      ? 'Crea cursos, asigna profesores y gestiona asistencia.'
+      : 'Ves todos los cursos; solo puedes entrar a los que Andrea te asignó.';
+  }
 
   async function api(action, opts = {}) {
     const method = opts.method || (opts.body ? 'POST' : 'GET');
@@ -43,6 +69,7 @@
     $('view-app').hidden = view === 'login';
     if (view === 'login') return;
     $('panel-cursos').hidden = view !== 'cursos';
+    $('panel-profes').hidden = view !== 'profes';
     $('panel-curso').hidden = view !== 'curso';
     $('panel-lista').hidden = view !== 'lista';
   }
@@ -58,8 +85,14 @@
     try {
       const me = await api('me');
       if (me.auth) {
-        state.user = me.usuario;
-        $('who').textContent = me.usuario;
+        state.user = {
+          id: me.id,
+          usuario: me.usuario,
+          nombre: me.nombre,
+          rol: me.rol,
+        };
+        setWho();
+        applyRoleUi();
         show('cursos');
         await loadCursos();
       } else {
@@ -79,8 +112,14 @@
         method: 'POST',
         body: { usuario: $('login-user').value.trim(), clave: $('login-pass').value },
       });
-      state.user = data.usuario;
-      $('who').textContent = data.usuario;
+      state.user = {
+        id: data.id,
+        usuario: data.usuario,
+        nombre: data.nombre,
+        rol: data.rol,
+      };
+      setWho();
+      applyRoleUi();
       show('cursos');
       await loadCursos();
     } catch (ex) {
@@ -92,7 +131,17 @@
   $('btn-logout').addEventListener('click', async () => {
     try { await api('logout', { method: 'POST', body: {} }); } catch {}
     state.user = null;
+    setWho();
     show('login');
+  });
+
+  $('btn-nav-cursos').addEventListener('click', async () => {
+    show('cursos');
+    await loadCursos();
+  });
+  $('btn-nav-profes').addEventListener('click', async () => {
+    show('profes');
+    await loadProfesores();
   });
 
   /* ── Cursos ── */
@@ -100,24 +149,33 @@
     state.cursos = await api('cursos');
     const grid = $('cursos-grid');
     if (!state.cursos.length) {
-      grid.innerHTML = '<p class="muted">No hay cursos. Crea el primero.</p>';
+      grid.innerHTML = isAdmin()
+        ? '<p class="muted">No hay cursos. Crea el primero.</p>'
+        : '<p class="muted">Aún no hay cursos cargados.</p>';
       return;
     }
-    grid.innerHTML = state.cursos.map((c) => `
-      <article class="card" data-curso-id="${c.id}">
+    grid.innerHTML = state.cursos.map((c) => {
+      const puede = !!c.puede_entrar;
+      return `
+      <article class="card ${puede ? '' : 'is-locked'}" data-curso-id="${c.id}" data-puede="${puede ? 1 : 0}">
         <h3>${esc(c.nombre)}</h3>
         <p>${esc(c.codigo)} · ${esc(c.modalidad)}</p>
         <div class="meta">
           <span class="pill">${Number(c.alumnos)} alumnos</span>
           <span class="pill">${Number(c.sesiones)} sesiones</span>
+          <span class="pill ${puede ? 'pill-ok' : 'pill-lock'}">${puede ? 'Acceso' : 'Sin acceso'}</span>
         </div>
-      </article>
-    `).join('');
+      </article>`;
+    }).join('');
   }
 
   $('cursos-grid').addEventListener('click', (e) => {
     const card = e.target.closest('[data-curso-id]');
     if (!card) return;
+    if (card.dataset.puede !== '1') {
+      toast('No estás asignado a este curso. Pide acceso a Andrea.');
+      return;
+    }
     openCurso(Number(card.dataset.cursoId));
   });
 
@@ -155,11 +213,17 @@
       state.curso = state.cursos.find((c) => Number(c.id) === id) || null;
     }
     if (!state.curso) return;
+    if (!state.curso.puede_entrar && !isAdmin()) {
+      toast('No estás asignado a este curso.');
+      return;
+    }
     $('curso-titulo').textContent = state.curso.nombre;
     $('curso-meta').textContent = `${state.curso.codigo} · ${state.curso.modalidad}`;
-    setTab('nomina');
+    setTab('sesiones');
     show('curso');
-    await Promise.all([loadAlumnos(), loadSesiones()]);
+    const jobs = [loadAlumnos(), loadSesiones()];
+    if (isAdmin()) jobs.push(loadEquipo());
+    await Promise.all(jobs);
   }
 
   document.querySelectorAll('[data-back]').forEach((btn) => {
@@ -180,10 +244,110 @@
     tab.addEventListener('click', () => setTab(tab.dataset.tab));
   });
   function setTab(name) {
+    if (name === 'equipo' && !isAdmin()) name = 'sesiones';
     document.querySelectorAll('.tab').forEach((t) => t.classList.toggle('is-active', t.dataset.tab === name));
     $('tab-nomina').hidden = name !== 'nomina';
     $('tab-sesiones').hidden = name !== 'sesiones';
+    $('tab-equipo').hidden = name !== 'equipo';
   }
+
+  /* ── Admin profesores ── */
+  async function loadProfesores() {
+    if (!isAdmin()) return;
+    state.profesores = await api('profesores');
+    const tb = $('tbody-profes');
+    if (!state.profesores.length) {
+      tb.innerHTML = '<tr><td colspan="6" class="muted">Aún no hay profesores. Crea el primero.</td></tr>';
+      return;
+    }
+    tb.innerHTML = state.profesores.map((p) => `
+      <tr>
+        <td><code>${esc(p.usuario)}</code></td>
+        <td>${esc(p.nombre)}</td>
+        <td>${esc(p.email || '—')}</td>
+        <td>${Number(p.cursos_n)}</td>
+        <td><span class="pill">${Number(p.activo) ? 'Activo' : 'Inactivo'}</span></td>
+        <td>
+          <button type="button" class="btn btn-mini btn-ghost" data-toggle-profe="${p.id}" data-activo="${Number(p.activo) ? 0 : 1}">
+            ${Number(p.activo) ? 'Desactivar' : 'Activar'}
+          </button>
+        </td>
+      </tr>
+    `).join('');
+  }
+
+  $('form-profesor').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    try {
+      await api('profesor_crear', {
+        method: 'POST',
+        body: {
+          usuario: $('profe-usuario').value.trim(),
+          nombre: $('profe-nombre').value.trim(),
+          clave: $('profe-clave').value,
+          email: $('profe-email').value.trim(),
+        },
+      });
+      $('form-profesor').reset();
+      toast('Profesor creado');
+      await loadProfesores();
+    } catch (ex) {
+      toast(ex.message);
+    }
+  });
+
+  $('tbody-profes').addEventListener('click', async (e) => {
+    const btn = e.target.closest('[data-toggle-profe]');
+    if (!btn) return;
+    try {
+      await api('profesor_toggle', {
+        method: 'POST',
+        body: { id: Number(btn.dataset.toggleProfe), activo: Number(btn.dataset.activo) === 1 },
+      });
+      await loadProfesores();
+    } catch (ex) {
+      toast(ex.message);
+    }
+  });
+
+  async function loadEquipo() {
+    if (!isAdmin() || !state.curso) return;
+    state.equipo = await api('curso_profesores', { query: `&curso_id=${state.curso.id}` });
+    const tb = $('tbody-equipo');
+    if (!state.equipo.length) {
+      tb.innerHTML = '<tr><td colspan="4" class="muted">Primero crea profesores en el menú Profesores.</td></tr>';
+      return;
+    }
+    tb.innerHTML = state.equipo.map((p) => `
+      <tr>
+        <td>${esc(p.nombre)}</td>
+        <td><code>${esc(p.usuario)}</code></td>
+        <td><span class="pill ${Number(p.asignado) ? 'pill-ok' : 'pill-lock'}">${Number(p.asignado) ? 'Asignado' : 'Sin acceso'}</span></td>
+        <td>
+          <button type="button" class="btn btn-mini ${Number(p.asignado) ? 'btn-danger' : 'btn-primary'}"
+            data-asig-profe="${p.id}" data-asignado="${Number(p.asignado)}">
+            ${Number(p.asignado) ? 'Quitar' : 'Asignar'}
+          </button>
+        </td>
+      </tr>
+    `).join('');
+  }
+
+  $('tbody-equipo').addEventListener('click', async (e) => {
+    const btn = e.target.closest('[data-asig-profe]');
+    if (!btn || !state.curso) return;
+    const asignado = Number(btn.dataset.asignado) === 1;
+    try {
+      await api(asignado ? 'curso_desasignar' : 'curso_asignar', {
+        method: 'POST',
+        body: { curso_id: Number(state.curso.id), usuario_id: Number(btn.dataset.asigProfe) },
+      });
+      toast(asignado ? 'Acceso quitado' : 'Profesor asignado');
+      await loadEquipo();
+    } catch (ex) {
+      toast(ex.message);
+    }
+  });
 
   /* ── Nómina ── */
   function updateNominaConteo() {
