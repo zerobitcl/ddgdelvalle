@@ -87,7 +87,10 @@
 
         <div id="tab-nomina" class="tab-panel">
           <div class="panel-head compact">
-            <p class="muted">Alumnos del curso. Sin nómina no se puede tomar asistencia.</p>
+            <div>
+              <p class="muted">Alumnos del curso. Sin nómina no se puede tomar asistencia.</p>
+              <p id="nomina-conteo" class="nomina-conteo">0 inscritos</p>
+            </div>
           </div>
           <form id="form-alumno" class="inline-form">
             <input id="alumno-rut" type="text" placeholder="RUT" required>
@@ -95,10 +98,25 @@
             <input id="alumno-email" type="email" placeholder="Email (opcional)">
             <button type="submit" class="btn btn-primary">Agregar</button>
           </form>
+
+          <details class="import-box">
+            <summary>Cargar lista completa (Excel / copia y pega)</summary>
+            <p class="muted">Pega desde Excel o un listado (un alumno por línea). Formatos: <code>Nombre</code>, <code>RUT;Nombre</code> o <code>RUT;Nombre;Email</code> (también con tab).</p>
+            <textarea id="import-texto" rows="6" placeholder="12.345.678-9;Ana Pérez;ana@correo.cl&#10;Juan Soto&#10;..."></textarea>
+            <div class="row-actions">
+              <label class="btn btn-ghost btn-file">
+                Subir CSV / TXT
+                <input id="import-archivo" type="file" accept=".csv,.txt,.tsv,text/csv,text/plain" hidden>
+              </label>
+              <button type="button" id="btn-importar" class="btn btn-primary">Importar a la nómina</button>
+            </div>
+            <p id="import-msg" class="muted" hidden></p>
+          </details>
+
           <div class="table-wrap">
             <table>
               <thead>
-                <tr><th>RUT</th><th>Nombre</th><th>Email</th><th>Estado</th><th></th></tr>
+                <tr><th>#</th><th>RUT</th><th>Nombre</th><th>Email</th><th>Estado</th><th></th></tr>
               </thead>
               <tbody id="tbody-alumnos"></tbody>
             </table>
@@ -111,6 +129,7 @@
             <button type="button" id="btn-nueva-sesion" class="btn btn-primary">+ Nueva sesión</button>
           </div>
           <form id="form-sesion" class="stack form-box" hidden>
+            <input type="hidden" id="sesion-id" value="">
             <div class="row-2">
               <label><span>Fecha</span><input id="sesion-fecha" type="date" required></label>
               <label><span>Hora</span><input id="sesion-hora" type="time" value="09:00" required></label>
@@ -119,7 +138,7 @@
             <label><span>Enlace online (Meet / Zoom / Teams)</span><input id="sesion-enlace" type="url" placeholder="https://meet.google.com/..."></label>
             <label><span>Notas</span><input id="sesion-notas" type="text" placeholder="Opcional"></label>
             <div class="row-actions">
-              <button type="submit" class="btn btn-primary">Abrir sesión y pasar lista</button>
+              <button type="submit" id="btn-guardar-sesion" class="btn btn-primary">Abrir sesión y pasar lista</button>
               <button type="button" id="btn-cancel-sesion" class="btn btn-ghost">Cancelar</button>
             </div>
           </form>

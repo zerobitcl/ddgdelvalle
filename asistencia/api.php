@@ -17,11 +17,14 @@ declare(strict_types=1);
  *   GET  ?action=alumnos&curso_id=
  *   POST ?action=alumno_crear  {curso_id, rut, nombre, email?}
  *   POST ?action=alumno_toggle {id, activo}
+ *   POST ?action=alumno_eliminar {id}
+ *   POST ?action=alumno_importar {curso_id, alumnos:[{rut?, nombre, email?}]}
  *
  * Sesiones:
  *   GET  ?action=sesiones&curso_id=
  *   POST ?action=sesion_crear  {curso_id, fecha, hora_inicio?, titulo?, enlace_online?, notas?}
- *   POST ?action=sesion_actualizar {id, titulo?, enlace_online?, notas?, cerrada?}
+ *   POST ?action=sesion_actualizar {id, fecha?, hora_inicio?, titulo?, enlace_online?, notas?, cerrada?}
+ *   POST ?action=sesion_eliminar {id}
  *   GET  ?action=sesion&id=     → sesión + lista con estados
  *
  * Asistencia:
@@ -318,6 +321,92 @@ try {
             $st->execute([$activo, $id]);
             respond(true, ['id' => $id, 'activo' => $activo]);
 
+        case 'alumno_eliminar':
+            requireAuth();
+            if ($method !== 'POST') {
+                respond(false, null, 'Método no permitido.', 405);
+            }
+            $id = (int) ($b['id'] ?? 0);
+            if ($id < 1) {
+                respond(false, null, 'id requerido.', 422);
+            }
+            $exists = $pdo->prepare('SELECT id FROM asis_alumnos WHERE id = ? LIMIT 1');
+            $exists->execute([$id]);
+            if (!$exists->fetch()) {
+                respond(false, null, 'Alumno no encontrado.', 404);
+            }
+            $pdo->beginTransaction();
+            $pdo->prepare('DELETE FROM asis_registros WHERE alumno_id = ?')->execute([$id]);
+            $pdo->prepare('DELETE FROM asis_alumnos WHERE id = ?')->execute([$id]);
+            $pdo->commit();
+            respond(true, ['id' => $id, 'eliminado' => true]);
+
+        case 'alumno_importar':
+            requireAuth();
+            if ($method !== 'POST') {
+                respond(false, null, 'Método no permitido.', 405);
+            }
+            $cursoId = (int) ($b['curso_id'] ?? 0);
+            $items = isset($b['alumnos']) && is_array($b['alumnos']) ? $b['alumnos'] : [];
+            if ($cursoId < 1 || !$items) {
+                respond(false, null, 'curso_id y alumnos[] son obligatorios.', 422);
+            }
+            $cursoOk = $pdo->prepare('SELECT id FROM asis_cursos WHERE id = ? LIMIT 1');
+            $cursoOk->execute([$cursoId]);
+            if (!$cursoOk->fetch()) {
+                respond(false, null, 'Curso no encontrado.', 404);
+            }
+
+            $ins = $pdo->prepare(
+                'INSERT INTO asis_alumnos (curso_id, rut, nombre, email) VALUES (?,?,?,?)
+                 ON DUPLICATE KEY UPDATE nombre = VALUES(nombre), email = IF(VALUES(email) = \'\', email, VALUES(email)), activo = 1'
+            );
+            $creados = 0;
+            $actualizados = 0;
+            $omitidos = 0;
+            $seq = 1;
+
+            $pdo->beginTransaction();
+            foreach ($items as $it) {
+                if (!is_array($it)) {
+                    $omitidos++;
+                    continue;
+                }
+                $nombre = clean((string) ($it['nombre'] ?? ''));
+                $email = clean((string) ($it['email'] ?? ''));
+                $rutRaw = clean((string) ($it['rut'] ?? ''));
+                if ($nombre === '') {
+                    $omitidos++;
+                    continue;
+                }
+                if ($rutRaw === '') {
+                    $slug = preg_replace('/[^A-Z0-9]+/', '', strtoupper(iconv('UTF-8', 'ASCII//TRANSLIT//IGNORE', $nombre) ?: $nombre)) ?: 'ALUMNO';
+                    $slug = substr($slug, 0, 12);
+                    $rutRaw = 'NR-' . $cursoId . '-' . $slug . '-' . $seq;
+                    $seq++;
+                    $rut = $rutRaw;
+                } else {
+                    $rut = rutNormalizar($rutRaw);
+                }
+
+                $before = $pdo->prepare('SELECT id FROM asis_alumnos WHERE curso_id = ? AND rut = ? LIMIT 1');
+                $before->execute([$cursoId, $rut]);
+                $existia = (bool) $before->fetch();
+                $ins->execute([$cursoId, $rut, $nombre, $email]);
+                if ($existia) {
+                    $actualizados++;
+                } else {
+                    $creados++;
+                }
+            }
+            $pdo->commit();
+            respond(true, [
+                'creados' => $creados,
+                'actualizados' => $actualizados,
+                'omitidos' => $omitidos,
+                'total' => $creados + $actualizados,
+            ]);
+
         case 'sesiones':
             requireAuth();
             $cursoId = (int) ($_GET['curso_id'] ?? 0);
@@ -398,6 +487,25 @@ try {
                     $params[] = clean((string) $b[$k]);
                 }
             }
+            if (array_key_exists('fecha', $b)) {
+                $fecha = clean((string) $b['fecha']);
+                if (!preg_match('/^\d{4}-\d{2}-\d{2}$/', $fecha)) {
+                    respond(false, null, 'fecha inválida (YYYY-MM-DD).', 422);
+                }
+                $fields[] = 'fecha = ?';
+                $params[] = $fecha;
+            }
+            if (array_key_exists('hora_inicio', $b)) {
+                $hora = clean((string) $b['hora_inicio']);
+                if (!preg_match('/^\d{2}:\d{2}/', $hora)) {
+                    respond(false, null, 'hora_inicio inválida (HH:MM).', 422);
+                }
+                if (strlen($hora) === 5) {
+                    $hora .= ':00';
+                }
+                $fields[] = 'hora_inicio = ?';
+                $params[] = $hora;
+            }
             if (array_key_exists('cerrada', $b)) {
                 $fields[] = 'cerrada = ?';
                 $params[] = !empty($b['cerrada']) ? 1 : 0;
@@ -408,6 +516,26 @@ try {
             $params[] = $id;
             $pdo->prepare('UPDATE asis_sesiones SET ' . implode(', ', $fields) . ' WHERE id = ?')->execute($params);
             respond(true, ['id' => $id]);
+
+        case 'sesion_eliminar':
+            requireAuth();
+            if ($method !== 'POST') {
+                respond(false, null, 'Método no permitido.', 405);
+            }
+            $id = (int) ($b['id'] ?? 0);
+            if ($id < 1) {
+                respond(false, null, 'id requerido.', 422);
+            }
+            $exists = $pdo->prepare('SELECT id FROM asis_sesiones WHERE id = ? LIMIT 1');
+            $exists->execute([$id]);
+            if (!$exists->fetch()) {
+                respond(false, null, 'Sesión no encontrada.', 404);
+            }
+            $pdo->beginTransaction();
+            $pdo->prepare('DELETE FROM asis_registros WHERE sesion_id = ?')->execute([$id]);
+            $pdo->prepare('DELETE FROM asis_sesiones WHERE id = ?')->execute([$id]);
+            $pdo->commit();
+            respond(true, ['id' => $id, 'eliminado' => true]);
 
         case 'sesion':
             requireAuth();

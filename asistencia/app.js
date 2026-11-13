@@ -186,26 +186,105 @@
   }
 
   /* ── Nómina ── */
-  async function loadAlumnos() {
-    state.alumnos = await api('alumnos', { query: `&curso_id=${state.curso.id}` });
-    const tb = $('tbody-alumnos');
-    if (!state.alumnos.length) {
-      tb.innerHTML = '<tr><td colspan="5" class="muted">Sin alumnos. Agrega la nómina del curso.</td></tr>';
+  function updateNominaConteo() {
+    const total = state.alumnos.length;
+    const activos = state.alumnos.filter((a) => Number(a.activo)).length;
+    const el = $('nomina-conteo');
+    if (!el) return;
+    if (!total) {
+      el.textContent = '0 inscritos';
       return;
     }
-    tb.innerHTML = state.alumnos.map((a) => `
+    el.textContent = activos === total
+      ? `${total} inscrito${total === 1 ? '' : 's'}`
+      : `${activos} activos · ${total} en nómina`;
+  }
+
+  async function loadAlumnos() {
+    state.alumnos = await api('alumnos', { query: `&curso_id=${state.curso.id}` });
+    updateNominaConteo();
+    const tb = $('tbody-alumnos');
+    if (!state.alumnos.length) {
+      tb.innerHTML = '<tr><td colspan="6" class="muted">Sin alumnos. Agrega la nómina del curso.</td></tr>';
+      return;
+    }
+    tb.innerHTML = state.alumnos.map((a, i) => `
       <tr>
+        <td class="num-col">${i + 1}</td>
         <td>${esc(a.rut)}</td>
         <td>${esc(a.nombre)}</td>
         <td>${esc(a.email || '—')}</td>
         <td><span class="pill">${Number(a.activo) ? 'Activo' : 'Inactivo'}</span></td>
         <td>
-          <button type="button" class="btn btn-mini btn-ghost" data-toggle-alumno="${a.id}" data-activo="${Number(a.activo) ? 0 : 1}">
-            ${Number(a.activo) ? 'Desactivar' : 'Activar'}
-          </button>
+          <div class="cell-actions">
+            <button type="button" class="btn btn-mini btn-ghost" data-toggle-alumno="${a.id}" data-activo="${Number(a.activo) ? 0 : 1}">
+              ${Number(a.activo) ? 'Desactivar' : 'Activar'}
+            </button>
+            <button type="button" class="btn btn-mini btn-danger" data-del-alumno="${a.id}">
+              Eliminar
+            </button>
+          </div>
         </td>
       </tr>
     `).join('');
+  }
+
+  function looksLikeRut(v) {
+    const s = String(v || '').trim();
+    if (!s) return false;
+    return /^[\d.\-]+[0-9kK]$/.test(s.replace(/\s/g, '')) || /^\d{6,9}-?[0-9kK]$/i.test(s);
+  }
+
+  function splitImportLine(line) {
+    const raw = String(line || '').replace(/^\uFEFF/, '').trim();
+    if (!raw) return null;
+    let parts;
+    if (raw.includes('\t')) parts = raw.split('\t');
+    else if (raw.includes(';')) parts = raw.split(';');
+    else if (raw.includes(',')) parts = raw.split(',');
+    else parts = [raw];
+    parts = parts.map((p) => p.trim().replace(/^["']|["']$/g, '')).filter((p, i, arr) => p !== '' || arr.length > 1);
+    if (!parts.length || parts.every((p) => !p)) return null;
+
+    // Saltar encabezados típicos de Excel
+    const head = parts.join(' ').toLowerCase();
+    if (/^(rut|nombre|name|alumno)/.test(head) && parts.length <= 4 && !looksLikeRut(parts[0]) && parts.length > 1) {
+      const joined = parts.map((p) => p.toLowerCase()).join('|');
+      if (/rut|nombre|email|correo/.test(joined)) return null;
+    }
+
+    if (parts.length === 1) {
+      return { rut: '', nombre: parts[0], email: '' };
+    }
+    if (parts.length === 2) {
+      if (looksLikeRut(parts[0])) return { rut: parts[0], nombre: parts[1], email: '' };
+      return { rut: '', nombre: parts[0], email: parts[1] };
+    }
+    if (looksLikeRut(parts[0])) {
+      return { rut: parts[0], nombre: parts[1], email: parts[2] || '' };
+    }
+    return { rut: '', nombre: parts[0], email: parts[1] || '' };
+  }
+
+  function parseImportText(text) {
+    return String(text || '')
+      .split(/\r?\n/)
+      .map(splitImportLine)
+      .filter(Boolean);
+  }
+
+  async function importAlumnos(text) {
+    const alumnos = parseImportText(text);
+    if (!alumnos.length) {
+      throw new Error('No se detectaron alumnos. Revisa el formato.');
+    }
+    const data = await api('alumno_importar', {
+      method: 'POST',
+      body: { curso_id: Number(state.curso.id), alumnos },
+    });
+    await loadAlumnos();
+    await loadCursos();
+    return data;
   }
 
   $('form-alumno').addEventListener('submit', async (e) => {
@@ -229,7 +308,61 @@
     }
   });
 
+  $('btn-importar').addEventListener('click', async () => {
+    const msg = $('import-msg');
+    msg.hidden = true;
+    try {
+      const data = await importAlumnos($('import-texto').value);
+      $('import-texto').value = '';
+      const txt = `Importados: ${data.creados} nuevos, ${data.actualizados} actualizados` +
+        (data.omitidos ? `, ${data.omitidos} omitidos` : '');
+      msg.textContent = txt;
+      msg.hidden = false;
+      toast(txt);
+    } catch (ex) {
+      toast(ex.message);
+    }
+  });
+
+  $('import-archivo').addEventListener('change', async (e) => {
+    const file = e.target.files && e.target.files[0];
+    e.target.value = '';
+    if (!file) return;
+    try {
+      const text = await file.text();
+      $('import-texto').value = text;
+      const data = await importAlumnos(text);
+      const txt = `Desde archivo: ${data.creados} nuevos, ${data.actualizados} actualizados`;
+      const msg = $('import-msg');
+      msg.textContent = txt;
+      msg.hidden = false;
+      toast(txt);
+    } catch (ex) {
+      toast(ex.message);
+    }
+  });
+
   $('tbody-alumnos').addEventListener('click', async (e) => {
+    const del = e.target.closest('[data-del-alumno]');
+    if (del) {
+      const id = Number(del.dataset.delAlumno);
+      const alumno = state.alumnos.find((a) => Number(a.id) === id);
+      const nombre = alumno?.nombre || 'este alumno';
+      if (!confirm(`¿Eliminar a ${nombre} de la nómina? Se borrarán también sus marcas de asistencia.`)) return;
+      try {
+        await api('alumno_eliminar', {
+          method: 'POST',
+          body: { id },
+        });
+        toast('Alumno eliminado');
+        await loadAlumnos();
+        await loadCursos();
+      } catch (ex) {
+        toast(ex.message);
+      }
+      return;
+    }
+
     const btn = e.target.closest('[data-toggle-alumno]');
     if (!btn) return;
     try {
@@ -238,12 +371,40 @@
         body: { id: Number(btn.dataset.toggleAlumno), activo: Number(btn.dataset.activo) === 1 },
       });
       await loadAlumnos();
+      await loadCursos();
     } catch (ex) {
       toast(ex.message);
     }
   });
 
   /* ── Sesiones ── */
+  function resetSesionForm() {
+    $('form-sesion').reset();
+    $('sesion-id').value = '';
+    $('sesion-hora').value = '09:00';
+    $('sesion-titulo').value = 'Clase';
+    $('btn-guardar-sesion').textContent = 'Abrir sesión y pasar lista';
+  }
+
+  function openSesionForm(sesion) {
+    $('form-sesion').hidden = false;
+    if (sesion) {
+      $('sesion-id').value = String(sesion.id);
+      $('sesion-fecha').value = sesion.fecha || '';
+      $('sesion-hora').value = String(sesion.hora_inicio || '09:00').slice(0, 5);
+      $('sesion-titulo').value = sesion.titulo || 'Clase';
+      $('sesion-enlace').value = sesion.enlace_online || '';
+      $('sesion-notas').value = sesion.notas || '';
+      $('btn-guardar-sesion').textContent = 'Guardar cambios';
+      $('sesion-titulo').focus();
+      return;
+    }
+    resetSesionForm();
+    $('sesion-fecha').value = new Date().toISOString().slice(0, 10);
+    $('btn-guardar-sesion').textContent = 'Abrir sesión y pasar lista';
+    $('sesion-fecha').focus();
+  }
+
   async function loadSesiones() {
     state.sesiones = await api('sesiones', { query: `&curso_id=${state.curso.id}` });
     const tb = $('tbody-sesiones');
@@ -263,39 +424,53 @@
           <td>${esc(s.titulo)} <span class="pill">${estado}</span></td>
           <td>${online}</td>
           <td>${Number(s.marcados)} · P:${Number(s.presentes)} A:${Number(s.ausentes)}</td>
-          <td><button type="button" class="btn btn-mini btn-primary" data-open-sesion="${s.id}">Pasar lista</button></td>
+          <td>
+            <div class="cell-actions">
+              <button type="button" class="btn btn-mini btn-primary" data-open-sesion="${s.id}">Pasar lista</button>
+              <button type="button" class="btn btn-mini btn-ghost" data-edit-sesion="${s.id}">Editar</button>
+              <button type="button" class="btn btn-mini btn-danger" data-del-sesion="${s.id}">Eliminar</button>
+            </div>
+          </td>
         </tr>
       `;
     }).join('');
   }
 
-  $('btn-nueva-sesion').addEventListener('click', () => {
-    $('form-sesion').hidden = false;
-    if (!$('sesion-fecha').value) {
-      $('sesion-fecha').value = new Date().toISOString().slice(0, 10);
-    }
-  });
+  $('btn-nueva-sesion').addEventListener('click', () => openSesionForm(null));
   $('btn-cancel-sesion').addEventListener('click', () => {
     $('form-sesion').hidden = true;
+    resetSesionForm();
   });
 
   $('form-sesion').addEventListener('submit', async (e) => {
     e.preventDefault();
+    const editId = Number($('sesion-id').value || 0);
+    const payload = {
+      fecha: $('sesion-fecha').value,
+      hora_inicio: $('sesion-hora').value,
+      titulo: $('sesion-titulo').value.trim() || 'Clase',
+      enlace_online: $('sesion-enlace').value.trim(),
+      notas: $('sesion-notas').value.trim(),
+    };
     try {
+      if (editId > 0) {
+        await api('sesion_actualizar', {
+          method: 'POST',
+          body: { id: editId, ...payload },
+        });
+        $('form-sesion').hidden = true;
+        resetSesionForm();
+        toast('Sesión actualizada');
+        await loadSesiones();
+        await loadCursos();
+        return;
+      }
       const data = await api('sesion_crear', {
         method: 'POST',
-        body: {
-          curso_id: Number(state.curso.id),
-          fecha: $('sesion-fecha').value,
-          hora_inicio: $('sesion-hora').value,
-          titulo: $('sesion-titulo').value.trim() || 'Clase',
-          enlace_online: $('sesion-enlace').value.trim(),
-          notas: $('sesion-notas').value.trim(),
-        },
+        body: { curso_id: Number(state.curso.id), ...payload },
       });
       $('form-sesion').hidden = true;
-      $('form-sesion').reset();
-      $('sesion-hora').value = '09:00';
+      resetSesionForm();
       toast('Sesión creada');
       await openLista(data.id);
     } catch (ex) {
@@ -303,10 +478,32 @@
     }
   });
 
-  $('tbody-sesiones').addEventListener('click', (e) => {
-    const btn = e.target.closest('[data-open-sesion]');
-    if (!btn) return;
-    openLista(Number(btn.dataset.openSesion));
+  $('tbody-sesiones').addEventListener('click', async (e) => {
+    const openBtn = e.target.closest('[data-open-sesion]');
+    if (openBtn) {
+      openLista(Number(openBtn.dataset.openSesion));
+      return;
+    }
+    const editBtn = e.target.closest('[data-edit-sesion]');
+    if (editBtn) {
+      const sesion = state.sesiones.find((s) => Number(s.id) === Number(editBtn.dataset.editSesion));
+      if (sesion) openSesionForm(sesion);
+      return;
+    }
+    const delBtn = e.target.closest('[data-del-sesion]');
+    if (!delBtn) return;
+    if (!confirm('¿Eliminar esta sesión y toda su lista de asistencia?')) return;
+    try {
+      await api('sesion_eliminar', {
+        method: 'POST',
+        body: { id: Number(delBtn.dataset.delSesion) },
+      });
+      toast('Sesión eliminada');
+      await loadSesiones();
+      await loadCursos();
+    } catch (ex) {
+      toast(ex.message);
+    }
   });
 
   /* ── Lista ── */

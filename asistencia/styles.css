@@ -99,8 +99,49 @@ input:focus, select:focus {
 .btn-soft { background: rgba(129,168,150,.2); color: var(--primary); }
 .btn-ghost { background: transparent; border: 1px solid var(--border); color: var(--primary); }
 .btn-warn { background: #fff7e6; color: var(--warn); border: 1px solid rgba(154,103,0,.25); }
+.btn-danger { background: #fdecec; color: var(--danger); border: 1px solid rgba(180,35,24,.22); }
 .btn-mini { padding: 6px 10px; font-size: 12px; }
+.btn-file { display: inline-flex; align-items: center; cursor: pointer; margin: 0; }
 .btn.is-active { outline: 2px solid var(--secondary); }
+.cell-actions { display: flex; flex-wrap: wrap; gap: 6px; justify-content: flex-end; }
+.nomina-conteo {
+  margin: 8px 0 0;
+  font-family: var(--display);
+  font-weight: 700;
+  font-size: 14px;
+  color: var(--primary);
+}
+.import-box {
+  margin-bottom: 14px;
+  padding: 12px 14px;
+  border: 1px dashed rgba(44,71,83,.28);
+  border-radius: 12px;
+  background: rgba(255,255,255,.65);
+}
+.import-box summary {
+  cursor: pointer;
+  font-weight: 700;
+  color: var(--primary);
+  font-family: var(--display);
+  font-size: 13px;
+}
+.import-box[open] summary { margin-bottom: 10px; }
+.import-box textarea {
+  width: 100%;
+  border: 1px solid rgba(15,23,42,.18);
+  border-radius: 10px;
+  padding: 11px 12px;
+  resize: vertical;
+  margin-bottom: 10px;
+  min-height: 120px;
+}
+.import-box code {
+  font-size: 11px;
+  background: rgba(44,71,83,.08);
+  padding: 1px 5px;
+  border-radius: 4px;
+}
+.num-col { width: 42px; color: var(--muted); font-variant-numeric: tabular-nums; }
 
 .app { min-height: 100vh; }
 .topbar {
