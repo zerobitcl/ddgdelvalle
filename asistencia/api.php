@@ -420,7 +420,13 @@ try {
                         (SELECT COUNT(*) FROM asis_registros r WHERE r.sesion_id = s.id AND r.estado != \'sin_marcar\') AS marcados
                  FROM asis_sesiones s
                  WHERE s.curso_id = ?
-                 ORDER BY s.fecha DESC, s.hora_inicio DESC, s.id DESC'
+                 ORDER BY
+                   (s.fecha < CURDATE()) ASC,
+                   CASE WHEN s.fecha >= CURDATE() THEN s.fecha END ASC,
+                   CASE WHEN s.fecha >= CURDATE() THEN s.hora_inicio END ASC,
+                   CASE WHEN s.fecha < CURDATE() THEN s.fecha END DESC,
+                   CASE WHEN s.fecha < CURDATE() THEN s.hora_inicio END DESC,
+                   s.id DESC'
             );
             $st->execute([$cursoId]);
             respond(true, $st->fetchAll());
