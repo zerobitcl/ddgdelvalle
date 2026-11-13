@@ -229,16 +229,28 @@ function ensureSchema(PDO $pdo): void
       KEY `idx_usuario` (`usuario_id`)
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci");
 
+    $seedUser = $pdo->prepare(
+        'INSERT INTO asis_usuarios (usuario, nombre, email, password_hash, rol) VALUES (?,?,?,?,?)'
+    );
+    // Andrea: admin operativa (crea profesores y asigna cursos)
     $andrea = $pdo->query("SELECT id FROM asis_usuarios WHERE usuario = 'andrea' LIMIT 1")->fetch();
     if (!$andrea) {
-        $ins = $pdo->prepare(
-            'INSERT INTO asis_usuarios (usuario, nombre, email, password_hash, rol) VALUES (?,?,?,?,?)'
-        );
-        $ins->execute([
+        $seedUser->execute([
             'andrea',
             'Andrea',
             'andrea@ddgdelvalle.cl',
             password_hash('AndreaDDG2026*', PASSWORD_DEFAULT),
+            'admin',
+        ]);
+    }
+    // Acceso legado que ya se compartió; se mantiene mientras migran a cuentas propias
+    $adminLegacy = $pdo->query("SELECT id FROM asis_usuarios WHERE usuario = 'admin' LIMIT 1")->fetch();
+    if (!$adminLegacy) {
+        $seedUser->execute([
+            'admin',
+            'Acceso compartido',
+            '',
+            password_hash('admin', PASSWORD_DEFAULT),
             'admin',
         ]);
     }
