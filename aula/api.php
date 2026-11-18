@@ -14,6 +14,7 @@ declare(strict_types=1);
  *   GET  ?action=curso&id=
  *   POST ?action=curso_crear         (admin)
  *   POST ?action=curso_enlace        {curso_id, enlace_clase} (admin|profesor del curso)
+ *   POST ?action=curso_video         {curso_id, video_url, video_titulo?} (admin|profesor del curso)
  *
  * Usuarios:
  *   GET  ?action=usuarios&rol=       (admin|profesor: alumnos activos)
@@ -199,9 +200,102 @@ function ensureSchema(PDO $pdo): void
       ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
     ");
 
+    // Migración suave: columnas de video grabado
+    $cols = $pdo->query('SHOW COLUMNS FROM aula_cursos')->fetchAll(PDO::FETCH_COLUMN);
+    if (!in_array('video_url', $cols, true)) {
+        $pdo->exec("ALTER TABLE `aula_cursos` ADD COLUMN `video_url` VARCHAR(1500) NOT NULL DEFAULT '' AFTER `aula_url`");
+    }
+    if (!in_array('video_titulo', $cols, true)) {
+        $pdo->exec("ALTER TABLE `aula_cursos` ADD COLUMN `video_titulo` VARCHAR(255) NOT NULL DEFAULT '' AFTER `video_url`");
+    }
+
     $n = (int) $pdo->query('SELECT COUNT(*) FROM aula_usuarios')->fetchColumn();
     if ($n === 0) {
         seedDemo($pdo);
+    }
+
+    ensureGastronomiaClase1($pdo);
+}
+
+/**
+ * Clase 1 Gastronomía · usuario compartido Curso1 / gastr2026
+ * Idempotente: se puede llamar en cada request sin duplicar.
+ */
+function ensureGastronomiaClase1(PDO $pdo): void
+{
+    static $done = false;
+    if ($done) {
+        return;
+    }
+    $done = true;
+
+    $videoUrl = 'https://1drv.ms/v/c/65474d6bef2f9e52/IQB6p_H10ItbSLtTtFAU1hGMAbkQOaVZSMd4KWeC4fFiuBA?e=ez5sm4';
+    $videoTitulo = 'Clase 1 · Tiradito de zapallo italiano y dolmas';
+
+    $st = $pdo->prepare('SELECT id, video_url FROM aula_cursos WHERE codigo = ? LIMIT 1');
+    $st->execute(['gastronomia-online']);
+    $curso = $st->fetch();
+
+    if (!$curso) {
+        $insC = $pdo->prepare(
+            'INSERT INTO aula_cursos (codigo, nombre, descripcion, modalidad, aula_url, video_url, video_titulo)
+             VALUES (?,?,?,?,?,?,?)'
+        );
+        $insC->execute([
+            'gastronomia-online',
+            'Gastronomía Online',
+            'Clases grabadas del curso de gastronomía DDG Del Valle 2026.',
+            'online',
+            '',
+            $videoUrl,
+            $videoTitulo,
+        ]);
+        $cursoId = (int) $pdo->lastInsertId();
+    } else {
+        $cursoId = (int) $curso['id'];
+        if (($curso['video_url'] ?? '') === '') {
+            $upd = $pdo->prepare('UPDATE aula_cursos SET video_url = ?, video_titulo = ?, descripcion = ? WHERE id = ?');
+            $upd->execute([
+                $videoUrl,
+                $videoTitulo,
+                'Clases grabadas del curso de gastronomía DDG Del Valle 2026.',
+                $cursoId,
+            ]);
+        }
+    }
+
+    $stU = $pdo->prepare('SELECT id, password_hash FROM aula_usuarios WHERE rut = ? LIMIT 1');
+    $stU->execute(['Curso1']);
+    $user = $stU->fetch();
+
+    if (!$user) {
+        $insU = $pdo->prepare(
+            'INSERT INTO aula_usuarios (rut, nombre, email, password_hash, rol) VALUES (?,?,?,?,?)'
+        );
+        $insU->execute([
+            'Curso1',
+            'Alumnos Gastronomía · Curso 1',
+            'curso1@ddgdelvalle.cl',
+            password_hash('gastr2026', PASSWORD_DEFAULT),
+            'alumno',
+        ]);
+        $userId = (int) $pdo->lastInsertId();
+    } else {
+        $userId = (int) $user['id'];
+        if (!password_verify('gastr2026', (string) $user['password_hash'])) {
+            $pdo->prepare('UPDATE aula_usuarios SET password_hash = ?, activo = 1 WHERE id = ?')
+                ->execute([password_hash('gastr2026', PASSWORD_DEFAULT), $userId]);
+        }
+    }
+
+    $ins = estaInscrito($pdo, $cursoId, $userId);
+    if (!$ins) {
+        $adminId = (int) ($pdo->query("SELECT id FROM aula_usuarios WHERE rol = 'admin' ORDER BY id LIMIT 1")->fetchColumn() ?: 0);
+        $insI = $pdo->prepare(
+            'INSERT INTO aula_inscripciones (curso_id, usuario_id, rol_en_curso, inscrito_por) VALUES (?,?,?,?)'
+        );
+        $insI->execute([$cursoId, $userId, 'alumno', $adminId ?: null]);
+        registrarLog($pdo, $cursoId, $userId, 'inscribir', 'alumno', $adminId ?: null, 'Acceso compartido Curso1');
     }
 }
 
@@ -377,6 +471,7 @@ try {
                 'profesor' => '12.222.222-2',
                 'profe' => '12.222.222-2',
                 'alumno' => '15.432.876-5',
+                'curso1' => 'Curso1',
             ];
             $key = mb_strtolower($userIn, 'UTF-8');
             if (isset($alias[$key])) {
@@ -442,11 +537,14 @@ try {
                 'rol_en_curso'  => $esAdmin ? 'admin' : ($ins['rol_en_curso'] ?? null),
                 'puede_acceder' => $puede,
                 'tiene_enlace'  => $c['enlace_clase'] !== '',
+                'tiene_video'   => ($c['video_url'] ?? '') !== '',
             ];
             // Solo inscritos/admin ven el link
             if ($puede) {
                 $item['enlace_clase'] = $c['enlace_clase'];
                 $item['aula_url'] = $c['aula_url'];
+                $item['video_url'] = $c['video_url'] ?? '';
+                $item['video_titulo'] = $c['video_titulo'] ?? '';
             }
             $out[] = $item;
         }
@@ -498,6 +596,8 @@ try {
                 'modalidad'     => $c['modalidad'],
                 'enlace_clase'  => $c['enlace_clase'],
                 'aula_url'      => $c['aula_url'],
+                'video_url'     => $c['video_url'] ?? '',
+                'video_titulo'  => $c['video_titulo'] ?? '',
                 'puede_acceder' => true,
                 'rol_en_curso'  => $esAdmin ? 'admin' : $ins['rol_en_curso'],
                 'puede_gestionar' => puedeGestionarCurso($pdo, $u, $id),
@@ -559,6 +659,26 @@ try {
         $st = $pdo->prepare('UPDATE aula_cursos SET enlace_clase = ? WHERE id = ?');
         $st->execute([$enlace, $cursoId]);
         respond(true, ['curso_id' => $cursoId, 'enlace_clase' => $enlace]);
+    }
+
+    if ($action === 'curso_video' && $_SERVER['REQUEST_METHOD'] === 'POST') {
+        $u = requireAuth();
+        $b = body();
+        $cursoId = (int) ($b['curso_id'] ?? 0);
+        $video   = clean((string) ($b['video_url'] ?? ''));
+        $titulo  = clean((string) ($b['video_titulo'] ?? ''));
+        if ($cursoId < 1) {
+            respond(false, null, 'curso_id inválido.', 400);
+        }
+        if ($video !== '' && !preg_match('#^https?://#i', $video)) {
+            respond(false, null, 'La URL del video debe empezar con https://', 400);
+        }
+        if (!puedeGestionarCurso($pdo, $u, $cursoId)) {
+            respond(false, null, 'No puedes editar el video de este curso.', 403);
+        }
+        $st = $pdo->prepare('UPDATE aula_cursos SET video_url = ?, video_titulo = ? WHERE id = ?');
+        $st->execute([$video, $titulo, $cursoId]);
+        respond(true, ['curso_id' => $cursoId, 'video_url' => $video, 'video_titulo' => $titulo]);
     }
 
     // ── Usuarios ──────────────────────────────────────

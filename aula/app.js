@@ -85,7 +85,8 @@
           <div class="meta">
             <span class="pill">${modalityLabel(c.modalidad)}</span>
             ${rol}
-            ${c.tiene_enlace ? '<span class="pill live">Clase con link</span>' : ''}
+            ${c.tiene_enlace ? '<span class="pill live">Clase en vivo</span>' : ''}
+            ${c.tiene_video ? '<span class="pill live">Video</span>' : ''}
           </div>
           <h3>${escapeHtml(c.nombre)}</h3>
           <p>${escapeHtml(c.descripcion || 'Sin descripción.')}</p>
@@ -139,10 +140,15 @@
     btnMat.classList.toggle('hidden', !hasMat);
     if (hasMat) btnMat.href = curso.aula_url;
 
+    renderVideo(curso);
+
     const gestiona = !!curso.puede_gestionar;
     $('#form-enlace').classList.toggle('hidden', !gestiona);
+    $('#form-video').classList.toggle('hidden', !gestiona);
     $('#box-gestion').classList.toggle('hidden', !gestiona);
     $('#input-enlace').value = curso.enlace_clase || '';
+    $('#input-video').value = curso.video_url || '';
+    $('#input-video-titulo').value = curso.video_titulo || '';
     $('#box-asignar-profe').classList.toggle('hidden', state.user.rol !== 'admin');
 
     if (gestiona) {
@@ -150,6 +156,40 @@
       renderInscritos(inscritos || []);
       if (state.user.rol === 'admin') loadProfesDisponibles(inscritos || []);
     }
+  }
+
+  function toEmbedUrl(url) {
+    if (!url) return '';
+    // OneDrive short links: prefer embed-friendly photos viewer when possible
+    try {
+      const u = new URL(url);
+      if (u.hostname.includes('1drv.ms') || u.hostname.includes('onedrive.live.com') || u.hostname.includes('sharepoint.com')) {
+        if (!u.searchParams.has('embed')) u.searchParams.set('embed', '1');
+        return u.toString();
+      }
+    } catch (_) {}
+    return url;
+  }
+
+  function renderVideo(curso) {
+    const box = $('#box-video');
+    const hasVideo = !!(curso.video_url);
+    box.classList.toggle('hidden', !hasVideo);
+    if (!hasVideo) {
+      $('#video-frame').removeAttribute('src');
+      return;
+    }
+    const title = curso.video_titulo || 'Clase grabada';
+    $('#video-titulo').textContent = title;
+    const embed = toEmbedUrl(curso.video_url);
+    const frame = $('#video-frame');
+    const fallback = $('#video-fallback');
+    const btn = $('#btn-ver-video');
+    btn.href = curso.video_url;
+    // OneDrive suele bloquear iframe: mostramos fallback siempre como alternativa
+    fallback.classList.remove('hidden');
+    frame.src = embed;
+    frame.addEventListener('error', () => fallback.classList.remove('hidden'), { once: true });
   }
 
   function renderInscritos(rows) {
@@ -345,6 +385,41 @@
     } catch (e) {
       msg.textContent = e.message;
       msg.classList.add('err');
+    }
+  });
+
+  $('#form-video').addEventListener('submit', async (ev) => {
+    ev.preventDefault();
+    const msg = $('#video-msg');
+    msg.textContent = '';
+    msg.className = 'status-msg';
+    try {
+      await api('curso_video', {
+        method: 'POST',
+        body: {
+          curso_id: state.cursoActual.curso.id,
+          video_url: $('#input-video').value.trim(),
+          video_titulo: $('#input-video-titulo').value.trim(),
+        },
+      });
+      msg.textContent = 'Video guardado.';
+      msg.classList.add('ok');
+      await openCurso(state.cursoActual.curso.id);
+    } catch (e) {
+      msg.textContent = e.message;
+      msg.classList.add('err');
+    }
+  });
+
+  $('#btn-limpiar-video').addEventListener('click', async () => {
+    try {
+      await api('curso_video', {
+        method: 'POST',
+        body: { curso_id: state.cursoActual.curso.id, video_url: '', video_titulo: '' },
+      });
+      await openCurso(state.cursoActual.curso.id);
+    } catch (e) {
+      alert(e.message);
     }
   });
 

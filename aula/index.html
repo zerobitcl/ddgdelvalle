@@ -21,7 +21,7 @@
       <form id="form-login" class="stack" autocomplete="on">
         <label>
           <span>Usuario o RUT</span>
-          <input id="login-user" name="usuario" type="text" required autocomplete="username" placeholder="alumno · profesor · admin">
+          <input id="login-user" name="usuario" type="text" required autocomplete="username" placeholder="Curso1 · alumno · admin">
         </label>
         <label>
           <span>Contraseña</span>
@@ -31,7 +31,7 @@
         <button type="submit" class="btn btn-primary">Entrar al aula</button>
       </form>
       <p class="hint">
-        Demo: <strong>alumno</strong> / Alumno2026* · <strong>profesor</strong> / Profe2026* · <strong>admin</strong> / Admin2026*
+        Acceso del curso de Gastronomía: usa el usuario y clave entregados por la OTEC.
       </p>
     </div>
   </div>
@@ -96,6 +96,25 @@
           </div>
         </div>
 
+        <div id="box-video" class="callout video-box hidden">
+          <strong id="video-titulo">Clase grabada</strong>
+          <p class="muted" style="margin-top:6px">Reproducción protegida: sin botón de descarga en el aula. No compartas el enlace fuera del curso.</p>
+          <div class="video-shell" id="video-shell">
+            <iframe
+              id="video-frame"
+              title="Clase grabada"
+              allow="autoplay; fullscreen; encrypted-media; picture-in-picture"
+              allowfullscreen
+              referrerpolicy="strict-origin-when-cross-origin"
+              sandbox="allow-scripts allow-same-origin allow-presentation allow-popups"
+            ></iframe>
+            <div class="video-fallback hidden" id="video-fallback">
+              <p class="muted">Si el reproductor no carga aquí, abre la clase en el visor seguro.</p>
+              <a id="btn-ver-video" class="btn btn-primary" href="#" target="_blank" rel="noopener noreferrer">Ver clase grabada</a>
+            </div>
+          </div>
+        </div>
+
         <div id="box-clase" class="callout agua">
           <strong>Clase en vivo (Meet / Zoom)</strong>
           <p id="enlace-estado" class="muted">Sin enlace publicado todavía.</p>
@@ -112,6 +131,19 @@
               <button type="button" id="btn-limpiar-enlace" class="btn btn-ghost">Quitar enlace</button>
             </div>
             <p id="enlace-msg" class="status-msg"></p>
+          </form>
+          <form id="form-video" class="inline-form hidden" style="margin-top:12px">
+            <label>URL video clase grabada (OneDrive / Stream)
+              <input id="input-video" class="field" type="url" placeholder="https://1drv.ms/v/...">
+            </label>
+            <label>Título de la clase
+              <input id="input-video-titulo" class="field" type="text" placeholder="Clase 1 · ...">
+            </label>
+            <div class="actions">
+              <button type="submit" class="btn btn-primary">Guardar video</button>
+              <button type="button" id="btn-limpiar-video" class="btn btn-ghost">Quitar video</button>
+            </div>
+            <p id="video-msg" class="status-msg"></p>
           </form>
         </div>
 

@@ -283,7 +283,39 @@ tr:last-child td { border-bottom: 0; }
   border-color: #a5f3fc;
   background: #ecfeff;
 }
+.callout.video-box {
+  border-color: #d6d3d1;
+  background: linear-gradient(180deg, #1c1917 0%, #292524 100%);
+  color: #fafaf9;
+}
+.callout.video-box .muted { color: #a8a29e; }
 .callout strong { display: block; margin-bottom: 4px; }
+
+.video-shell {
+  margin-top: 12px;
+  position: relative;
+  border-radius: 14px;
+  overflow: hidden;
+  background: #0c0a09;
+  border: 1px solid #44403c;
+  aspect-ratio: 16 / 9;
+}
+.video-shell iframe {
+  width: 100%;
+  height: 100%;
+  border: 0;
+  display: block;
+  background: #000;
+}
+.video-fallback {
+  position: absolute;
+  inset: auto 0 0 0;
+  padding: 14px 16px;
+  background: linear-gradient(180deg, transparent, rgba(12, 10, 9, 0.92));
+  display: grid;
+  gap: 10px;
+  justify-items: start;
+}
 
 .empty {
   text-align: center;

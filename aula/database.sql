@@ -36,6 +36,8 @@ CREATE TABLE IF NOT EXISTS `aula_cursos` (
   `modalidad`     ENUM('presencial','online','mixta') NOT NULL DEFAULT 'online',
   `enlace_clase`  VARCHAR(1000) NOT NULL DEFAULT '' COMMENT 'Meet / Zoom / Teams vigente',
   `aula_url`      VARCHAR(500)  NOT NULL DEFAULT '' COMMENT 'URL de materiales (ej. modulo-alumno.php)',
+  `video_url`     VARCHAR(1500) NOT NULL DEFAULT '' COMMENT 'URL clase grabada (OneDrive / Stream)',
+  `video_titulo`  VARCHAR(255)  NOT NULL DEFAULT '' COMMENT 'Título visible de la clase grabada',
   `activo`        TINYINT(1)   NOT NULL DEFAULT 1,
   `created_at`    TIMESTAMP    NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `updated_at`    TIMESTAMP    NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
