@@ -9,7 +9,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,560;9..144,700&family=Manrope:wght@400;600;700;800&display=swap" rel="stylesheet">
   <link rel="icon" href="https://ddgdelvalle.cl/wp-content/uploads/2026/03/icono-ddg.png">
-  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="styles.css?v=20261118b">
 </head>
 <body>
   <!-- LOGIN -->
@@ -98,20 +98,17 @@
 
         <div id="box-video" class="callout video-box hidden">
           <strong id="video-titulo">Clase grabada</strong>
-          <p class="muted" style="margin-top:6px">Reproducción protegida: sin botón de descarga en el aula. No compartas el enlace fuera del curso.</p>
+          <p class="muted" style="margin-top:6px">Se reproduce dentro del aula (sin OneDrive ni cuentas Microsoft). Descarga deshabilitada en el reproductor.</p>
           <div class="video-shell" id="video-shell">
-            <iframe
-              id="video-frame"
-              title="Clase grabada"
-              allow="autoplay; fullscreen; encrypted-media; picture-in-picture"
-              allowfullscreen
-              referrerpolicy="strict-origin-when-cross-origin"
-              sandbox="allow-scripts allow-same-origin allow-presentation allow-popups"
-            ></iframe>
-            <div class="video-fallback hidden" id="video-fallback">
-              <p class="muted">Si el reproductor no carga aquí, abre la clase en el visor seguro.</p>
-              <a id="btn-ver-video" class="btn btn-primary" href="#" target="_blank" rel="noopener noreferrer">Ver clase grabada</a>
-            </div>
+            <video
+              id="video-player"
+              controls
+              controlsList="nodownload noplaybackrate"
+              disablePictureInPicture
+              playsinline
+              preload="metadata"
+            ></video>
+            <p id="video-error" class="video-error hidden">No se pudo cargar el video. Recarga o vuelve a entrar al aula.</p>
           </div>
         </div>
 
@@ -263,6 +260,6 @@
     </main>
   </div>
 
-  <script src="app.js" defer></script>
+  <script src="app.js?v=20261118b" defer></script>
 </body>
 </html>

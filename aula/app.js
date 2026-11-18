@@ -158,38 +158,39 @@
     }
   }
 
-  function toEmbedUrl(url) {
+  function resolveVideoSrc(url) {
     if (!url) return '';
-    // OneDrive short links: prefer embed-friendly photos viewer when possible
-    try {
-      const u = new URL(url);
-      if (u.hostname.includes('1drv.ms') || u.hostname.includes('onedrive.live.com') || u.hostname.includes('sharepoint.com')) {
-        if (!u.searchParams.has('embed')) u.searchParams.set('embed', '1');
-        return u.toString();
-      }
-    } catch (_) {}
+    // Archivo local del aula → stream autenticado
+    if (url.startsWith('stream.php') || /^[\w.-]+\.mp4$/i.test(url)) {
+      const file = url.startsWith('stream.php')
+        ? (new URL(url, location.href)).searchParams.get('f')
+        : url;
+      return `stream.php?f=${encodeURIComponent(file || url)}`;
+    }
     return url;
   }
 
   function renderVideo(curso) {
     const box = $('#box-video');
+    const player = $('#video-player');
+    const err = $('#video-error');
     const hasVideo = !!(curso.video_url);
     box.classList.toggle('hidden', !hasVideo);
+    err.classList.add('hidden');
     if (!hasVideo) {
-      $('#video-frame').removeAttribute('src');
+      player.removeAttribute('src');
+      player.load();
       return;
     }
-    const title = curso.video_titulo || 'Clase grabada';
-    $('#video-titulo').textContent = title;
-    const embed = toEmbedUrl(curso.video_url);
-    const frame = $('#video-frame');
-    const fallback = $('#video-fallback');
-    const btn = $('#btn-ver-video');
-    btn.href = curso.video_url;
-    // OneDrive suele bloquear iframe: mostramos fallback siempre como alternativa
-    fallback.classList.remove('hidden');
-    frame.src = embed;
-    frame.addEventListener('error', () => fallback.classList.remove('hidden'), { once: true });
+    $('#video-titulo').textContent = curso.video_titulo || 'Clase grabada';
+    const src = resolveVideoSrc(curso.video_url);
+    if (!player || !src) return;
+    player.oncontextmenu = (e) => e.preventDefault();
+    player.onerror = () => err.classList.remove('hidden');
+    // Siempre reasignar: evita quedarse sin src por caché/navegación interna
+    player.removeAttribute('src');
+    player.src = src;
+    player.load();
   }
 
   function renderInscritos(rows) {

@@ -229,7 +229,8 @@ function ensureGastronomiaClase1(PDO $pdo): void
     }
     $done = true;
 
-    $videoUrl = 'https://1drv.ms/v/c/65474d6bef2f9e52/IQB6p_H10ItbSLtTtFAU1hGMAbkQOaVZSMd4KWeC4fFiuBA?e=ez5sm4';
+    // Video alojado en el aula (sin OneDrive / sin login Microsoft)
+    $videoUrl = 'stream.php?f=clase1-gastronomia.mp4';
     $videoTitulo = 'Clase 1 · Tiradito de zapallo italiano y dolmas';
 
     $st = $pdo->prepare('SELECT id, video_url FROM aula_cursos WHERE codigo = ? LIMIT 1');
@@ -253,7 +254,9 @@ function ensureGastronomiaClase1(PDO $pdo): void
         $cursoId = (int) $pdo->lastInsertId();
     } else {
         $cursoId = (int) $curso['id'];
-        if (($curso['video_url'] ?? '') === '') {
+        $current = (string) ($curso['video_url'] ?? '');
+        // Migrar OneDrive / vacío → stream local del aula
+        if ($current === '' || str_contains($current, '1drv.ms') || str_contains($current, 'onedrive')) {
             $upd = $pdo->prepare('UPDATE aula_cursos SET video_url = ?, video_titulo = ?, descripcion = ? WHERE id = ?');
             $upd->execute([
                 $videoUrl,

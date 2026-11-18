@@ -7,6 +7,13 @@ registro/config.php
 config-api2pdf.php
 .private/
 
+# Videos del aula (demasiado pesados para git; viven en el hosting)
+aula/videos/*.mp4
+aula/videos/*.webm
+aula/videos/*.ogg
+!aula/videos/.htaccess
+!aula/videos/index.html
+
 # PDFs generados en runtime
 registro/pdfs/*.pdf
 !registro/pdfs/.gitkeep
