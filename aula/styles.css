@@ -47,6 +47,18 @@ a { color: inherit; }
   padding: 28px;
   box-shadow: var(--shadow);
 }
+.brand-logo {
+  display: block;
+  width: 40px;
+  height: 40px;
+  object-fit: contain;
+  flex-shrink: 0;
+}
+.brand-logo-login {
+  width: 72px;
+  height: 72px;
+  margin: 0 0 14px;
+}
 .login-card h1 {
   font-family: var(--display);
   font-weight: 600;
@@ -95,6 +107,12 @@ a { color: inherit; }
   backdrop-filter: blur(10px);
   border-bottom: 1px solid var(--line);
 }
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.brand-text { display: grid; gap: 1px; }
 .brand strong { display: block; font-size: 0.95rem; }
 .brand span { color: var(--muted); font-size: 0.8rem; }
 .topbar-actions { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
@@ -288,7 +306,6 @@ tr:last-child td { border-bottom: 0; }
   background: linear-gradient(180deg, #1c1917 0%, #292524 100%);
   color: #fafaf9;
 }
-.callout.video-box .muted { color: #a8a29e; }
 .callout strong { display: block; margin-bottom: 4px; }
 
 .video-shell {
