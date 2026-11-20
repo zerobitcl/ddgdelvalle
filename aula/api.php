@@ -209,6 +209,119 @@ function ensureSchema(PDO $pdo): void
         $pdo->exec("ALTER TABLE `aula_cursos` ADD COLUMN `video_titulo` VARCHAR(255) NOT NULL DEFAULT '' AFTER `video_url`");
     }
 
+    $cols = $pdo->query('SHOW COLUMNS FROM aula_cursos')->fetchAll(PDO::FETCH_COLUMN);
+    $extra = [
+        'portada'      => "VARCHAR(500) NOT NULL DEFAULT ''",
+        'relator'      => "VARCHAR(255) NOT NULL DEFAULT ''",
+        'programa_pdf' => "VARCHAR(1500) NOT NULL DEFAULT ''",
+        'bajada'       => "VARCHAR(500) NOT NULL DEFAULT ''",
+        'sincrono'     => "TINYINT(1) NOT NULL DEFAULT 0",
+        'valoracion'   => "TINYINT UNSIGNED NOT NULL DEFAULT 0",
+    ];
+    foreach ($extra as $col => $def) {
+        if (!in_array($col, $cols, true)) {
+            $pdo->exec("ALTER TABLE `aula_cursos` ADD COLUMN `$col` $def");
+        }
+    }
+
+    $pdo->exec("
+      CREATE TABLE IF NOT EXISTS `aula_modulos` (
+        `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+        `curso_id` INT UNSIGNED NOT NULL,
+        `titulo` VARCHAR(255) NOT NULL,
+        `tipo` ENUM('video','archivo','enlace') NOT NULL DEFAULT 'video',
+        `url` VARCHAR(1500) NOT NULL DEFAULT '',
+        `orden` INT NOT NULL DEFAULT 0,
+        `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+        PRIMARY KEY (`id`),
+        KEY `idx_mod_curso` (`curso_id`, `orden`),
+        CONSTRAINT `fk_aula_mod_curso` FOREIGN KEY (`curso_id`) REFERENCES `aula_cursos` (`id`) ON DELETE CASCADE
+      ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
+    ");
+
+    $pdo->exec("
+      CREATE TABLE IF NOT EXISTS `aula_progreso` (
+        `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+        `usuario_id` INT UNSIGNED NOT NULL,
+        `modulo_id` INT UNSIGNED NOT NULL,
+        `completado_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+        PRIMARY KEY (`id`),
+        UNIQUE KEY `uq_prog` (`usuario_id`, `modulo_id`),
+        CONSTRAINT `fk_aula_prog_user` FOREIGN KEY (`usuario_id`) REFERENCES `aula_usuarios` (`id`) ON DELETE CASCADE,
+        CONSTRAINT `fk_aula_prog_mod` FOREIGN KEY (`modulo_id`) REFERENCES `aula_modulos` (`id`) ON DELETE CASCADE
+      ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
+    ");
+
+    $pdo->exec("
+      CREATE TABLE IF NOT EXISTS `aula_foro` (
+        `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+        `curso_id` INT UNSIGNED NOT NULL,
+        `usuario_id` INT UNSIGNED NOT NULL,
+        `mensaje` VARCHAR(1000) NOT NULL,
+        `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+        PRIMARY KEY (`id`),
+        KEY `idx_foro_curso` (`curso_id`, `created_at`),
+        CONSTRAINT `fk_aula_foro_curso` FOREIGN KEY (`curso_id`) REFERENCES `aula_cursos` (`id`) ON DELETE CASCADE,
+        CONSTRAINT `fk_aula_foro_user` FOREIGN KEY (`usuario_id`) REFERENCES `aula_usuarios` (`id`) ON DELETE CASCADE
+      ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
+    ");
+
+    $pdo->exec("
+      CREATE TABLE IF NOT EXISTS `aula_suscripciones` (
+        `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+        `usuario_id` INT UNSIGNED NOT NULL,
+        `tipo` ENUM('mensual','diario') NOT NULL DEFAULT 'mensual',
+        `meses` INT UNSIGNED NOT NULL DEFAULT 0,
+        `detalle` VARCHAR(500) NOT NULL DEFAULT '',
+        `vigente_desde` DATE NULL DEFAULT NULL,
+        `vigente_hasta` DATE NULL DEFAULT NULL,
+        `updated_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+        PRIMARY KEY (`id`),
+        UNIQUE KEY `uq_sus_user` (`usuario_id`),
+        CONSTRAINT `fk_aula_sus_user` FOREIGN KEY (`usuario_id`) REFERENCES `aula_usuarios` (`id`) ON DELETE CASCADE
+      ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
+    ");
+
+    $pdo->exec("
+      CREATE TABLE IF NOT EXISTS `aula_certificados` (
+        `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+        `usuario_id` INT UNSIGNED NOT NULL,
+        `curso_id` INT UNSIGNED NOT NULL,
+        `emitido_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+        PRIMARY KEY (`id`),
+        UNIQUE KEY `uq_cert` (`usuario_id`, `curso_id`),
+        CONSTRAINT `fk_aula_cert_user` FOREIGN KEY (`usuario_id`) REFERENCES `aula_usuarios` (`id`) ON DELETE CASCADE,
+        CONSTRAINT `fk_aula_cert_curso` FOREIGN KEY (`curso_id`) REFERENCES `aula_cursos` (`id`) ON DELETE CASCADE
+      ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
+    ");
+
+    $pdo->exec("
+      CREATE TABLE IF NOT EXISTS `aula_solicitudes` (
+        `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+        `usuario_id` INT UNSIGNED NOT NULL,
+        `mensaje` VARCHAR(1000) NOT NULL,
+        `estado` ENUM('pendiente','revisada') NOT NULL DEFAULT 'pendiente',
+        `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+        PRIMARY KEY (`id`),
+        KEY `idx_sol_user` (`usuario_id`, `created_at`),
+        CONSTRAINT `fk_aula_sol_user` FOREIGN KEY (`usuario_id`) REFERENCES `aula_usuarios` (`id`) ON DELETE CASCADE
+      ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
+    ");
+
+    $pdo->exec("
+      CREATE TABLE IF NOT EXISTS `aula_accesos` (
+        `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+        `usuario_id` INT UNSIGNED NOT NULL,
+        `curso_id` INT UNSIGNED NOT NULL,
+        `ultimo_acceso` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+        `veces` INT UNSIGNED NOT NULL DEFAULT 1,
+        PRIMARY KEY (`id`),
+        UNIQUE KEY `uq_acceso` (`usuario_id`, `curso_id`),
+        CONSTRAINT `fk_aula_acc_user` FOREIGN KEY (`usuario_id`) REFERENCES `aula_usuarios` (`id`) ON DELETE CASCADE,
+        CONSTRAINT `fk_aula_acc_curso` FOREIGN KEY (`curso_id`) REFERENCES `aula_cursos` (`id`) ON DELETE CASCADE
+      ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
+    ");
+
     $n = (int) $pdo->query('SELECT COUNT(*) FROM aula_usuarios')->fetchColumn();
     if ($n === 0) {
         seedDemo($pdo);
@@ -423,6 +536,99 @@ function estaInscrito(PDO $pdo, int $cursoId, int $usuarioId): ?array
     return $row ?: null;
 }
 
+function fechaOk(?string $v): ?string
+{
+    $v = trim((string) $v);
+    if ($v === '') {
+        return null;
+    }
+    $d = DateTime::createFromFormat('Y-m-d', $v);
+    return ($d && $d->format('Y-m-d') === $v) ? $v : null;
+}
+
+function urlMaterialOk(string $url): bool
+{
+    if ($url === '') {
+        return true;
+    }
+    if (preg_match('#^https?://#i', $url)) {
+        return true;
+    }
+    return (bool) preg_match('#^(stream\.php\?|materiales/)[\w./?=&%-]+$#', $url);
+}
+
+function esSincrono(array $c): bool
+{
+    return (int) ($c['sincrono'] ?? 0) === 1 || trim((string) ($c['enlace_clase'] ?? '')) !== '';
+}
+
+function fichaCurso(array $c): array
+{
+    return [
+        'portada'      => $c['portada'] ?? '',
+        'relator'      => $c['relator'] ?? '',
+        'programa_pdf' => $c['programa_pdf'] ?? '',
+        'bajada'       => $c['bajada'] ?? '',
+        'valoracion'   => (int) ($c['valoracion'] ?? 0),
+        'es_sincrono'  => esSincrono($c),
+    ];
+}
+
+function registrarAcceso(PDO $pdo, int $cursoId, int $usuarioId): void
+{
+    $st = $pdo->prepare(
+        'INSERT INTO aula_accesos (usuario_id, curso_id, ultimo_acceso, veces)
+         VALUES (?,?,NOW(),1)
+         ON DUPLICATE KEY UPDATE ultimo_acceso = NOW(), veces = veces + 1'
+    );
+    $st->execute([$usuarioId, $cursoId]);
+}
+
+function modulosDeCurso(PDO $pdo, int $cursoId, int $usuarioId): array
+{
+    $st = $pdo->prepare(
+        'SELECT m.id, m.titulo, m.tipo, m.url, m.orden,
+                p.completado_at
+         FROM aula_modulos m
+         LEFT JOIN aula_progreso p ON p.modulo_id = m.id AND p.usuario_id = ?
+         WHERE m.curso_id = ?
+         ORDER BY m.orden, m.id'
+    );
+    $st->execute([$usuarioId, $cursoId]);
+    return array_map(static function ($r) {
+        return [
+            'id'          => (int) $r['id'],
+            'titulo'      => $r['titulo'],
+            'tipo'        => $r['tipo'],
+            'url'         => $r['url'],
+            'orden'       => (int) $r['orden'],
+            'completado'  => $r['completado_at'] !== null,
+        ];
+    }, $st->fetchAll());
+}
+
+function cursoCompleto(PDO $pdo, int $cursoId, int $usuarioId): bool
+{
+    $tiene = $pdo->prepare('SELECT 1 FROM aula_certificados WHERE curso_id = ? AND usuario_id = ? LIMIT 1');
+    $tiene->execute([$cursoId, $usuarioId]);
+    if ($tiene->fetchColumn()) {
+        return true;
+    }
+    $st = $pdo->prepare('SELECT COUNT(*) FROM aula_modulos WHERE curso_id = ?');
+    $st->execute([$cursoId]);
+    $total = (int) $st->fetchColumn();
+    if ($total < 1) {
+        return false;
+    }
+    $he = $pdo->prepare(
+        'SELECT COUNT(*) FROM aula_progreso p
+         JOIN aula_modulos m ON m.id = p.modulo_id
+         WHERE m.curso_id = ? AND p.usuario_id = ?'
+    );
+    $he->execute([$cursoId, $usuarioId]);
+    return (int) $he->fetchColumn() >= $total;
+}
+
 function registrarLog(
     PDO $pdo,
     int $cursoId,
@@ -514,20 +720,29 @@ try {
     // ── Cursos ────────────────────────────────────────
     if ($action === 'cursos') {
         $u = requireAuth();
-        $rows = $pdo->query(
+        $uid = (int) $u['id'];
+        $stCursos = $pdo->prepare(
             'SELECT c.*,
                     (SELECT COUNT(*) FROM aula_inscripciones i WHERE i.curso_id = c.id AND i.rol_en_curso = \'alumno\') AS alumnos_n,
-                    (SELECT COUNT(*) FROM aula_inscripciones i WHERE i.curso_id = c.id AND i.rol_en_curso = \'profesor\') AS profesores_n
+                    (SELECT COUNT(*) FROM aula_inscripciones i WHERE i.curso_id = c.id AND i.rol_en_curso = \'profesor\') AS profesores_n,
+                    (SELECT COUNT(*) FROM aula_modulos m WHERE m.curso_id = c.id) AS modulos_n,
+                    (SELECT COUNT(*) FROM aula_progreso p
+                       JOIN aula_modulos m ON m.id = p.modulo_id
+                      WHERE m.curso_id = c.id AND p.usuario_id = ?) AS hechos
              FROM aula_cursos c
              WHERE c.activo = 1
              ORDER BY c.nombre'
-        )->fetchAll();
+        );
+        $stCursos->execute([$uid]);
+        $rows = $stCursos->fetchAll();
 
         $out = [];
         foreach ($rows as $c) {
-            $ins = estaInscrito($pdo, (int) $c['id'], (int) $u['id']);
+            $ins = estaInscrito($pdo, (int) $c['id'], $uid);
             $esAdmin = ($u['rol'] === 'admin');
             $puede = $esAdmin || (bool) $ins;
+            $total = (int) $c['modulos_n'];
+            $hechos = (int) $c['hechos'];
             $item = [
                 'id'            => (int) $c['id'],
                 'codigo'        => $c['codigo'],
@@ -541,13 +756,17 @@ try {
                 'puede_acceder' => $puede,
                 'tiene_enlace'  => $c['enlace_clase'] !== '',
                 'tiene_video'   => ($c['video_url'] ?? '') !== '',
-            ];
-            // Solo inscritos/admin ven el link
+                'modulos_n'     => $total,
+                'completados'   => $hechos,
+                'avance'        => $total > 0 ? (int) round($hechos * 100 / $total) : 0,
+            ] + fichaCurso($c);
             if ($puede) {
                 $item['enlace_clase'] = $c['enlace_clase'];
                 $item['aula_url'] = $c['aula_url'];
                 $item['video_url'] = $c['video_url'] ?? '';
                 $item['video_titulo'] = $c['video_titulo'] ?? '';
+            } else {
+                unset($item['programa_pdf']);
             }
             $out[] = $item;
         }
@@ -589,6 +808,9 @@ try {
              ORDER BY i.rol_en_curso DESC, u.nombre'
         );
         $inscritos->execute([$id]);
+        registrarAcceso($pdo, $id, (int) $u['id']);
+        $modulos = modulosDeCurso($pdo, $id, (int) $u['id']);
+        $hechos = count(array_filter($modulos, static fn ($m) => $m['completado']));
 
         respond(true, [
             'curso' => [
@@ -604,7 +826,12 @@ try {
                 'puede_acceder' => true,
                 'rol_en_curso'  => $esAdmin ? 'admin' : $ins['rol_en_curso'],
                 'puede_gestionar' => puedeGestionarCurso($pdo, $u, $id),
-            ],
+                'modulos_n'     => count($modulos),
+                'completados'   => $hechos,
+                'avance'        => count($modulos) > 0 ? (int) round($hechos * 100 / count($modulos)) : 0,
+                'certificado'   => cursoCompleto($pdo, $id, (int) $u['id']),
+            ] + fichaCurso($c),
+            'modulos' => $modulos,
             'inscritos' => array_map(static function ($r) {
                 return [
                     'inscripcion_id' => (int) $r['id'],
@@ -673,8 +900,8 @@ try {
         if ($cursoId < 1) {
             respond(false, null, 'curso_id inválido.', 400);
         }
-        if ($video !== '' && !preg_match('#^https?://#i', $video)) {
-            respond(false, null, 'La URL del video debe empezar con https://', 400);
+        if ($video !== '' && !urlMaterialOk($video)) {
+            respond(false, null, 'La URL del video debe ser https:// o un archivo del aula.', 400);
         }
         if (!puedeGestionarCurso($pdo, $u, $cursoId)) {
             respond(false, null, 'No puedes editar el video de este curso.', 403);
@@ -949,6 +1176,228 @@ try {
         );
         $st->execute([$cursoId]);
         respond(true, ['alumnos' => $st->fetchAll()]);
+    }
+
+    if ($action === 'curso_ficha' && $_SERVER['REQUEST_METHOD'] === 'POST') {
+        $u = requireAuth();
+        $b = body();
+        $cursoId = (int) ($b['curso_id'] ?? 0);
+        if ($cursoId < 1 || !puedeGestionarCurso($pdo, $u, $cursoId)) {
+            respond(false, null, 'No puedes editar este curso.', 403);
+        }
+        $portada = clean((string) ($b['portada'] ?? ''));
+        $relator = clean((string) ($b['relator'] ?? ''));
+        $pdf     = clean((string) ($b['programa_pdf'] ?? ''));
+        $bajada  = clean((string) ($b['bajada'] ?? ''));
+        $desc    = clean((string) ($b['descripcion'] ?? ''));
+        $sinc    = !empty($b['sincrono']) ? 1 : 0;
+        $val     = max(0, min(5, (int) ($b['valoracion'] ?? 0)));
+        if (!urlMaterialOk($portada) || !urlMaterialOk($pdf)) {
+            respond(false, null, 'La portada y el programa deben ser un enlace https o un archivo del aula.', 400);
+        }
+        $st = $pdo->prepare(
+            'UPDATE aula_cursos
+             SET portada = ?, relator = ?, programa_pdf = ?, bajada = ?, descripcion = ?, sincrono = ?, valoracion = ?
+             WHERE id = ?'
+        );
+        $st->execute([$portada, $relator, $pdf, $bajada, $desc, $sinc, $val, $cursoId]);
+        respond(true, ['curso_id' => $cursoId]);
+    }
+
+    if ($action === 'modulo_crear' && $_SERVER['REQUEST_METHOD'] === 'POST') {
+        $u = requireAuth();
+        $b = body();
+        $cursoId = (int) ($b['curso_id'] ?? 0);
+        $titulo = clean((string) ($b['titulo'] ?? ''));
+        $tipo = (string) ($b['tipo'] ?? 'video');
+        $url = clean((string) ($b['url'] ?? ''));
+        $orden = (int) ($b['orden'] ?? 0);
+        if (!in_array($tipo, ['video', 'archivo', 'enlace'], true)) {
+            $tipo = 'video';
+        }
+        if ($cursoId < 1 || $titulo === '') {
+            respond(false, null, 'Curso y título son obligatorios.', 400);
+        }
+        if (!puedeGestionarCurso($pdo, $u, $cursoId)) {
+            respond(false, null, 'No puedes editar este curso.', 403);
+        }
+        if (!urlMaterialOk($url)) {
+            respond(false, null, 'La URL del módulo no es válida.', 400);
+        }
+        $st = $pdo->prepare(
+            'INSERT INTO aula_modulos (curso_id, titulo, tipo, url, orden) VALUES (?,?,?,?,?)'
+        );
+        $st->execute([$cursoId, $titulo, $tipo, $url, $orden]);
+        respond(true, ['id' => (int) $pdo->lastInsertId()]);
+    }
+
+    if ($action === 'modulo_borrar' && $_SERVER['REQUEST_METHOD'] === 'POST') {
+        $u = requireAuth();
+        $b = body();
+        $id = (int) ($b['id'] ?? 0);
+        $st = $pdo->prepare('SELECT curso_id FROM aula_modulos WHERE id = ?');
+        $st->execute([$id]);
+        $cursoId = (int) $st->fetchColumn();
+        if ($cursoId < 1 || !puedeGestionarCurso($pdo, $u, $cursoId)) {
+            respond(false, null, 'No puedes quitar este módulo.', 403);
+        }
+        $pdo->prepare('DELETE FROM aula_modulos WHERE id = ?')->execute([$id]);
+        respond(true, ['id' => $id]);
+    }
+
+    if ($action === 'progreso' && $_SERVER['REQUEST_METHOD'] === 'POST') {
+        $u = requireAuth();
+        $b = body();
+        $moduloId = (int) ($b['modulo_id'] ?? 0);
+        $st = $pdo->prepare('SELECT curso_id FROM aula_modulos WHERE id = ?');
+        $st->execute([$moduloId]);
+        $cursoId = (int) $st->fetchColumn();
+        if ($cursoId < 1) {
+            respond(false, null, 'Módulo no encontrado.', 404);
+        }
+        $esAdmin = ($u['rol'] === 'admin');
+        if (!$esAdmin && !estaInscrito($pdo, $cursoId, (int) $u['id'])) {
+            respond(false, null, 'Sin acceso al curso.', 403);
+        }
+        $pdo->prepare(
+            'INSERT IGNORE INTO aula_progreso (usuario_id, modulo_id) VALUES (?,?)'
+        )->execute([(int) $u['id'], $moduloId]);
+        respond(true, [
+            'modulo_id' => $moduloId,
+            'certificado' => cursoCompleto($pdo, $cursoId, (int) $u['id']),
+        ]);
+    }
+
+    if ($action === 'foro') {
+        $u = requireAuth();
+        $cursoId = (int) ($_GET['curso_id'] ?? 0);
+        $esAdmin = ($u['rol'] === 'admin');
+        if ($cursoId < 1 || (!$esAdmin && !estaInscrito($pdo, $cursoId, (int) $u['id']))) {
+            respond(false, null, 'Sin acceso al foro.', 403);
+        }
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $b = body();
+            $msg = clean((string) ($b['mensaje'] ?? ''));
+            if ($msg === '' || mb_strlen($msg) > 1000) {
+                respond(false, null, 'Escribe un comentario de hasta 1000 caracteres.', 400);
+            }
+            $pdo->prepare('INSERT INTO aula_foro (curso_id, usuario_id, mensaje) VALUES (?,?,?)')
+                ->execute([$cursoId, (int) $u['id'], $msg]);
+        }
+        $st = $pdo->prepare(
+            'SELECT f.id, f.mensaje, f.created_at, u.nombre
+             FROM aula_foro f
+             JOIN aula_usuarios u ON u.id = f.usuario_id
+             WHERE f.curso_id = ?
+             ORDER BY f.created_at ASC
+             LIMIT 200'
+        );
+        $st->execute([$cursoId]);
+        respond(true, ['mensajes' => $st->fetchAll()]);
+    }
+
+    if ($action === 'suscripcion') {
+        $u = requireAuth();
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            requireAdmin();
+            $b = body();
+            $usuarioId = (int) ($b['usuario_id'] ?? 0);
+            if ($usuarioId < 1 && !empty($b['rut'])) {
+                $stU = $pdo->prepare('SELECT id FROM aula_usuarios WHERE rut = ? OR email = ? LIMIT 1');
+                $rut = rutNormalizar((string) $b['rut']);
+                $stU->execute([$rut, clean((string) $b['rut'])]);
+                $usuarioId = (int) $stU->fetchColumn();
+            }
+            if ($usuarioId < 1) {
+                respond(false, null, 'No encontré a ese alumno.', 404);
+            }
+            $tipo = (($b['tipo'] ?? '') === 'diario') ? 'diario' : 'mensual';
+            $meses = max(0, (int) ($b['meses'] ?? 0));
+            $detalle = clean((string) ($b['detalle'] ?? ''));
+            $desde = fechaOk($b['vigente_desde'] ?? null);
+            $hasta = fechaOk($b['vigente_hasta'] ?? null);
+            $pdo->prepare(
+                'INSERT INTO aula_suscripciones (usuario_id, tipo, meses, detalle, vigente_desde, vigente_hasta)
+                 VALUES (?,?,?,?,?,?)
+                 ON DUPLICATE KEY UPDATE tipo = VALUES(tipo), meses = VALUES(meses), detalle = VALUES(detalle),
+                   vigente_desde = VALUES(vigente_desde), vigente_hasta = VALUES(vigente_hasta)'
+            )->execute([$usuarioId, $tipo, $meses, $detalle, $desde, $hasta]);
+            respond(true, ['usuario_id' => $usuarioId]);
+        }
+        $st = $pdo->prepare('SELECT tipo, meses, detalle, vigente_desde, vigente_hasta FROM aula_suscripciones WHERE usuario_id = ?');
+        $st->execute([(int) $u['id']]);
+        $row = $st->fetch() ?: null;
+        respond(true, ['suscripcion' => $row]);
+    }
+
+    if ($action === 'actividad') {
+        $u = requireAuth();
+        $uid = (int) $u['id'];
+        $st = $pdo->prepare(
+            'SELECT c.id, c.nombre, a.ultimo_acceso,
+                    (SELECT COUNT(*) FROM aula_modulos m WHERE m.curso_id = c.id) AS modulos_n,
+                    (SELECT COUNT(*) FROM aula_progreso p
+                       JOIN aula_modulos m ON m.id = p.modulo_id
+                      WHERE m.curso_id = c.id AND p.usuario_id = ?) AS hechos,
+                    (SELECT 1 FROM aula_certificados k WHERE k.curso_id = c.id AND k.usuario_id = ? LIMIT 1) AS emitido
+             FROM aula_inscripciones i
+             JOIN aula_cursos c ON c.id = i.curso_id AND c.activo = 1
+             LEFT JOIN aula_accesos a ON a.curso_id = c.id AND a.usuario_id = i.usuario_id
+             WHERE i.usuario_id = ?
+             ORDER BY a.ultimo_acceso IS NULL, a.ultimo_acceso DESC, c.nombre'
+        );
+        $st->execute([$uid, $uid, $uid]);
+        $cursos = array_map(static function ($r) {
+            $total = (int) $r['modulos_n'];
+            $hechos = (int) $r['hechos'];
+            $finalizado = $total > 0 && $hechos >= $total;
+            return [
+                'id' => (int) $r['id'],
+                'nombre' => $r['nombre'],
+                'ultimo_acceso' => $r['ultimo_acceso'],
+                'modulos_n' => $total,
+                'completados' => $hechos,
+                'avance' => $total > 0 ? (int) round($hechos * 100 / $total) : 0,
+                'finalizado' => $finalizado || (bool) $r['emitido'],
+                'certificado' => $finalizado || (bool) $r['emitido'],
+            ];
+        }, $st->fetchAll());
+        $sol = $pdo->prepare('SELECT id, mensaje, estado, created_at FROM aula_solicitudes WHERE usuario_id = ? ORDER BY created_at DESC LIMIT 20');
+        $sol->execute([$uid]);
+        respond(true, ['cursos' => $cursos, 'solicitudes' => $sol->fetchAll()]);
+    }
+
+    if ($action === 'solicitud' && $_SERVER['REQUEST_METHOD'] === 'POST') {
+        $u = requireAuth();
+        $b = body();
+        $msg = clean((string) ($b['mensaje'] ?? ''));
+        if ($msg === '' || mb_strlen($msg) > 1000) {
+            respond(false, null, 'Describe el cambio que necesitas, en hasta 1000 caracteres.', 400);
+        }
+        $pdo->prepare('INSERT INTO aula_solicitudes (usuario_id, mensaje) VALUES (?,?)')
+            ->execute([(int) $u['id'], $msg]);
+        respond(true, ['enviada' => true]);
+    }
+
+    if ($action === 'solicitudes') {
+        requireAdmin();
+        $rows = $pdo->query(
+            'SELECT s.id, s.mensaje, s.estado, s.created_at, u.nombre, u.rut, u.email
+             FROM aula_solicitudes s
+             JOIN aula_usuarios u ON u.id = s.usuario_id
+             ORDER BY s.estado ASC, s.created_at DESC
+             LIMIT 100'
+        )->fetchAll();
+        respond(true, ['solicitudes' => $rows]);
+    }
+
+    if ($action === 'solicitud_estado' && $_SERVER['REQUEST_METHOD'] === 'POST') {
+        requireAdmin();
+        $b = body();
+        $id = (int) ($b['id'] ?? 0);
+        $estado = (($b['estado'] ?? '') === 'revisada') ? 'revisada' : 'pendiente';
+        $pdo->prepare('UPDATE aula_solicitudes SET estado = ? WHERE id = ?')->execute([$estado, $id]);
+        respond(true, ['id' => $id, 'estado' => $estado]);
     }
 
     respond(false, null, 'Acción desconocida: ' . $action, 400);

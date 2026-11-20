@@ -4,74 +4,254 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="robots" content="noindex,nofollow">
-  <title>DDG Del Valle · Aula Virtual</title>
+  <title>Aula Virtual · DDG Del Valle</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,560;9..144,700&family=Manrope:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Outfit:wght@500;700&display=swap" rel="stylesheet">
   <link rel="icon" href="https://ddgdelvalle.cl/wp-content/uploads/2026/03/icono-ddg.png">
-  <link rel="stylesheet" href="styles.css?v=20261118c">
+  <link rel="stylesheet" href="styles.css?v=20261120b">
 </head>
 <body>
-  <!-- LOGIN -->
   <div id="view-login" class="login-wrap">
-    <div class="login-card">
-      <img class="brand-logo brand-logo-login" src="https://ddgdelvalle.cl/wp-content/uploads/2026/03/icono-ddg.png" alt="DDG Del Valle" width="72" height="72">
-      <p class="eyebrow">OTEC · Aula virtual</p>
-      <h1>Acceso al aula</h1>
-      <p class="muted">Alumnos y profesores entran aquí. Verás todos los cursos; solo puedes abrir los que tienes inscritos.</p>
-      <form id="form-login" class="stack" autocomplete="on">
-        <label>
-          <span>Usuario o RUT</span>
-          <input id="login-user" name="usuario" type="text" required autocomplete="username" placeholder="Curso1 · alumno · admin">
-        </label>
-        <label>
-          <span>Contraseña</span>
-          <input id="login-pass" name="clave" type="password" required autocomplete="current-password">
-        </label>
-        <p id="login-error" class="error hidden"></p>
-        <button type="submit" class="btn btn-primary">Entrar al aula</button>
-      </form>
-      <p class="hint">
-        Acceso del curso de Gastronomía: usa el usuario y clave entregados por la OTEC.
-      </p>
-    </div>
+    <form id="form-login" class="login-card" autocomplete="on">
+      <a class="wordmark wordmark-login" href="https://ddgdelvalle.cl/aula/" title="Aula Virtual">
+        <img src="https://ddgdelvalle.cl/wp-content/uploads/2026/03/icono_Online.png" alt="" width="42" height="42">
+        <span>Aula<br>Virtual</span>
+      </a>
+      <label>
+        <span>Correo, usuario o RUT</span>
+        <input id="login-user" name="usuario" type="text" required autocomplete="username" placeholder="correo@ddgdelvalle.cl">
+      </label>
+      <label>
+        <span>Contraseña</span>
+        <input id="login-pass" name="clave" type="password" required autocomplete="current-password" placeholder="Clave entregada por la OTEC">
+      </label>
+      <p id="login-error" class="error hidden"></p>
+      <button type="submit" class="btn btn-teal">Ingresar</button>
+      <a class="recover" href="mailto:contacto@ddgdelvalle.cl?subject=Recuperar%20clave%20del%20aula%20virtual">Recuperar clave</a>
+    </form>
   </div>
 
-  <!-- APP -->
   <div id="view-app" class="app hidden">
-    <header class="topbar">
-      <div class="brand">
-        <img class="brand-logo" src="https://ddgdelvalle.cl/wp-content/uploads/2026/03/icono-ddg.png" alt="DDG Del Valle" width="40" height="40">
-        <div class="brand-text">
-          <strong>DDG Del Valle</strong>
-          <span>Aula virtual</span>
-        </div>
-      </div>
-      <div class="topbar-actions">
-        <span id="who" class="who"></span>
-        <button type="button" id="btn-logout" class="btn btn-ghost">Salir</button>
-      </div>
-    </header>
-
-    <main class="shell">
-      <nav class="tabs" id="main-tabs" aria-label="Secciones">
-        <button type="button" class="tab" data-tab="cursos" aria-selected="true">Cursos</button>
-        <button type="button" class="tab hidden" data-tab="usuarios" id="tab-usuarios">Usuarios</button>
-        <button type="button" class="tab hidden" data-tab="log" id="tab-log">Log de inscripciones</button>
+    <aside class="sidebar">
+      <a class="wordmark" href="https://ddgdelvalle.cl/aula/" title="Aula Virtual">
+        <img src="https://ddgdelvalle.cl/wp-content/uploads/2026/03/icono_Online.png" alt="" width="42" height="42">
+        <span>Aula<br>Virtual</span>
+      </a>
+      <p id="who" class="who"></p>
+      <nav class="side-nav" aria-label="Aula">
+        <button type="button" data-nav="cursos" class="is-active">Mis Cursos</button>
+        <button type="button" data-nav="suscripcion">Mi Suscripción</button>
+        <button type="button" data-nav="actividad">Mi Actividad</button>
+        <a href="https://ddgdelvalle.cl/#cursos">Ver más cursos</a>
+        <button type="button" data-nav="gestion" id="nav-gestion" class="hidden">Gestión</button>
       </nav>
+      <button type="button" id="btn-logout" class="logout">Salir</button>
+      <a class="side-brand" href="https://ddgdelvalle.cl/" title="Volver a DDG Del Valle">
+        <img src="https://ddgdelvalle.cl/wp-content/uploads/2026/03/LOGO-DDG_color.png" alt="DDG Del Valle" width="132" height="64">
+      </a>
+    </aside>
 
-      <!-- CURSOS -->
-      <section id="panel-cursos" class="panel" data-panel="cursos">
-        <div class="panel-head">
-          <div>
-            <h2>Catálogo de cursos</h2>
-            <p class="muted">Todos los cursos del sistema. Los bloqueados requieren inscripción previa.</p>
+    <div class="workspace">
+      <header class="mobile-bar">
+        <a class="wordmark" href="https://ddgdelvalle.cl/aula/" title="Aula Virtual">
+          <img src="https://ddgdelvalle.cl/wp-content/uploads/2026/03/icono_Online.png" alt="" width="42" height="42">
+          <span>Aula<br>Virtual</span>
+        </a>
+        <a href="https://ddgdelvalle.cl/" title="Volver a DDG Del Valle">
+          <img src="https://ddgdelvalle.cl/wp-content/uploads/2026/03/LOGO-DDG_color.png" alt="DDG Del Valle" width="86" height="42">
+        </a>
+        <p id="who-mobile" class="who"></p>
+        <nav class="side-nav" aria-label="Aula">
+          <button type="button" data-nav="cursos">Mis Cursos</button>
+          <button type="button" data-nav="suscripcion">Mi Suscripción</button>
+          <button type="button" data-nav="actividad">Mi Actividad</button>
+          <a href="https://ddgdelvalle.cl/#cursos">Ver más cursos</a>
+          <button type="button" id="btn-logout-mobile" class="logout">Salir</button>
+        </nav>
+      </header>
+
+      <section id="panel-cursos" class="panel">
+        <div class="hero" role="img" aria-label="Aula virtual DDG Del Valle"></div>
+        <h1>Mis Cursos</h1>
+        <div id="cursos-grid" class="cards"></div>
+        <div class="interes">
+          <h2>Cursos y talleres que podrían interesarte</h2>
+          <div class="interes-row">
+            <a href="https://ddgdelvalle.cl/#cursos"><img src="https://ddgdelvalle.cl/wp-content/uploads/2026/04/Riego-.webp" alt="Riego y eficiencia hídrica"></a>
+            <a href="https://ddgdelvalle.cl/#cursos"><img src="https://ddgdelvalle.cl/wp-content/uploads/2026/04/IA-.webp" alt="IA en uso cotidiano"></a>
+            <a href="https://ddgdelvalle.cl/#cursos"><img src="https://ddgdelvalle.cl/wp-content/uploads/2026/04/Plaguicida-.webp" alt="Uso y manejo de plaguicidas"></a>
           </div>
-          <button type="button" id="btn-nuevo-curso" class="btn btn-primary hidden">+ Nuevo curso</button>
         </div>
-        <form id="form-curso" class="inline-form hidden">
+      </section>
+
+      <section id="panel-curso" class="panel hidden">
+        <p class="crumb">
+          <a href="#/cursos">Aula Virtual</a>
+          <span aria-hidden="true">›</span>
+          <a href="#/cursos">Mis Cursos</a>
+          <span aria-hidden="true">›</span>
+          <span id="curso-crumb"></span>
+        </p>
+        <h1 id="curso-titulo"></h1>
+        <div class="course-tabs" id="course-tabs" role="tablist">
+          <button type="button" data-ctab="presentacion" role="tab" aria-selected="true">Presentación</button>
+          <button type="button" data-ctab="contenido" role="tab">Contenido</button>
+          <button type="button" data-ctab="comunidad" role="tab">Comunidad</button>
+          <button type="button" data-ctab="vivo" id="tab-vivo" class="tab-live" role="tab">Conexión Online</button>
+        </div>
+
+        <div id="ctab-presentacion" class="ctab">
+          <div id="box-video" class="stage">
+            <video id="video-player" class="hidden" controls controlsList="nodownload noplaybackrate" disablePictureInPicture playsinline preload="metadata"></video>
+            <div id="stage-empty" class="stage-empty">
+              <span class="play" aria-hidden="true"></span>
+            </div>
+            <p id="video-error" class="error hidden">No se pudo cargar el video. Vuelve a entrar al curso.</p>
+          </div>
+          <p class="kicker">Detalle del taller / curso</p>
+          <p id="programa-row"></p>
+          <p class="kicker">Descripción del taller / curso</p>
+          <p id="curso-bajada" class="lead"></p>
+          <p id="curso-desc-view" class="prose"></p>
+        </div>
+
+        <div id="ctab-contenido" class="ctab hidden">
+          <div id="modulos"></div>
+        </div>
+
+        <div id="ctab-comunidad" class="ctab hidden">
+          <form id="form-foro" class="foro-form">
+            <label>
+              <span>Escribe en el foro del curso</span>
+              <textarea id="foro-texto" maxlength="1000" required placeholder="Comparte una duda o un comentario con el curso"></textarea>
+            </label>
+            <button type="submit" class="btn btn-dark">Publicar</button>
+            <p id="foro-msg" class="status-msg"></p>
+          </form>
+          <div id="foro-list" class="foro-list"></div>
+        </div>
+
+        <div id="ctab-vivo" class="ctab hidden">
+          <div class="live-card">
+            <h2>Clase en vivo</h2>
+            <p id="enlace-estado">Sin enlace publicado todavía.</p>
+            <a id="btn-unirse" class="btn btn-dark hidden" href="#" target="_blank" rel="noopener">Entrar a la sesión</a>
+            <a id="btn-material" class="btn btn-ghost hidden" href="#" target="_blank" rel="noopener">Abrir material</a>
+          </div>
+        </div>
+
+        <details id="box-gestion" class="gestion hidden">
+          <summary>Gestión del curso</summary>
+          <form id="form-ficha" class="stack">
+            <label>Bajada <input id="ficha-bajada" class="field" maxlength="500"></label>
+            <label>Descripción <textarea id="ficha-desc" class="field" rows="3"></textarea></label>
+            <div class="grid-2">
+              <label>Relator <input id="ficha-relator" class="field"></label>
+              <label>Valoración (0 a 5) <input id="ficha-valor" class="field" type="number" min="0" max="5" value="0"></label>
+              <label>Portada (https) <input id="ficha-portada" class="field" placeholder="https://"></label>
+              <label>Programa PDF (solo vista previa) <input id="ficha-pdf" class="field" placeholder="https:// o materiales/programa.pdf"></label>
+            </div>
+            <label class="check"><input id="ficha-sincrono" type="checkbox"> Curso sincrónico (muestra Conexión Online)</label>
+            <button type="submit" class="btn btn-dark">Guardar ficha</button>
+            <p id="ficha-msg" class="status-msg"></p>
+          </form>
+
+          <form id="form-video" class="stack">
+            <h3>Video de presentación</h3>
+            <label>URL <input id="input-video" class="field" placeholder="https:// o stream.php?f=clase.mp4"></label>
+            <label>Título <input id="input-video-titulo" class="field"></label>
+            <div class="actions">
+              <button type="submit" class="btn btn-dark">Guardar video</button>
+              <button type="button" id="btn-limpiar-video" class="btn btn-ghost">Quitar</button>
+            </div>
+            <p id="video-msg" class="status-msg"></p>
+          </form>
+
+          <form id="form-enlace" class="stack">
+            <h3>Enlace de la clase en vivo</h3>
+            <label>Meet / Zoom / Teams <input id="input-enlace" class="field" type="url" placeholder="https://"></label>
+            <div class="actions">
+              <button type="submit" class="btn btn-dark">Guardar enlace</button>
+              <button type="button" id="btn-limpiar-enlace" class="btn btn-ghost">Quitar</button>
+            </div>
+            <p id="enlace-msg" class="status-msg"></p>
+          </form>
+
+          <form id="form-modulo" class="stack">
+            <h3>Nuevo módulo</h3>
+            <div class="grid-2">
+              <label>Título <input id="mod-titulo" class="field" required></label>
+              <label>Tipo
+                <select id="mod-tipo" class="field">
+                  <option value="video">Video</option>
+                  <option value="archivo">Archivo descargable</option>
+                  <option value="enlace">Enlace</option>
+                </select>
+              </label>
+            </div>
+            <label>URL <input id="mod-url" class="field" placeholder="https://"></label>
+            <button type="submit" class="btn btn-dark">Agregar módulo</button>
+            <p id="mod-msg" class="status-msg"></p>
+          </form>
+
+          <form id="form-inscribir" class="form-row">
+            <label>Inscribir alumno
+              <select id="select-alumno" class="field" required><option value="">Cargando…</option></select>
+            </label>
+            <button type="submit" class="btn btn-dark">Inscribir</button>
+          </form>
+          <p id="inscribir-msg" class="status-msg"></p>
+
+          <div id="box-asignar-profe">
+            <form id="form-asignar-profe" class="form-row">
+              <label>Asignar profesor
+                <select id="select-profe" class="field" required><option value="">Cargando…</option></select>
+              </label>
+              <button type="submit" class="btn btn-dark">Asignar</button>
+            </form>
+            <p id="profe-msg" class="status-msg"></p>
+          </div>
+
+          <h3>Nómina</h3>
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>Nombre</th><th>RUT</th><th>Rol</th><th></th></tr></thead>
+              <tbody id="tbody-inscritos"></tbody>
+            </table>
+          </div>
+        </details>
+      </section>
+
+      <section id="panel-suscripcion" class="panel hidden">
+        <h1>Mi Suscripción</h1>
+        <div id="suscripcion-body" class="sheet"></div>
+      </section>
+
+      <section id="panel-actividad" class="panel hidden">
+        <h1>Mi Actividad</h1>
+        <div id="actividad-body"></div>
+        <form id="form-solicitud" class="sheet">
+          <h2>Solicitar modificación de datos</h2>
+          <p class="muted">La OTEC revisa el pedido y te contacta. No cambia los datos al enviarlo.</p>
+          <label>
+            <span>Qué necesitas corregir</span>
+            <textarea id="solicitud-texto" maxlength="1000" required placeholder="Nombre, correo, RUT u otro dato"></textarea>
+          </label>
+          <button type="submit" class="btn btn-dark">Enviar solicitud</button>
+          <p id="solicitud-msg" class="status-msg"></p>
+        </form>
+      </section>
+
+      <section id="panel-gestion" class="panel hidden">
+        <h1>Gestión</h1>
+        <div class="panel-head">
+          <button type="button" id="btn-nuevo-curso" class="btn btn-dark admin-only">Nuevo curso</button>
+          <button type="button" id="btn-refresh-log" class="btn btn-ghost">Actualizar log</button>
+        </div>
+        <form id="form-curso" class="sheet hidden">
           <div class="grid-2">
-            <label>Nombre <input id="curso-nombre" class="field" required placeholder="Ej. Riego Tecnificado"></label>
+            <label>Nombre <input id="curso-nombre" class="field" required></label>
             <label>Modalidad
               <select id="curso-modalidad" class="field">
                 <option value="online">Online</option>
@@ -80,137 +260,19 @@
               </select>
             </label>
           </div>
-          <label>Descripción <input id="curso-desc" class="field" placeholder="Breve descripción"></label>
+          <label>Descripción <input id="curso-desc" class="field"></label>
           <div class="actions">
-            <button type="submit" class="btn btn-primary">Crear curso</button>
+            <button type="submit" class="btn btn-dark">Crear curso</button>
             <button type="button" id="btn-cancel-curso" class="btn btn-ghost">Cancelar</button>
           </div>
         </form>
-        <div id="cursos-grid" class="cards"></div>
-      </section>
 
-      <!-- DETALLE CURSO -->
-      <section id="panel-curso" class="panel hidden" data-panel="curso">
-        <button type="button" class="back" id="btn-back-cursos">← Volver al catálogo</button>
-        <div class="panel-head">
-          <div>
-            <p class="eyebrow" id="curso-meta"></p>
-            <h2 id="curso-titulo"></h2>
-            <p class="muted" id="curso-desc-view"></p>
-          </div>
-        </div>
-
-        <div id="box-video" class="callout video-box hidden">
-          <strong id="video-titulo">Clase grabada</strong>
-          <div class="video-shell" id="video-shell">
-            <video
-              id="video-player"
-              controls
-              controlsList="nodownload noplaybackrate"
-              disablePictureInPicture
-              playsinline
-              preload="metadata"
-            ></video>
-            <p id="video-error" class="video-error hidden">No se pudo cargar el video. Recarga o vuelve a entrar al aula.</p>
-          </div>
-        </div>
-
-        <div id="box-clase" class="callout agua">
-          <strong>Clase en vivo (Meet / Zoom)</strong>
-          <p id="enlace-estado" class="muted">Sin enlace publicado todavía.</p>
-          <div class="actions" style="margin-top:10px">
-            <a id="btn-unirse" class="btn btn-agua hidden" href="#" target="_blank" rel="noopener">Unirse a la clase</a>
-            <a id="btn-material" class="btn btn-primary hidden" href="#" target="_blank" rel="noopener">Abrir material / evaluaciones</a>
-          </div>
-          <form id="form-enlace" class="inline-form hidden" style="margin-top:12px">
-            <label>Link Meet / Zoom / Teams
-              <input id="input-enlace" class="field" type="url" placeholder="https://meet.google.com/...">
-            </label>
-            <div class="actions">
-              <button type="submit" class="btn btn-primary">Guardar enlace</button>
-              <button type="button" id="btn-limpiar-enlace" class="btn btn-ghost">Quitar enlace</button>
-            </div>
-            <p id="enlace-msg" class="status-msg"></p>
-          </form>
-          <form id="form-video" class="inline-form hidden" style="margin-top:12px">
-            <label>URL video clase grabada (OneDrive / Stream)
-              <input id="input-video" class="field" type="url" placeholder="https://1drv.ms/v/...">
-            </label>
-            <label>Título de la clase
-              <input id="input-video-titulo" class="field" type="text" placeholder="Clase 1 · ...">
-            </label>
-            <div class="actions">
-              <button type="submit" class="btn btn-primary">Guardar video</button>
-              <button type="button" id="btn-limpiar-video" class="btn btn-ghost">Quitar video</button>
-            </div>
-            <p id="video-msg" class="status-msg"></p>
-          </form>
-        </div>
-
-        <div id="box-gestion" class="hidden">
-          <div class="panel-head" style="margin-top:8px">
-            <div>
-              <h2 style="font-size:1.2rem">Inscribir alumnos</h2>
-              <p class="muted">Solo alumnos ya cargados en el sistema (aún no inscritos en este curso).</p>
-            </div>
-          </div>
-          <form id="form-inscribir" class="form-row">
-            <label>Alumno disponible
-              <select id="select-alumno" class="field" required>
-                <option value="">Cargando…</option>
-              </select>
-            </label>
-            <button type="submit" class="btn btn-primary">Inscribir</button>
-          </form>
-          <p id="inscribir-msg" class="status-msg"></p>
-
-          <div id="box-asignar-profe" class="hidden">
-            <div class="panel-head" style="margin-top:18px">
-              <div>
-                <h2 style="font-size:1.2rem">Asignar profesor</h2>
-                <p class="muted">El profesor verá el curso en su cuenta y podrá inscribir alumnos y publicar el Meet/Zoom.</p>
-              </div>
-            </div>
-            <form id="form-asignar-profe" class="form-row">
-              <label>Profesor
-                <select id="select-profe" class="field" required>
-                  <option value="">Cargando…</option>
-                </select>
-              </label>
-              <button type="submit" class="btn btn-primary">Asignar</button>
-            </form>
-            <p id="profe-msg" class="status-msg"></p>
-          </div>
-
-          <div class="panel-head" style="margin-top:18px">
-            <div>
-              <h2 style="font-size:1.2rem">Nómina del curso</h2>
-            </div>
-          </div>
-          <div class="table-wrap">
-            <table>
-              <thead>
-                <tr><th>Nombre</th><th>RUT</th><th>Rol</th><th></th></tr>
-              </thead>
-              <tbody id="tbody-inscritos"></tbody>
-            </table>
-          </div>
-        </div>
-      </section>
-
-      <!-- USUARIOS (admin) -->
-      <section id="panel-usuarios" class="panel hidden" data-panel="usuarios">
-        <div class="panel-head">
-          <div>
-            <h2>Usuarios del sistema</h2>
-            <p class="muted">Carga previa de alumnos y profesores. Luego el profesor los inscribe a cada curso.</p>
-          </div>
-        </div>
-        <form id="form-usuario" class="inline-form">
+        <form id="form-usuario" class="sheet admin-only">
+          <h2>Cargar usuario</h2>
           <div class="grid-2">
             <label>RUT <input id="u-rut" class="field" required placeholder="12.345.678-9"></label>
             <label>Nombre <input id="u-nombre" class="field" required></label>
-            <label>Email <input id="u-email" class="field" type="email" placeholder="opcional"></label>
+            <label>Email <input id="u-email" class="field" type="email"></label>
             <label>Rol
               <select id="u-rol" class="field">
                 <option value="alumno">Alumno</option>
@@ -220,49 +282,60 @@
             </label>
             <label>Clave inicial <input id="u-clave" class="field" type="password" required minlength="6"></label>
           </div>
-          <div class="actions">
-            <button type="submit" class="btn btn-primary">Cargar usuario</button>
-          </div>
+          <button type="submit" class="btn btn-dark">Cargar usuario</button>
           <p id="usuario-msg" class="status-msg"></p>
         </form>
-        <div class="table-wrap" style="margin-top:16px">
+        <div class="table-wrap admin-only">
           <table>
-            <thead>
-              <tr><th>Nombre</th><th>RUT</th><th>Rol</th><th>Email</th></tr>
-            </thead>
+            <thead><tr><th>Nombre</th><th>RUT</th><th>Rol</th><th>Email</th></tr></thead>
             <tbody id="tbody-usuarios"></tbody>
           </table>
         </div>
-      </section>
 
-      <!-- LOG -->
-      <section id="panel-log" class="panel hidden" data-panel="log">
-        <div class="panel-head">
-          <div>
-            <h2>Log de inscripciones</h2>
-            <p class="muted">Historial de altas y bajas. Visible para admin y profesores (sus cursos).</p>
+        <form id="form-suscripcion-admin" class="sheet admin-only">
+          <h2>Registrar suscripción</h2>
+          <div class="grid-2">
+            <label>RUT o correo del alumno <input id="sus-rut" class="field" required></label>
+            <label>Tipo
+              <select id="sus-tipo" class="field">
+                <option value="mensual">Mensual</option>
+                <option value="diario">Ingreso diario</option>
+              </select>
+            </label>
+            <label>Meses <input id="sus-meses" class="field" type="number" min="0" value="1"></label>
+            <label>Detalle <input id="sus-detalle" class="field" placeholder="Plan, sede, observación"></label>
+            <label>Desde <input id="sus-desde" class="field" type="date"></label>
+            <label>Hasta <input id="sus-hasta" class="field" type="date"></label>
           </div>
-          <button type="button" id="btn-refresh-log" class="btn btn-ghost">Actualizar</button>
-        </div>
+          <button type="submit" class="btn btn-dark">Guardar suscripción</button>
+          <p id="sus-msg" class="status-msg"></p>
+        </form>
+
+        <h2 class="admin-only">Solicitudes de datos</h2>
+        <div id="solicitudes-admin" class="stack admin-only"></div>
+
+        <h2>Log de inscripciones</h2>
         <div class="table-wrap">
           <table>
             <thead>
-              <tr>
-                <th>Fecha</th>
-                <th>Acción</th>
-                <th>Curso</th>
-                <th>Persona</th>
-                <th>Rol</th>
-                <th>Hecho por</th>
-              </tr>
+              <tr><th>Fecha</th><th>Acción</th><th>Curso</th><th>Persona</th><th>Rol</th><th>Hecho por</th></tr>
             </thead>
             <tbody id="tbody-log"></tbody>
           </table>
         </div>
       </section>
-    </main>
+    </div>
   </div>
 
-  <script src="app.js?v=20261118c" defer></script>
+  <dialog id="pdf-dialog">
+    <div class="pdf-bar">
+      <strong id="pdf-title">Programa del curso</strong>
+      <button type="button" id="pdf-close" class="btn btn-ghost">Cerrar</button>
+    </div>
+    <iframe id="pdf-frame" title="Vista previa del programa"></iframe>
+    <p class="muted">Solo vista previa. El programa no se ofrece para descarga.</p>
+  </dialog>
+
+  <script src="app.js?v=20261120a" defer></script>
 </body>
 </html>
